@@ -133,10 +133,10 @@ export function NavPill() {
             </button>
             <GithubStarsButton
               username="zivhdinfo"
-              repo="interactive-feedback-mcp-nodejs"
+              repo="lazy-ui"
               label="GitHub"
               initialValue={0}
-              counterEffect="3d"
+              counterEffect="fade"
               apiEndpoint="/api/github-stars"
               className="nav-github-stars"
               aria-label="Open Lazy-ui on GitHub"
