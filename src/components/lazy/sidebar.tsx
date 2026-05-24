@@ -25,7 +25,6 @@ const CATEGORY_ORDER = [
   "Background",
   "Text Animate",
   "Animate",
-  "Effects",
   "Forms",
   "Buttons",
   "Feedback",
@@ -35,9 +34,13 @@ const CATEGORY_ORDER = [
 ];
 
 // Sidebar badges. A slug listed here renders a tag (e.g. "New", "Update")
-// in the sidebar next to the component name. Badge lifetime is bounded —
-// see [CLAUDE.md](../../CLAUDE.md#sidebar-badge-rotation) for the rule.
-const NEW_SLUGS = new Set(["stack-list"]);
+// in the sidebar next to the component name AND powers the dedicated "New"
+// tab on `/components`. Badge lifetime is bounded — see
+// [CLAUDE.md](../../CLAUDE.md#sidebar-badge-rotation) for the rule.
+export const NEW_SLUGS: ReadonlySet<string> = new Set([
+  "grid-background",
+  "stack-list",
+]);
 
 const DOC_SECTION: SidebarSection = {
   id: "docs",

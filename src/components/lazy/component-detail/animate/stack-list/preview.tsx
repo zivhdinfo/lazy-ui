@@ -102,7 +102,7 @@ export function Preview({ values }: { values: CustomizeValues }) {
   const gap = (values.gap ?? 12) as number;
   const pauseOnHover = (values.pauseOnHover ?? true) as boolean;
   const dismissOnSwipe = (values.dismissOnSwipe ?? true) as boolean;
-  const stack = (values.stack ?? true) as boolean;
+  const stack = (values.stack ?? false) as boolean;
   const stackDepth = (values.stackDepth ?? 3) as number;
 
   return (

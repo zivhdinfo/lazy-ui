@@ -12,6 +12,7 @@ import {
 import { AnimatedTabs } from "@/components/lazy-ui/animated-tabs";
 import { CodePreview } from "@/components/lazy-ui/code-preview";
 import { CopyButton } from "@/components/lazy-ui/copy-button";
+import { GridBackground } from "@/components/lazy-ui/grid-background";
 import type { ComponentItem } from "@/registry/components";
 
 import { contentFor } from "../component-content";
@@ -366,22 +367,13 @@ export function ComponentDetail({
             className="relative rounded-3xl border border-white/10 bg-white/[0.02]"
             style={{ minHeight: STAGE_MIN_HEIGHT[component.slug] ?? 500 }}
           >
-            {/* Dotted grid background */}
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-0 rounded-3xl"
-              style={{
-                backgroundImage:
-                  "linear-gradient(to right, rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.08) 1px, transparent 1px)",
-                backgroundSize: "20px 20px",
-                backgroundPosition: "right bottom",
-                WebkitMaskImage:
-                  "repeating-linear-gradient(to right, black 0 3px, transparent 3px 8px), repeating-linear-gradient(to bottom, black 0 3px, transparent 3px 8px)",
-                maskImage:
-                  "repeating-linear-gradient(to right, black 0 3px, transparent 3px 8px), repeating-linear-gradient(to bottom, black 0 3px, transparent 3px 8px)",
-                WebkitMaskComposite: "source-in",
-                maskComposite: "intersect",
-              }}
+            {/* Dotted grid background — SVG-based, stays crisp at any zoom. */}
+            <GridBackground
+              variant="dots"
+              size={20}
+              dotSize={3}
+              color="rgba(255,255,255,0.08)"
+              className="rounded-3xl"
             />
 
             {/* Preview frame (anchored left, explicit width or full) */}

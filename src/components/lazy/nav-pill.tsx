@@ -10,7 +10,11 @@ import { GithubStarsButton } from "@/components/lazy-ui/github-stars-button";
 
 import { BrandMark } from "./brand-mark";
 import { NAV_ITEMS, activeNavIndex } from "./nav-items";
-import { getSidebarSections, isSidebarItemActive } from "./sidebar";
+import {
+  NEW_SLUGS,
+  getSidebarSections,
+  isSidebarItemActive,
+} from "./sidebar";
 
 const NAV_PILL_SPRING = {
   type: "spring" as const,
@@ -121,6 +125,16 @@ export function NavPill() {
           </div>
 
           <div className="nav-right">
+            {NEW_SLUGS.size > 0 && (
+              <Link
+                href="/components?tab=new"
+                className="nav-new-link"
+                aria-label={`What's new — ${NEW_SLUGS.size} update${NEW_SLUGS.size === 1 ? "" : "s"}`}
+              >
+                <span>New</span>
+                <span className="nav-new-count">{NEW_SLUGS.size}</span>
+              </Link>
+            )}
             <button
               type="button"
               className="nav-search"

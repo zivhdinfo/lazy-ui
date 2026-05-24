@@ -82,7 +82,6 @@
 
   /* Layout */
   --sidebar-w: 240px;
-  --rightbar-w: 300px;
   --header-h: 64px;
   /* Offset where sticky shell columns start. Matches `.app.nav-pill-on`'s
      padding-top — without this, the sidebar's bottom edge hangs below the
@@ -184,7 +183,7 @@
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: var(--sidebar-w) 1fr var(--rightbar-w);
+  grid-template-columns: var(--sidebar-w) 1fr;
   gap: 0;
   max-width: 1640px;
   margin: 0 auto;
@@ -1141,173 +1140,6 @@ pre .c { color: var(--fg-4); font-style: italic; }
 pre .t { color: #f0abfc; }
 pre .v { color: #67e8f9; }
 
-/* Right column */
-.rightbar {
-  position: sticky;
-  top: var(--shell-top);
-  align-self: start;
-  height: calc(100vh - var(--shell-top));
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: 32px 0 32px 24px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
-}
-.rightbar::-webkit-scrollbar { width: 6px; }
-.rightbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.08); border-radius: 3px; }
-
-/* Rightbar cards — shared style */
-.rb-card {
-  border: 1px solid var(--line-1);
-  border-radius: 14px;
-  padding: 16px;
-  background:
-    radial-gradient(400px 200px at 100% 0%, rgba(255, 255, 255, 0.04), transparent 60%),
-    var(--bg-1);
-  margin-bottom: 12px;
-  transition: border-color 0.3s;
-}
-.rb-card:hover { border-color: var(--line-2); }
-
-.rb-card-eyebrow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 10.5px;
-  letter-spacing: 0;
-  text-transform: uppercase;
-  color: var(--fg-3);
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-.rb-card-eyebrow .version {
-  color: var(--fg-4);
-  font-family: var(--font-geist-mono), monospace;
-  letter-spacing: 0;
-  text-transform: none;
-  font-weight: 500;
-  font-size: 10px;
-  padding: 2px 6px;
-  border: 1px solid var(--line-1);
-  border-radius: 5px;
-}
-
-.rb-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-.rb-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 8px;
-  border-radius: 8px;
-  font-size: 12.5px;
-  color: var(--fg-1);
-  text-decoration: none;
-  transition: background 0.2s, color 0.2s, transform 0.3s var(--ease-out);
-}
-.rb-row:hover {
-  background: rgba(255, 255, 255, 0.03);
-  transform: translateX(2px);
-}
-.rb-row .dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  transition: transform 0.2s var(--ease-out);
-}
-.rb-row .dot.published {
-  background: var(--silver-grad);
-  box-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
-}
-.rb-row .dot.planned {
-  background: transparent;
-  border: 1px solid var(--line-3);
-  box-shadow: none;
-}
-.rb-row .label {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.rb-row.planned { cursor: default; }
-.rb-row.planned:hover { background: transparent; transform: none; }
-.rb-row.planned .label { color: var(--fg-3); }
-.rb-row .meta {
-  font-size: 10.5px;
-  color: var(--fg-4);
-  letter-spacing: 0;
-  font-family: var(--font-geist-mono), monospace;
-}
-
-.rb-card-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 10px;
-  padding: 8px 8px 4px;
-  border-top: 1px solid var(--line-1);
-  font-size: 12px;
-  color: var(--fg-2);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-.rb-card-foot:hover { color: var(--fg-0); }
-.rb-card-foot svg {
-  width: 12px;
-  height: 12px;
-  transition: transform 0.2s var(--ease-out);
-}
-.rb-card-foot:hover svg { transform: translateX(3px); }
-
-/* Link rows in "Help" card */
-.rb-link {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 8px;
-  border-radius: 8px;
-  font-size: 12.5px;
-  color: var(--fg-2);
-  text-decoration: none;
-  transition: background 0.2s, color 0.2s;
-}
-.rb-link:hover {
-  background: rgba(255, 255, 255, 0.03);
-  color: var(--fg-0);
-}
-.rb-link .icon {
-  width: 14px;
-  height: 14px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--fg-3);
-  flex-shrink: 0;
-  transition: color 0.2s;
-}
-.rb-link:hover .icon { color: var(--fg-1); }
-.rb-link .icon svg { width: 14px; height: 14px; }
-.rb-link .label { flex: 1; }
-.rb-link .arrow {
-  display: inline-flex;
-  width: 12px;
-  height: 12px;
-  color: var(--fg-4);
-  transition: transform 0.2s var(--ease-out), color 0.2s;
-}
-.rb-link .arrow svg { width: 12px; height: 12px; }
-.rb-link:hover .arrow {
-  color: var(--fg-1);
-  transform: translateX(3px);
-}
-
 /* ── Scroll-reveal ───────────────────────────────── */
 .reveal {
   opacity: 1;
@@ -1516,6 +1348,42 @@ pre .v { color: #67e8f9; }
   width: 14px;
   height: 14px;
 }
+
+/* Quiet "New · N" link — sits in the nav alongside Search/GitHub/Install.
+   Intentionally text-first: no icon, no chip; the count is mono so it reads
+   as data, not a badge. Same height as its neighbors. */
+.nav-new-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--fg-1);
+  border: 1px solid var(--line-1);
+  background: transparent;
+  transition:
+    background 0.2s var(--ease-out),
+    border-color 0.2s var(--ease-out),
+    color 0.2s var(--ease-out);
+}
+.nav-new-link:hover {
+  color: var(--fg-0);
+  border-color: var(--line-2);
+  background: rgba(255, 255, 255, 0.03);
+}
+.nav-new-count {
+  color: var(--fg-3);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.nav-new-link:hover .nav-new-count { color: var(--fg-1); }
 
 .nav-search-layer {
   position: fixed;
@@ -3104,30 +2972,6 @@ pre .v { color: #67e8f9; }
   background: var(--bg-0);
   pointer-events: none;
 }
-/* Dotted grid — same recipe as the component-detail preview stage. z-index: -1
-   so canvas-based children (backgrounds) that internally use `absolute inset-0`
-   still render above the grid without needing the grid to wrestle with them. */
-.showcase-preview::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
-  background-size: 20px 20px;
-  background-position: right bottom;
-  -webkit-mask-image:
-    repeating-linear-gradient(to right, black 0 3px, transparent 3px 8px),
-    repeating-linear-gradient(to bottom, black 0 3px, transparent 3px 8px);
-  mask-image:
-    repeating-linear-gradient(to right, black 0 3px, transparent 3px 8px),
-    repeating-linear-gradient(to bottom, black 0 3px, transparent 3px 8px);
-  -webkit-mask-composite: source-in;
-  mask-composite: intersect;
-  pointer-events: none;
-  z-index: -1;
-}
-
 /* Title overlay — sits on top of the preview with a gradient backdrop. */
 .showcase-title-overlay {
   position: absolute;
@@ -3844,7 +3688,6 @@ pre .v { color: #67e8f9; }
 /* ── Responsive ───────────────────────────────────── */
 @media (max-width: 1200px) {
   .shell { grid-template-columns: 200px 1fr; }
-  .rightbar { display: none; }
 }
 @media (max-width: 967px) {
   .nav-pill {
@@ -3867,7 +3710,8 @@ pre .v { color: #67e8f9; }
   .nav-pill-items,
   .nav-search,
   .nav-github-stars,
-  .nav-install-link {
+  .nav-install-link,
+  .nav-new-link {
     display: none;
   }
   .nav-pill .nav-right {
@@ -4069,6 +3913,79 @@ pre .v { color: #67e8f9; }
 .lp-btn--ghost:hover {
   --lp-btn-bd: var(--lp-border-strong);
   background: rgba(255, 255, 255, 0.04);
+}
+/* Hero "What's New" pill — two-part chip with a silver-grad eyebrow badge
+   on the left and a comma-separated list of the newest component titles on
+   the right. Names truncate with `…` so the pill never grows past its
+   `max-width`. Caps the silver moment to one tight badge so the chip still
+   reads quiet, not promotional. */
+.lp-new-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  max-width: min(100%, 560px);
+  padding: 5px 16px 5px 5px;
+  border: 1px solid var(--lp-border-strong);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--lp-fg-1);
+  text-decoration: none;
+  font-family: var(--lp-sans);
+  transition:
+    background 160ms var(--lp-ease),
+    border-color 160ms var(--lp-ease);
+}
+.lp-new-pill:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+.lp-new-pill-badge {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #f4f6f8 0%, #c7cdd4 100%);
+  color: #08090b;
+  font-family: var(--lp-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+}
+.lp-new-pill-names {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--lp-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lp-fg-1);
+}
+/* `+N` chip — used when there are more new components than the pill can show
+   inline. Reads as a count, not a CTA, so it stays muted next to the names. */
+.lp-new-pill-more {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--lp-fg-1);
+  font-family: var(--lp-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
 }
 .lp-btn--sm { height: 32px; padding: 0 12px; font-size: 13px; }
 .lp-arrow { transition: transform 180ms var(--lp-ease); display: inline-flex; }
@@ -5836,6 +5753,7 @@ pre .v { color: #67e8f9; }
   .lp { --lp-pad-section: 64px; }
   .lp-shell { padding: 0 20px; }
   .lp-hero-ctas .lp-btn { width: 100%; justify-content: center; }
+  .lp-hero-ctas .lp-new-pill { width: 100%; max-width: none; }
   .lp-final-cta { padding: 48px 22px; }
   .lp-footer-inner { grid-template-columns: 1fr; }
   .lp-bento {

@@ -45,6 +45,7 @@ import { Preview as Pricing5 } from "./blocks/pricing-5/preview";
 // background/
 import { Preview as AuroraMesh } from "./background/aurora-mesh/preview";
 import { Preview as ChromaFlow } from "./background/chroma-flow/preview";
+import { Preview as GridBackground } from "./background/grid-background/preview";
 import { Preview as HorizonCipher } from "./background/horizon-cipher/preview";
 import { Preview as LiquidChrome } from "./background/liquid-chrome/preview";
 import { Preview as OrbitBloom } from "./background/orbit-bloom/preview";
@@ -98,6 +99,7 @@ const PREVIEWS: Record<string, PreviewComponent> = {
   // background/
   "aurora-mesh": AuroraMesh,
   "chroma-flow": ChromaFlow,
+  "grid-background": GridBackground,
   "horizon-cipher": HorizonCipher,
   "liquid-chrome": LiquidChrome,
   "orbit-bloom": OrbitBloom,

@@ -47,7 +47,7 @@ export const components: ComponentItem[] = [
     title: "Reveal Animate",
     description:
       "A masked text reveal that sweeps content in or out with blur.",
-    category: "Effects",
+    category: "Animate",
     target: "components/lazy-ui/reveal-animate/reveal-animate.tsx",
     status: "published",
   },
@@ -182,7 +182,7 @@ export const components: ComponentItem[] = [
     title: "Circle Cipher",
     description:
       "A cursor-following glyph trail — speed-gated brush lights cells on a Canvas2D grid, characters fade as the signal decays.",
-    category: "Effects",
+    category: "Animate",
     target: "components/lazy-ui/circle-cipher/circle-cipher.tsx",
     status: "published",
     dependencies: ["motion"],
@@ -365,6 +365,15 @@ export const components: ComponentItem[] = [
     target: "components/lazy-ui/bling-transition/bling-transition.tsx",
     status: "published",
     dependencies: ["three"],
+  },
+  {
+    slug: "grid-background",
+    title: "Grid Background",
+    description:
+      "SVG-based grid backdrop — dots, lines, dashed, or crosshair — that stays crisp at any browser zoom. Optional radial / linear fade.",
+    category: "Background",
+    target: "components/lazy-ui/grid-background/grid-background.tsx",
+    status: "published",
   },
   {
     slug: "stack-list",

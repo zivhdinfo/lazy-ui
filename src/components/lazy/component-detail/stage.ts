@@ -43,4 +43,5 @@ export const STAGE_MIN_HEIGHT: Record<string, number> = {
   "liquid-reveal": 560,
   "liquid-transition": 560,
   "stack-list": 560,
+  "grid-background": 560,
 };

@@ -9,7 +9,6 @@ import {
 } from "motion/react";
 import { useMemo, type CSSProperties, type ReactNode } from "react";
 
-import { CircleCipher } from "@/components/lazy-ui/circle-cipher";
 import { LiquidChrome } from "@/components/lazy-ui/liquid-chrome";
 import { LiquidReveal } from "@/components/lazy-ui/liquid-reveal";
 import { OrbitMesh } from "@/components/lazy-ui/orbit-mesh";
@@ -31,24 +30,31 @@ import {
   lpRevealTransition,
   lpRevealViewport,
 } from "./lp-reveal";
+import { NEW_SLUGS } from "./sidebar";
 
 export function LandingPage() {
   const components = useMemo(() => getPublishedComponentsOnly(), []);
   const blocks = useMemo(() => getPublishedBlocks(), []);
+  // Preserve `NEW_SLUGS` insertion order (latest-first) so the hero pill
+  // surfaces the most recent component as the headline name.
+  const newComponents = useMemo(() => {
+    const bySlug = new Map(components.map((c) => [c.slug, c]));
+    const out: ComponentItem[] = [];
+    for (const slug of NEW_SLUGS) {
+      const c = bySlug.get(slug);
+      if (c) out.push(c);
+    }
+    return out;
+  }, [components]);
 
   return (
     <div className="lp">
-      <Hero componentCount={components.length} blockCount={blocks.length} />
+      <Hero
+        componentCount={components.length}
+        blockCount={blocks.length}
+        newComponents={newComponents}
+      />
       <div className="lp-cipher-zone">
-        <CircleCipher
-          characters="0123456789ABCDEFZLKEN"
-          size={15}
-          color="rgba(255,255,255,0.95)"
-          spread={150}
-          persistence={2}
-          opacity={0.85}
-          style={{ zIndex: 0 }}
-        />
         <ComponentsSection components={components} />
         <BlocksSection blocks={blocks} />
         <LPFooter />
@@ -62,9 +68,11 @@ export function LandingPage() {
 function Hero({
   componentCount,
   blockCount,
+  newComponents,
 }: {
   componentCount: number;
   blockCount: number;
+  newComponents: ComponentItem[];
 }) {
   const reduced = useReducedMotion();
   // Scroll-driven parallax for the hero background. Slower drift + scale +
@@ -127,6 +135,37 @@ function Hero({
               Browse components
               <span className="lp-arrow">→</span>
             </Link>
+            {newComponents.length > 0 && (() => {
+              // Always headline the single newest component. Anything beyond
+              // it rolls into a `+N` chip so the pill never balloons past its
+              // `max-width` (and stays scannable at a glance).
+              const visibleNames =
+                newComponents.length > 1
+                  ? newComponents.slice(0, 1)
+                  : newComponents;
+              const hiddenCount = newComponents.length - visibleNames.length;
+              return (
+                <Link
+                  href="/components?tab=new"
+                  className="lp-new-pill"
+                  aria-label={`${newComponents.length} new component${
+                    newComponents.length === 1 ? "" : "s"
+                  }: ${newComponents.map((c) => c.title).join(", ")}`}
+                >
+                  <span className="lp-new-pill-badge">
+                    New component{newComponents.length === 1 ? "" : "s"}
+                  </span>
+                  <span className="lp-new-pill-names">
+                    {visibleNames.map((c) => c.title).join(" · ")}
+                  </span>
+                  {hiddenCount > 0 && (
+                    <span className="lp-new-pill-more" aria-hidden>
+                      +{hiddenCount}
+                    </span>
+                  )}
+                </Link>
+              );
+            })()}
             <GithubStarsButton
               username="zivhdinfo"
               repo="lazy-ui"

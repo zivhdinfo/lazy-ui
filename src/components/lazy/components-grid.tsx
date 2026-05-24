@@ -8,6 +8,7 @@ import {
 } from "motion/react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   useEffect,
   useLayoutEffect,
@@ -18,8 +19,10 @@ import {
   type ReactNode,
 } from "react";
 
+import { GridBackground } from "@/components/lazy-ui/grid-background";
 import type { ComponentItem } from "@/registry/components";
 
+import { NEW_SLUGS } from "./sidebar";
 import { useScrollReveal } from "./use-scroll-reveal";
 
 /** Per-card stagger — capped so the "All" view (36 cards) still feels snappy.
@@ -464,6 +467,26 @@ const PREVIEW_FOR: Record<string, ComponentType> = {
   }),
 
   // ─── Background — fill the card edge-to-edge ───
+  "grid-background": lazyPreview(async () => {
+    const { GridBackground } = await import(
+      "@/components/lazy-ui/grid-background"
+    );
+    return function GridBackgroundPreview() {
+      return (
+        <Fill>
+          <div className="absolute inset-0 bg-[#050505]">
+            <GridBackground
+              variant="dots"
+              size={22}
+              dotSize={3}
+              color="rgba(255,255,255,0.18)"
+              fade="edges"
+            />
+          </div>
+        </Fill>
+      );
+    };
+  }),
   "aurora-mesh": lazyPreview(async () => {
     const { AuroraMesh } = await import("@/components/lazy-ui/aurora-mesh");
     return function AuroraMeshPreview() {
@@ -744,6 +767,16 @@ function ShowcaseCard({
       style={{ containIntrinsicSize: `auto ${RESERVED_HEIGHT}px` }}
     >
       <div className="showcase-preview" aria-hidden>
+        {/* `zIndex: -1` parks the grid behind any preview that internally
+            uses `absolute inset-0` (canvas backgrounds, etc.) without forcing
+            those previews to opt in to stacking. */}
+        <GridBackground
+          variant="dashed"
+          size={40}
+          dotSize={3}
+          color="rgba(255,255,255,0.08)"
+          style={{ zIndex: -1 }}
+        />
         {mounted && Preview ? <Preview /> : <PreviewSkeleton />}
       </div>
       <Link
@@ -764,21 +797,21 @@ const BUCKETS: ReadonlyArray<{
   label: string;
   categories: ReadonlyArray<string>;
 }> = [
-  {
-    label: "Components",
-    categories: [
-      "Navigation",
-      "Buttons",
-      "Forms",
-      "Feedback",
-      "Overlay",
-      "Device Mocks",
-    ],
-  },
-  { label: "Text", categories: ["Text Animate"] },
-  { label: "Effects", categories: ["Effects", "Animate"] },
-  { label: "Backgrounds", categories: ["Background"] },
-];
+    {
+      label: "Components",
+      categories: [
+        "Navigation",
+        "Buttons",
+        "Forms",
+        "Feedback",
+        "Overlay",
+        "Device Mocks",
+      ],
+    },
+    { label: "Text", categories: ["Text Animate"] },
+    { label: "Animate", categories: ["Animate"] },
+    { label: "Backgrounds", categories: ["Background"] },
+  ];
 
 function bucketIndex(category: string): number {
   for (let i = 0; i < BUCKETS.length; i++) {
@@ -789,6 +822,7 @@ function bucketIndex(category: string): number {
 
 export function ComponentsGrid({ items }: { items: ComponentItem[] }) {
   useScrollReveal();
+  const searchParams = useSearchParams();
 
   const grouped = useMemo(() => {
     const groups: ComponentItem[][] = BUCKETS.map(() => []);
@@ -799,20 +833,31 @@ export function ComponentsGrid({ items }: { items: ComponentItem[] }) {
     return groups;
   }, [items]);
 
-  // `all` shows every bucket with its heading; otherwise the index points
-  // into BUCKETS and only that bucket renders.
-  const [activeTab, setActiveTab] = useState<string>("all");
+  // Items currently flagged in the sidebar `New` badge set. Preserves
+  // registry order rather than `NEW_SLUGS` iteration order.
+  const newItems = useMemo(
+    () => items.filter((it) => NEW_SLUGS.has(it.slug)),
+    [items],
+  );
+
+  // `all` shows every bucket with its heading. `new` shows just the newly
+  // landed components in a flat grid. Anything else is an index into BUCKETS.
+  // The initial tab honors `?tab=…` so the header/hero "New X updates" links
+  // land users directly on the New tab.
+  const initialTab = searchParams?.get("tab") === "new" ? "new" : "all";
+  const [activeTab, setActiveTab] = useState<string>(initialTab);
 
   const tabs = useMemo(
     () => [
       { id: "all", label: "All", count: items.length },
+      { id: "new", label: "New", count: newItems.length },
       ...BUCKETS.map((b, i) => ({
         id: String(i),
         label: b.label,
         count: grouped[i].length,
       })),
     ],
-    [items.length, grouped],
+    [items.length, newItems.length, grouped],
   );
 
   return (
@@ -871,6 +916,8 @@ export function ComponentsGrid({ items }: { items: ComponentItem[] }) {
         >
           {activeTab === "all" ? (
             <AllView grouped={grouped} total={items.length} />
+          ) : activeTab === "new" ? (
+            <SingleBucketView items={newItems} />
           ) : (
             <SingleBucketView items={grouped[Number(activeTab)] ?? []} />
           )}

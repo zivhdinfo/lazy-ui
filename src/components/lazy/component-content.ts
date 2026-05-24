@@ -3251,6 +3251,109 @@ export function Demo() {
       },
     ],
   },
+  "grid-background": {
+    componentName: "GridBackground",
+    usageCode: `import { GridBackground } from "@/components/lazy-ui/grid-background";
+
+export function Demo() {
+  return (
+    <div className="relative h-72 w-full overflow-hidden rounded-2xl bg-neutral-950">
+      <GridBackground
+        variant="dots"
+        size={24}
+        dotSize={3}
+        color="rgba(255,255,255,0.12)"
+        fade="edges"
+      />
+      <div className="relative grid h-full place-items-center text-sm text-white/80">
+        Crisp at any zoom level.
+      </div>
+    </div>
+  );
+}`,
+    api: [
+      {
+        name: "variant",
+        type: '"dots" | "lines" | "dashed" | "crosshair"',
+        default: '"dots"',
+        description:
+          "Pattern variant. `dots` places a small circle at every intersection; `lines` draws solid grid lines; `dashed` adds a stroke dash; `crosshair` shows a small `+` at each intersection.",
+      },
+      {
+        name: "size",
+        type: "number",
+        default: "24",
+        description: "Cell size in pixels — the SVG pattern tile is `size × size`.",
+      },
+      {
+        name: "lineWidth",
+        type: "number",
+        default: "1",
+        description:
+          "Stroke thickness for `lines`, `dashed`, and `crosshair`. Ignored for `dots`.",
+      },
+      {
+        name: "dotSize",
+        type: "number",
+        default: "3",
+        description: "Diameter of each dot for the `dots` variant.",
+      },
+      {
+        name: "dashLength",
+        type: "number",
+        default: "3",
+        description: "Length of each dash for the `dashed` variant.",
+      },
+      {
+        name: "dashGap",
+        type: "number",
+        default: "5",
+        description: "Gap between dashes for the `dashed` variant.",
+      },
+      {
+        name: "crossSize",
+        type: "number",
+        default: "5",
+        description:
+          "Arm length of each crosshair. The full `+` is `crossSize * 2` across.",
+      },
+      {
+        name: "color",
+        type: "string",
+        default: '"rgba(255,255,255,0.08)"',
+        description: "Stroke / fill color. Any CSS color string.",
+      },
+      {
+        name: "fade",
+        type: '"none" | "edges" | "center" | "top" | "bottom"',
+        default: '"none"',
+        description:
+          "Optional soft fade overlay. `edges` softens corners, `center` punches the middle, `top`/`bottom` create a directional fade. Implemented with a CSS `mask-image`, so the grid's antialiasing stays intact.",
+      },
+      {
+        name: "fadeStrength",
+        type: "number",
+        default: "1",
+        description:
+          "Strength of the fade. `0` disables the mask; `1` is the full fade.",
+      },
+      {
+        name: "className",
+        type: "string",
+        default: "—",
+        description:
+          "Extra class names merged onto the root. The root is `pointer-events-none absolute inset-0` by default; drop it into any `relative` parent.",
+      },
+    ],
+    credits: [
+      {
+        label: "SVG <pattern> element",
+        href: "https://developer.mozilla.org/en-US/docs/Web/SVG/Element/pattern",
+        description:
+          "Tile primitive that gives this component its resolution independence.",
+      },
+    ],
+  },
   "stack-list": {
     componentName: "StackList",
     usageCode: `import { StackList } from "@/components/lazy-ui/stack-list";
@@ -3361,7 +3464,7 @@ export function Demo() {
       {
         name: "stack",
         type: "boolean",
-        default: "true",
+        default: "false",
         description:
           "Stack cards on top of each other (shadcn-toast style) instead of rendering them as a scrolling list. Hovering the container fans the stack out; the pointer leaving collapses it back. The stack anchors on the side `enterFrom` points to (top → anchored at top and fans downward, bottom → anchored at bottom and fans upward).",
       },

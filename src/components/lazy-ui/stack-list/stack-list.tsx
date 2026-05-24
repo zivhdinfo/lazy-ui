@@ -78,7 +78,7 @@ export interface StackListProps {
    * stacked cards out into a list; the pointer leaving collapses them back.
    * The stack anchors on the side `enterFrom` points to (top → anchored at
    * top and fans downward, bottom → anchored at bottom and fans upward).
-   * @default true
+   * @default false
    */
   stack?: boolean;
   /**
@@ -469,7 +469,7 @@ export function StackList({
   pauseOnHover = false,
   hoverEffect = "none",
   clickEffect = "none",
-  stack = true,
+  stack = false,
   stackDepth = 3,
   fadeEdges = false,
   fadeSize = 64,

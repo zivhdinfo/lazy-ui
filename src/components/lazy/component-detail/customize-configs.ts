@@ -45,6 +45,7 @@ import { customize as pricing5 } from "./blocks/pricing-5/customize";
 // background/
 import { customize as auroraMesh } from "./background/aurora-mesh/customize";
 import { customize as chromaFlow } from "./background/chroma-flow/customize";
+import { customize as gridBackground } from "./background/grid-background/customize";
 import { customize as horizonCipher } from "./background/horizon-cipher/customize";
 import { customize as liquidChrome } from "./background/liquid-chrome/customize";
 import { customize as orbitBloom } from "./background/orbit-bloom/customize";
@@ -95,6 +96,7 @@ export const CUSTOM_CONFIGS: Record<string, CustomizeControl[]> = {
   // background/
   "aurora-mesh": auroraMesh,
   "chroma-flow": chromaFlow,
+  "grid-background": gridBackground,
   "horizon-cipher": horizonCipher,
   "liquid-chrome": liquidChrome,
   "orbit-bloom": orbitBloom,

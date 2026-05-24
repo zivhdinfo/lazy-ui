@@ -79,7 +79,7 @@ export const customize: CustomizeControl[] = [
     defaultValue: 3,
     format: fmtCount,
   }),
-  toggle("stack", "Stack mode", true),
+  toggle("stack", "Stack mode", false),
   toggle("pauseOnHover", "Pause on hover", true),
   toggle("dismissOnSwipe", "Swipe to dismiss", true),
 ];
