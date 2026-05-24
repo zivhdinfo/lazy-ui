@@ -21,6 +21,7 @@ import { Preview as LiquidTransition } from "./animate/liquid-transition/preview
 import { Preview as MatrixGrid } from "./animate/matrix-grid/preview";
 import { Preview as ParticleHalo } from "./animate/particle-halo/preview";
 import { Preview as RevealAnimate } from "./animate/reveal-animate/preview";
+import { Preview as StackList } from "./animate/stack-list/preview";
 
 // text-animate/
 import { Preview as ShinyText } from "./text-animate/shiny-text/preview";
@@ -77,6 +78,7 @@ const PREVIEWS: Record<string, PreviewComponent> = {
   "matrix-grid": MatrixGrid,
   "particle-halo": ParticleHalo,
   "reveal-animate": RevealAnimate,
+  "stack-list": StackList,
   // text-animate/
   "shiny-text": ShinyText,
   "spinning-text": SpinningText,

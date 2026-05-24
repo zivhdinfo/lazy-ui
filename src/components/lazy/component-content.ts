@@ -3251,6 +3251,216 @@ export function Demo() {
       },
     ],
   },
+  "stack-list": {
+    componentName: "StackList",
+    usageCode: `import { StackList } from "@/components/lazy-ui/stack-list";
+
+const items = [
+  { id: 1, content: "New deploy passed checks." },
+  { id: 2, content: "PR #482 ready for review." },
+  { id: 3, content: "Daily report sent." },
+];
+
+export function Demo() {
+  return (
+    <StackList
+      items={items}
+      animation="blur"
+      enterFrom="top"
+      hoverEffect="lift"
+      clickEffect="ripple"
+      duration={0.65}
+      autoInsertDelay={2200}
+      maxItems={5}
+      gap={12}
+      stackDepth={3}
+      stack={false}
+      pauseOnHover={true}
+      dismissOnSwipe={true}
+    />
+  );
+}`,
+    api: [
+      {
+        name: "items",
+        type: "StackListItem[]",
+        default: "—",
+        description:
+          "Array of `{ id, content }`. The first entry sits on top; later entries stack below it.",
+      },
+      {
+        name: "animation",
+        type: '"blur" | "scale" | "bounce"',
+        default: '"blur"',
+        description:
+          "Entrance/exit animation. `blur` is a defocus → focus sweep; `scale` is a visible pop; `bounce` is a directional spring translate.",
+      },
+      {
+        name: "enterFrom",
+        type: '"top" | "bottom" | "left" | "right"',
+        default: '"top"',
+        description:
+          "Direction items animate in from. Only consumed by `bounce`.",
+      },
+      {
+        name: "duration",
+        type: "number",
+        default: "0.65",
+        description:
+          "Animation duration in seconds. Only consumed by `blur`; `bounce` and `scale` use spring transitions.",
+      },
+      {
+        name: "easing",
+        type: "[number, number, number, number]",
+        default: "[0.22, 1, 0.36, 1]",
+        description:
+          "Cubic-bezier control points for non-spring animations. The default lands soft.",
+      },
+      {
+        name: "align",
+        type: '"top" | "center" | "bottom"',
+        default: '"center"',
+        description:
+          "Vertical alignment of the list inside the container when there are fewer items than fit.",
+      },
+      {
+        name: "autoInsertDelay",
+        type: "number",
+        default: "2000",
+        description:
+          "Delay between auto-inserted items in ms. `0` disables auto-insertion; the list then only mutates from props or `onDismiss`.",
+      },
+      {
+        name: "maxItems",
+        type: "number",
+        default: "6",
+        description:
+          "Visible cap. When auto-insertion pushes past this number, the oldest card rolls off the bottom.",
+      },
+      {
+        name: "pauseOnHover",
+        type: "boolean",
+        default: "false",
+        description:
+          "Pause auto-insertion while the pointer is over the list.",
+      },
+      {
+        name: "hoverEffect",
+        type: '"none" | "scale" | "lift"',
+        default: '"none"',
+        description:
+          "Per-card hover effect. `lift` adds a soft translate-up with a deeper shadow.",
+      },
+      {
+        name: "clickEffect",
+        type: '"none" | "ripple" | "press"',
+        default: '"none"',
+        description:
+          "Per-card click effect. `ripple` paints a soft radial from the click point; `press` applies a quick scale-down.",
+      },
+      {
+        name: "stack",
+        type: "boolean",
+        default: "true",
+        description:
+          "Stack cards on top of each other (shadcn-toast style) instead of rendering them as a scrolling list. Hovering the container fans the stack out; the pointer leaving collapses it back. The stack anchors on the side `enterFrom` points to (top → anchored at top and fans downward, bottom → anchored at bottom and fans upward).",
+      },
+      {
+        name: "stackDepth",
+        type: "number",
+        default: "3",
+        description:
+          "How many cards are visible in the stacked cascade (front card included). Older cards beyond this depth unmount. Only used when `stack` is true.",
+      },
+      {
+        name: "dismissOnSwipe",
+        type: "boolean",
+        default: "false",
+        description:
+          "Enable horizontal drag-to-dismiss. The card reveals `Dismiss` hints once dragged past 40% of the threshold.",
+      },
+      {
+        name: "dismissThreshold",
+        type: "number",
+        default: "100",
+        description: "Pixel offset required to commit a dismiss on release.",
+      },
+      {
+        name: "onDismiss",
+        type: "(item: StackListItem) => void",
+        default: "—",
+        description:
+          "Fires when a card commits a swipe dismiss. The card is removed from internal state before the callback runs.",
+      },
+      {
+        name: "onItemClick",
+        type: "(item: StackListItem) => void",
+        default: "—",
+        description:
+          "Fires when a card is clicked or activated by `Enter` / `Space`. Providing this also turns the card into a focusable `button`.",
+      },
+      {
+        name: "fadeEdges",
+        type: "boolean",
+        default: "false",
+        description:
+          "Render soft top/bottom fades. Requires a non-transparent `fadeColor` to be visible. List mode only.",
+      },
+      {
+        name: "fadeSize",
+        type: "number",
+        default: "64",
+        description: "Fade gradient height in pixels. List mode only.",
+      },
+      {
+        name: "fadeColor",
+        type: "string",
+        default: '"transparent"',
+        description:
+          "Solid color the fade gradient resolves to. Set this to your container background to mask the scroll edges.",
+      },
+      {
+        name: "gap",
+        type: "number",
+        default: "12",
+        description: "Vertical gap between cards in pixels. List mode only.",
+      },
+      {
+        name: "height",
+        type: "string | number",
+        default: '"min(600px, 80vh)"',
+        description:
+          "Container height. Numbers are emitted as `px`, strings pass through as raw CSS.",
+      },
+      {
+        name: "renderItem",
+        type: "(item: StackListItem) => ReactNode",
+        default: "—",
+        description:
+          "Optional custom card renderer. Defaults to a neutral text row.",
+      },
+      {
+        name: "className",
+        type: "string",
+        default: "—",
+        description: "Extra class names merged onto the root container.",
+      },
+      {
+        name: "itemClassName",
+        type: "string",
+        default: "—",
+        description:
+          "Extra class names merged onto the outer frame of every card.",
+      },
+      {
+        name: "innerClassName",
+        type: "string",
+        default: "—",
+        description:
+          "Extra class names merged onto the inner content surface of every card.",
+      },
+    ],
+  },
   "orbit-mesh": {
     componentName: "OrbitMesh",
     usageCode: `import { OrbitMesh } from "@/components/lazy-ui/orbit-mesh";

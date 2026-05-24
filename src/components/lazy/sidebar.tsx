@@ -34,35 +34,10 @@ const CATEGORY_ORDER = [
   "Device Mocks",
 ];
 
-const NEW_SLUGS = new Set([
-  "glass-button",
-  "circle-cipher",
-  "liquid-reveal",
-  "liquid-transition",
-  "bling-transition",
-  "particle-halo",
-  "text-warp",
-  "text-rise",
-  "text-spin",
-  "text-scramble",
-  "spinning-text",
-  "text-flip",
-  "iphone",
-  "wave-cipher",
-  "horizon-cipher",
-  "orbit-cipher",
-  "orbit-bloom",
-  "orbit-mesh",
-  "aurora-mesh",
-  "shadow-mesh",
-  "prism-drift",
-  "chroma-flow",
-  "slime-background",
-  "neumorphism",
-  "ripple-surface",
-  "liquid-chrome",
-  "matrix-grid",
-]);
+// Sidebar badges. A slug listed here renders a tag (e.g. "New", "Update")
+// in the sidebar next to the component name. Badge lifetime is bounded —
+// see [CLAUDE.md](../../CLAUDE.md#sidebar-badge-rotation) for the rule.
+const NEW_SLUGS = new Set(["stack-list"]);
 
 const DOC_SECTION: SidebarSection = {
   id: "docs",

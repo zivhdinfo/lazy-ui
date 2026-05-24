@@ -42,4 +42,5 @@ export const STAGE_MIN_HEIGHT: Record<string, number> = {
   "particle-halo": 560,
   "liquid-reveal": 560,
   "liquid-transition": 560,
+  "stack-list": 560,
 };

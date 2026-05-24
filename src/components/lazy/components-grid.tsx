@@ -302,6 +302,55 @@ const PREVIEW_FOR: Record<string, ComponentType> = {
       );
     };
   }),
+  "stack-list": lazyPreview(async () => {
+    const { StackList } = await import("@/components/lazy-ui/stack-list");
+    const items = [
+      {
+        id: "a",
+        content: (
+          <div className="text-[12px] text-black/85 dark:text-white/85">
+            Deploy passed ·{" "}
+            <span className="text-neutral-500 dark:text-neutral-400">main</span>
+          </div>
+        ),
+      },
+      {
+        id: "b",
+        content: (
+          <div className="text-[12px] text-black/85 dark:text-white/85">
+            PR ready ·{" "}
+            <span className="text-neutral-500 dark:text-neutral-400">#482</span>
+          </div>
+        ),
+      },
+      {
+        id: "c",
+        content: (
+          <div className="text-[12px] text-black/85 dark:text-white/85">
+            Daily report sent
+          </div>
+        ),
+      },
+    ];
+    return function StackListPreview() {
+      return (
+        <Fill>
+          <StackList
+            items={items}
+            animation="blur"
+            enterFrom="top"
+            autoInsertDelay={2200}
+            maxItems={5}
+            stackDepth={3}
+            hoverEffect="lift"
+            clickEffect="ripple"
+            pauseOnHover
+            height="100%"
+          />
+        </Fill>
+      );
+    };
+  }),
 
   // ─── Text Animate ───
   "shiny-text": lazyPreview(async () => {

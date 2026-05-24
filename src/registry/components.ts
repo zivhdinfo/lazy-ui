@@ -367,6 +367,16 @@ export const components: ComponentItem[] = [
     dependencies: ["three"],
   },
   {
+    slug: "stack-list",
+    title: "Stack List",
+    description:
+      "A vertical card stack with motion-first entrance/exit, optional auto-injection, swipe-to-dismiss, and configurable hover/click effects. Honors reduced motion.",
+    category: "Animate",
+    target: "components/lazy-ui/stack-list/stack-list.tsx",
+    status: "published",
+    dependencies: ["motion"],
+  },
+  {
     slug: "animate-tooltip",
     title: "Animate Tooltip",
     description:

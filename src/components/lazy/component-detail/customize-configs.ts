@@ -22,6 +22,7 @@ import { customize as liquidTransition } from "./animate/liquid-transition/custo
 import { customize as matrixGrid } from "./animate/matrix-grid/customize";
 import { customize as particleHalo } from "./animate/particle-halo/customize";
 import { customize as revealAnimate } from "./animate/reveal-animate/customize";
+import { customize as stackList } from "./animate/stack-list/customize";
 
 // text-animate/
 import { customize as shinyText } from "./text-animate/shiny-text/customize";
@@ -75,6 +76,7 @@ export const CUSTOM_CONFIGS: Record<string, CustomizeControl[]> = {
   "matrix-grid": matrixGrid,
   "particle-halo": particleHalo,
   "reveal-animate": revealAnimate,
+  "stack-list": stackList,
   // text-animate/
   "shiny-text": shinyText,
   "spinning-text": spinningText,
