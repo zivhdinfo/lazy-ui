@@ -10,6 +10,13 @@ export const DEVICE_WIDTHS: Record<Device, number | null> = {
 
 export const MIN_PREVIEW_WIDTH = 280;
 
+/** Map a viewport width (px) to the closest device preset. */
+export function deviceFromViewport(viewport: number): Device {
+  if (viewport < 768) return "mobile";
+  if (viewport < 1024) return "tablet";
+  return "desktop";
+}
+
 /** Per-slug stage min-height override. Larger mocks need more vertical room. */
 export const STAGE_MIN_HEIGHT: Record<string, number> = {
   iphone: 640,

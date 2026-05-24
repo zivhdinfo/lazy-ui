@@ -21,6 +21,7 @@ import {
 import {
   DEVICE_WIDTHS,
   MIN_PREVIEW_WIDTH,
+  deviceFromViewport,
   type Device,
 } from "./component-detail/stage";
 import { DeviceButton } from "./component-detail/toolbar";
@@ -114,6 +115,14 @@ export function ResponsivePreviewFrame({
   }, [cancelSpring, writeBend]);
 
   useEffect(() => cancelSpring, [cancelSpring]);
+
+  // Auto-select initial device based on the user's actual viewport so mobile
+  // visitors don't land on the full-width desktop preset. Runs once on mount
+  // to avoid overriding subsequent user choices.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setWidth(DEVICE_WIDTHS[deviceFromViewport(window.innerWidth)]);
+  }, []);
 
   // Track rendered frame width so the label reads correctly during full-width.
   useEffect(() => {

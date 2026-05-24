@@ -39,6 +39,7 @@ import {
   DEVICE_WIDTHS,
   MIN_PREVIEW_WIDTH,
   STAGE_MIN_HEIGHT,
+  deviceFromViewport,
   type Device,
   type Mode,
 } from "./stage";
@@ -108,6 +109,14 @@ export function ComponentDetail({
   }, [cancelSpring, writeBend]);
 
   useEffect(() => cancelSpring, [cancelSpring]);
+
+  // Auto-select initial device based on the user's actual viewport so mobile
+  // visitors don't land on the full-width desktop preset. Runs once on mount
+  // to avoid overriding subsequent user choices.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setWidth(DEVICE_WIDTHS[deviceFromViewport(window.innerWidth)]);
+  }, []);
 
   // Track rendered width of the frame so the label can show the live value
   // (including during full-width / drag).
