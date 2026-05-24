@@ -14,8 +14,8 @@ export function Preview({ values }: { values: CustomizeValues }) {
   return (
     <div className="relative h-full min-h-[520px] w-full self-stretch overflow-hidden rounded-xl bg-black">
       <LiquidReveal
-        frontImage="/images/caitlyn.jpg"
-        backImage="/images/no-caitlyn.jpg"
+        frontImage="/images/armor.png"
+        backImage="/images/human.png"
         cursorSize={cursorSize}
         mouseForce={mouseForce}
         resolution={resolution}

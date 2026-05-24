@@ -238,8 +238,8 @@ const PREVIEW_FOR: Record<string, ComponentType> = {
       return (
         <Fill>
           <LiquidReveal
-            frontImage="/images/caitlyn.jpg"
-            backImage="/images/no-caitlyn.jpg"
+            frontImage="/images/armor.png"
+            backImage="/images/human.png"
             autoDemo
             autoSpeed={0.5}
             resolution={0.4}

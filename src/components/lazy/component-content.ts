@@ -1590,8 +1590,8 @@ export function Demo() {
   return (
     <div className="relative h-[480px] w-full overflow-hidden rounded-xl">
       <LiquidReveal
-        frontImage="/images/caitlyn.jpg"
-        backImage="/images/no-caitlyn.jpg"
+        frontImage="/images/armor.png"
+        backImage="/images/human.png"
       />
     </div>
   );
