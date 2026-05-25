@@ -130,6 +130,29 @@ const PREVIEW_FOR: Record<string, ComponentType> = {
       );
     };
   }),
+  "image-zoom": lazyPreview(async () => {
+    const { Image, ImageZoom } = await import(
+      "@/components/lazy-ui/image-zoom"
+    );
+    return function ImageZoomPreview() {
+      return (
+        <div className="h-full w-full p-5">
+          <ImageZoom
+            zoomScale={2.2}
+            duration={380}
+            className="h-full w-full rounded-xl"
+            aria-label="Image zoom preview"
+          >
+            <Image
+              src="/images/caitlyn.jpg"
+              alt="Portrait preview"
+              objectFit="cover"
+            />
+          </ImageZoom>
+        </div>
+      );
+    };
+  }),
   "glass-button": lazyPreview(async () => {
     const { GlassButton } = await import("@/components/lazy-ui/glass-button");
     return function GlassButtonPreview() {
@@ -805,6 +828,7 @@ const BUCKETS: ReadonlyArray<{
         "Forms",
         "Feedback",
         "Overlay",
+        "Effects",
         "Device Mocks",
       ],
     },

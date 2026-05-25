@@ -325,6 +325,114 @@ export function Demo() {
       },
     ],
   },
+  "image-zoom": {
+    componentName: "ImageZoom",
+    usageCode: `import { Image, ImageZoom } from "@/components/lazy-ui/image-zoom";
+
+export function Demo() {
+  return (
+    <ImageZoom zoomScale={2.6} edgeBlur>
+      <Image src="/images/caitlyn.jpg" alt="Preview" />
+    </ImageZoom>
+  );
+}`,
+    api: [
+      {
+        name: "zoomScale",
+        type: "number",
+        default: "2.6",
+        description: "Scale applied while the image is zoomed.",
+      },
+      {
+        name: "duration",
+        type: "number",
+        default: "420",
+        description: "Zoom transition duration in milliseconds.",
+      },
+      {
+        name: "easing",
+        type: "string",
+        default: '"cubic-bezier(0.16, 1, 0.3, 1)"',
+        description: "CSS easing used for zoom and edge-blur opacity.",
+      },
+      {
+        name: "focusSmoothing",
+        type: "number",
+        default: "0.18",
+        description:
+          "Pointer focus lerp factor. Higher values follow the cursor faster.",
+      },
+      {
+        name: "zoomOnClick",
+        type: "boolean",
+        default: "true",
+        description: "Toggle persistent zoom on click or tap.",
+      },
+      {
+        name: "zoomOnHover",
+        type: "boolean",
+        default: "true",
+        description: "Zoom while hovering with a mouse, trackpad, or pen.",
+      },
+      {
+        name: "edgeBlur",
+        type: "boolean",
+        default: "true",
+        description:
+          "Render a masked backdrop-blur rim around the current focus point.",
+      },
+      {
+        name: "edgeBlurAmount",
+        type: "number",
+        default: "10",
+        description: "Blur amount for the edge rim in pixels.",
+      },
+      {
+        name: "focusRadius",
+        type: "number",
+        default: "42",
+        description:
+          "Clear area around the cursor; everything outside it gets the blur rim.",
+      },
+      {
+        name: "disabled",
+        type: "boolean",
+        default: "false",
+        description: "Disable interaction and keep the image at scale 1.",
+      },
+      {
+        name: "width",
+        type: "React.CSSProperties['width']",
+        default: '"100%"',
+        description: "Root width.",
+      },
+      {
+        name: "height",
+        type: "React.CSSProperties['height']",
+        default: '"100%"',
+        description: "Root height.",
+      },
+      {
+        name: "children",
+        type: "React.ReactElement",
+        default: "—",
+        description: "Image or media element rendered inside the zoom surface.",
+      },
+    ],
+    credits: [
+      {
+        label: "Animate UI Image Zoom",
+        href: "https://animate-ui.com/docs/primitives/effects/image-zoom",
+        description:
+          "Reference and credit for the original Image Zoom primitive API.",
+      },
+      {
+        label: "requestAnimationFrame",
+        href: "https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame",
+        description: "Pointer focus smoothing without scheduling leaks.",
+      },
+    ],
+  },
   "reveal-animate": {
     componentName: "RevealAnimate",
     usageCode: `import { useState } from "react";

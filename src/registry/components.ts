@@ -43,6 +43,15 @@ export const components: ComponentItem[] = [
     internalDependencies: ["counter"],
   },
   {
+    slug: "image-zoom",
+    title: "Image Zoom",
+    description:
+      "A lightweight image zoom effect with pointer-smoothed focus, click or hover activation, and a soft blurred edge rim.",
+    category: "Effects",
+    target: "components/lazy-ui/image-zoom/image-zoom.tsx",
+    status: "published",
+  },
+  {
     slug: "reveal-animate",
     title: "Reveal Animate",
     description:
