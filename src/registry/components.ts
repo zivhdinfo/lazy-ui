@@ -52,6 +52,16 @@ export const components: ComponentItem[] = [
     status: "published",
   },
   {
+    slug: "smooth-cursor",
+    title: "Smooth Cursor",
+    description:
+      "A custom cursor wrapper with MotionValue pointer tracking, spring-lagged label, press feedback, and local or viewport scope.",
+    category: "Effects",
+    target: "components/lazy-ui/smooth-cursor/smooth-cursor.tsx",
+    status: "published",
+    dependencies: ["motion"],
+  },
+  {
     slug: "reveal-animate",
     title: "Reveal Animate",
     description:

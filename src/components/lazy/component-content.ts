@@ -433,6 +433,158 @@ export function Demo() {
       },
     ],
   },
+  "smooth-cursor": {
+    componentName: "SmoothCursor",
+    usageCode: `import { SmoothCursor } from "@/components/lazy-ui/smooth-cursor";
+
+export function Demo() {
+  return (
+    <SmoothCursor label="Design" color="#f97316">
+      <div className="rounded-2xl border p-8">
+        <button className="rounded-full bg-white px-4 py-2 text-black">
+          Hover surface
+        </button>
+      </div>
+    </SmoothCursor>
+  );
+}`,
+    api: [
+      {
+        name: "children",
+        type: "ReactNode",
+        default: "—",
+        description: "Surface where the custom cursor is active.",
+      },
+      {
+        name: "label",
+        type: "ReactNode",
+        default: '"Lazy UI"',
+        description: "Content rendered inside the cursor label pill.",
+      },
+      {
+        name: "cursor",
+        type: "ReactNode",
+        default: "default arrow",
+        description: "Custom cursor glyph. Leave empty to use the built-in arrow.",
+      },
+      {
+        name: "color",
+        type: "string",
+        default: '"#f97316"',
+        description: "Fill color for the cursor glyph and label background.",
+      },
+      {
+        name: "textColor",
+        type: "string",
+        default: '"#ffffff"',
+        description: "Text color inside the label pill.",
+      },
+      {
+        name: "size",
+        type: "number",
+        default: "28",
+        description: "Cursor glyph size in pixels.",
+      },
+      {
+        name: "trigger",
+        type: '"hover" | "press" | "always"',
+        default: '"hover"',
+        description:
+          "When the cursor is visible. `always` still waits for a pointer position before showing.",
+      },
+      {
+        name: "global",
+        type: "boolean",
+        default: "false",
+        description:
+          "Use viewport coordinates and a fixed overlay instead of local surface coordinates.",
+      },
+      {
+        name: "showLabel",
+        type: "boolean",
+        default: "true",
+        description: "Show or hide the label pill.",
+      },
+      {
+        name: "hideNativeCursor",
+        type: "boolean",
+        default: "true",
+        description: "Hide the browser cursor while the custom cursor is visible.",
+      },
+      {
+        name: "hideOnTouch",
+        type: "boolean",
+        default: "true",
+        description: "Do not render the custom cursor on coarse-pointer devices.",
+      },
+      {
+        name: "offset",
+        type: "{ x?: number; y?: number }",
+        default: "{ x: 0, y: 0 }",
+        description: "Pixel offset from the pointer to the cursor glyph anchor.",
+      },
+      {
+        name: "labelOffset",
+        type: "{ x?: number; y?: number }",
+        default: "derived from size",
+        description: "Pixel offset from the pointer to the label pill.",
+      },
+      {
+        name: "spring",
+        type: "SpringOptions",
+        default: "built-in cursor spring",
+        description: "Motion spring used by the cursor glyph.",
+      },
+      {
+        name: "labelSpring",
+        type: "SpringOptions",
+        default: "built-in label spring",
+        description: "Motion spring used by the lagging label.",
+      },
+      {
+        name: "tiltStrength",
+        type: "number",
+        default: "12",
+        description: "Extra rotation added from horizontal pointer velocity.",
+      },
+      {
+        name: "tilt",
+        type: "number",
+        default: "-14",
+        description: "Resting cursor rotation in degrees.",
+      },
+      {
+        name: "pressScale",
+        type: "number",
+        default: "0.92",
+        description: "Scale applied while the pointer is pressed.",
+      },
+      {
+        name: "zIndex",
+        type: "number",
+        default: "50",
+        description: "Stacking order for the cursor overlay layer.",
+      },
+      {
+        name: "disabled",
+        type: "boolean",
+        default: "false",
+        description: "Disable the custom cursor and leave the wrapped content interactive.",
+      },
+      {
+        name: "classNames",
+        type: "SmoothCursorClassNames",
+        default: "—",
+        description: "Slot-level class overrides for root, layer, cursor, glyph, and label.",
+      },
+      {
+        name: "className",
+        type: "string",
+        default: "—",
+        description: "Extra class names merged onto the root surface.",
+      },
+    ],
+  },
   "reveal-animate": {
     componentName: "RevealAnimate",
     usageCode: `import { useState } from "react";

@@ -153,6 +153,25 @@ const PREVIEW_FOR: Record<string, ComponentType> = {
       );
     };
   }),
+  "smooth-cursor": lazyPreview(async () => {
+    const { SmoothCursor } = await import("@/components/lazy-ui/smooth-cursor");
+    return function SmoothCursorPreview() {
+      return (
+        <div className="h-full w-full p-5">
+          <SmoothCursor
+            trigger="always"
+            label="Cursor"
+            color="#f97316"
+            className="flex h-full w-full items-center justify-center rounded-xl border border-white/10 bg-neutral-950"
+          >
+            <span className="rounded-full bg-white px-3 py-1.5 text-xs font-medium text-black">
+              Hover
+            </span>
+          </SmoothCursor>
+        </div>
+      );
+    };
+  }),
   "glass-button": lazyPreview(async () => {
     const { GlassButton } = await import("@/components/lazy-ui/glass-button");
     return function GlassButtonPreview() {

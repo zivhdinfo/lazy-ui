@@ -12,6 +12,7 @@ import { customize as githubStarsButton } from "./component/github-stars-button/
 import { footer as githubStarsButtonFooter } from "./component/github-stars-button/footer";
 import { customize as imageZoom } from "./component/image-zoom/customize";
 import { customize as progress } from "./component/progress/customize";
+import { customize as smoothCursor } from "./component/smooth-cursor/customize";
 import { customize as switchCustomize } from "./component/switch/customize";
 
 // animate/
@@ -69,6 +70,7 @@ export const CUSTOM_CONFIGS: Record<string, CustomizeControl[]> = {
   "github-stars-button": githubStarsButton,
   "image-zoom": imageZoom,
   progress,
+  "smooth-cursor": smoothCursor,
   switch: switchCustomize,
   // animate/
   "bling-transition": blingTransition,
