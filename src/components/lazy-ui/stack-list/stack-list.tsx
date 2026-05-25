@@ -19,8 +19,8 @@ import {
   useReducedMotion,
   useTransform,
   type PanInfo,
+  type TargetAndTransition,
   type Transition,
-  type Variants,
 } from "motion/react";
 
 import { cn } from "@/lib/utils";
@@ -407,7 +407,7 @@ function buildVariants(
   animation: StackListAnimation,
   enterFrom: StackListEnterFrom,
   reduced: boolean,
-): Variants {
+): Record<"initial" | "animate" | "exit", TargetAndTransition> {
   if (reduced) {
     return {
       initial: { opacity: 0 },

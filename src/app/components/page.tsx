@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+
 import { ComponentsGrid } from "@/components/lazy/components-grid";
 import { DocsShell } from "@/components/lazy/docs-shell";
 import { GridBackground } from "@/components/lazy-ui/grid-background";
@@ -26,7 +28,9 @@ export default function ComponentsPage() {
         />
       </div>
       <DocsShell>
-        <ComponentsGrid items={components} />
+        <Suspense fallback={null}>
+          <ComponentsGrid items={components} />
+        </Suspense>
       </DocsShell>
     </div>
   );
