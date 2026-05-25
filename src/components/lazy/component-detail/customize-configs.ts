@@ -7,6 +7,7 @@ import { customize as animatedTabs } from "./component/animated-tabs/customize";
 import { customize as animateTooltip } from "./component/animate-tooltip/customize";
 import { customize as checkbox } from "./component/checkbox/customize";
 import { customize as copyButton } from "./component/copy-button/customize";
+import { customize as flipButton } from "./component/flip-button/customize";
 import { customize as glassButton } from "./component/glass-button/customize";
 import { customize as githubStarsButton } from "./component/github-stars-button/customize";
 import { footer as githubStarsButtonFooter } from "./component/github-stars-button/footer";
@@ -66,6 +67,7 @@ export const CUSTOM_CONFIGS: Record<string, CustomizeControl[]> = {
   "animate-tooltip": animateTooltip,
   checkbox,
   "copy-button": copyButton,
+  "flip-button": flipButton,
   "glass-button": glassButton,
   "github-stars-button": githubStarsButton,
   "image-zoom": imageZoom,

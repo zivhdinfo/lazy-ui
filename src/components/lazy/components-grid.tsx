@@ -130,6 +130,20 @@ const PREVIEW_FOR: Record<string, ComponentType> = {
       );
     };
   }),
+  "flip-button": lazyPreview(async () => {
+    const { FlipButton } = await import("@/components/lazy-ui/flip-button");
+    return function FlipButtonPreview() {
+      return (
+        <FlipButton
+          front="Deploy"
+          reveal="Ship it"
+          from="top"
+          palette="sky"
+          className="h-10 min-w-32 text-xs"
+        />
+      );
+    };
+  }),
   "image-zoom": lazyPreview(async () => {
     const { Image, ImageZoom } = await import(
       "@/components/lazy-ui/image-zoom"

@@ -43,6 +43,16 @@ export const components: ComponentItem[] = [
     internalDependencies: ["counter"],
   },
   {
+    slug: "flip-button",
+    title: "Flip Button",
+    description:
+      "A two-face button with top/bottom flip motion, press feedback, and preset glass-gradient palettes.",
+    category: "Buttons",
+    target: "components/lazy-ui/flip-button/flip-button.tsx",
+    status: "published",
+    dependencies: ["motion"],
+  },
+  {
     slug: "image-zoom",
     title: "Image Zoom",
     description:

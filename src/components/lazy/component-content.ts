@@ -325,6 +325,82 @@ export function Demo() {
       },
     ],
   },
+  "flip-button": {
+    componentName: "FlipButton",
+    usageCode: `import { FlipButton } from "@/components/lazy-ui/flip-button";
+
+export function Demo() {
+  return (
+    <div className="flex flex-wrap gap-3">
+      <FlipButton reveal="Ship it" palette="sky">Deploy</FlipButton>
+      <FlipButton from="bottom" front="Open docs" reveal="Read now" palette="graphite" />
+    </div>
+  );
+}`,
+    api: [
+      {
+        name: "children",
+        type: "ReactNode",
+        default: "—",
+        description: "Front face content. Ignored when `front` is provided.",
+      },
+      {
+        name: "front",
+        type: "ReactNode",
+        default: "children",
+        description: "Explicit front face content, useful for generated usage snippets.",
+      },
+      {
+        name: "reveal",
+        type: "ReactNode",
+        default: '"Continue"',
+        description: "Back face content shown on hover or keyboard focus.",
+      },
+      {
+        name: "from",
+        type: '"top" | "bottom"',
+        default: '"top"',
+        description: "Direction the back face enters from.",
+      },
+      {
+        name: "palette",
+        type: '"sky" | "silver" | "graphite" | "mint" | "violet"',
+        default: '"sky"',
+        description:
+          "Preset gradient surface. `sky` follows the soft blue glass style; the others keep the same inset/outset treatment with different restrained colorways.",
+      },
+      {
+        name: "tapScale",
+        type: "number",
+        default: "0.96",
+        description: "Scale applied while the pointer is pressed.",
+      },
+      {
+        name: "perspective",
+        type: "number",
+        default: "900",
+        description: "CSS perspective depth for the 3D flip.",
+      },
+      {
+        name: "flipTransition",
+        type: "Transition",
+        default: "built-in spring",
+        description: "Motion transition used by both faces.",
+      },
+      {
+        name: "classNames",
+        type: "FlipButtonClassNames",
+        default: "—",
+        description: "Slot-level class overrides for front, back, and content spans.",
+      },
+      {
+        name: "className",
+        type: "string",
+        default: "—",
+        description: "Extra class names merged onto the root button.",
+      },
+    ],
+  },
   "image-zoom": {
     componentName: "ImageZoom",
     usageCode: `import { Image, ImageZoom } from "@/components/lazy-ui/image-zoom";

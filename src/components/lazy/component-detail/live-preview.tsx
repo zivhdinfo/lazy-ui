@@ -7,6 +7,7 @@ import { Preview as AnimatedTabs } from "./component/animated-tabs/preview";
 import { Preview as AnimateTooltip } from "./component/animate-tooltip/preview";
 import { Preview as Checkbox } from "./component/checkbox/preview";
 import { Preview as CopyButton } from "./component/copy-button/preview";
+import { Preview as FlipButton } from "./component/flip-button/preview";
 import { Preview as GlassButton } from "./component/glass-button/preview";
 import { Preview as GithubStarsButton } from "./component/github-stars-button/preview";
 import { Preview as ImageZoom } from "./component/image-zoom/preview";
@@ -68,6 +69,7 @@ const PREVIEWS: Record<string, PreviewComponent> = {
   "animate-tooltip": AnimateTooltip,
   checkbox: Checkbox,
   "copy-button": CopyButton,
+  "flip-button": FlipButton,
   "glass-button": GlassButton,
   "github-stars-button": GithubStarsButton,
   "image-zoom": ImageZoom,
