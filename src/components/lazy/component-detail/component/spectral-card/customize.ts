@@ -1,8 +1,14 @@
 import type { CustomizeControl } from "../../../customize";
-import { select, slider } from "../../controls";
+import { select, slider, text } from "../../controls";
 import { fmt2, fmtPct, fmtPx, fmtSec1 } from "../../format";
 
 export const customize: CustomizeControl[] = [
+  text(
+    "media",
+    "Image URL",
+    "/images/piano-girl.webp",
+    "https://example.com/image.webp",
+  ),
   select(
     "tone",
     "Tone",

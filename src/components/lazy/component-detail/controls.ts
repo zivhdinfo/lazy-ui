@@ -28,6 +28,15 @@ export function toggle(
   return { type: "toggle", key, label, defaultValue };
 }
 
+export function text(
+  key: string,
+  label: string,
+  defaultValue: string,
+  placeholder?: string,
+): CustomizeControl {
+  return { type: "text", key, label, defaultValue, placeholder };
+}
+
 export function select<T extends string>(
   key: string,
   label: string,

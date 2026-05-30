@@ -6,6 +6,8 @@ import {
 import type { CustomizeValues } from "../../../customize";
 
 export function Preview({ values }: { values: CustomizeValues }) {
+  const media = ((values.media as string | undefined)?.trim() ||
+    "/images/piano-girl.webp") as string;
   const tone = (values.tone ?? "ember") as SpectralCardTone;
   const energy = (values.energy ?? 1) as number;
   const restZoom = (values.restZoom ?? 0.08) as number;
@@ -21,8 +23,8 @@ export function Preview({ values }: { values: CustomizeValues }) {
   return (
     <div className="flex min-h-[680px] w-full items-center justify-center p-4">
       <SpectralCard
-        media="/images/piano-girl.webp"
-        mediaLabel="Piano girl"
+        media={media}
+        mediaLabel="Spectral card preview"
         width={360}
         height={640}
         tone={tone}

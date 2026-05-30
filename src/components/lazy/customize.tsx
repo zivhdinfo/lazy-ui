@@ -41,7 +41,17 @@ type ToggleControl = Base & {
   defaultValue: boolean;
 };
 
-export type CustomizeControl = SliderControl | SelectControl | ToggleControl;
+type TextControl = Base & {
+  type: "text";
+  defaultValue: string;
+  placeholder?: string;
+};
+
+export type CustomizeControl =
+  | SliderControl
+  | SelectControl
+  | ToggleControl
+  | TextControl;
 
 export type CustomizeValues = Record<string, number | string | boolean>;
 
@@ -267,6 +277,7 @@ function controlItemClass(c: CustomizeControl): string {
       ? "min-w-0 flex-[1_1_calc(50%-4px)]"
       : "min-w-0 flex-[1_1_280px]";
   }
+  if (c.type === "text") return "min-w-0 flex-[1_1_100%]";
   if (c.type === "toggle") return "min-w-0 max-w-[260px] flex-[1_1_160px]";
   return "min-w-0 flex-[1_1_280px]";
 }
@@ -301,6 +312,17 @@ function renderControl(
       />
     );
   }
+  if (c.type === "text") {
+    return (
+      <TextRow
+        key={c.key}
+        label={c.label}
+        value={values[c.key] as string}
+        placeholder={c.placeholder}
+        onChange={(v) => setValue(c.key, v)}
+      />
+    );
+  }
   return (
     <ToggleRow
       key={c.key}
@@ -308,6 +330,33 @@ function renderControl(
       value={values[c.key] as boolean}
       onChange={(v) => setValue(c.key, v)}
     />
+  );
+}
+
+function TextRow({
+  label,
+  value,
+  placeholder,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  placeholder?: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <label className="flex h-full min-h-12 items-center gap-3 rounded-lg border border-white/10 bg-neutral-900/80 px-3 py-2 transition-colors focus-within:border-white/25">
+      <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wider text-neutral-500">
+        {label}
+      </span>
+      <input
+        className="min-w-0 flex-1 bg-transparent text-[12px] text-neutral-200 outline-none placeholder:text-neutral-600"
+        spellCheck={false}
+        value={value}
+        placeholder={placeholder}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    </label>
   );
 }
 
