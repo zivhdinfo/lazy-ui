@@ -12,6 +12,7 @@ import { Preview as GlassButton } from "./component/glass-button/preview";
 import { Preview as GithubStarsButton } from "./component/github-stars-button/preview";
 import { Preview as ImageZoom } from "./component/image-zoom/preview";
 import { Preview as Progress } from "./component/progress/preview";
+import { Preview as SpectralCard } from "./component/spectral-card/preview";
 import { Preview as SmoothCursor } from "./component/smooth-cursor/preview";
 import { Preview as Switch } from "./component/switch/preview";
 
@@ -74,6 +75,7 @@ const PREVIEWS: Record<string, PreviewComponent> = {
   "github-stars-button": GithubStarsButton,
   "image-zoom": ImageZoom,
   progress: Progress,
+  "spectral-card": SpectralCard,
   "smooth-cursor": SmoothCursor,
   switch: Switch,
   // animate/

@@ -509,6 +509,177 @@ export function Demo() {
       },
     ],
   },
+  "spectral-card": {
+    componentName: "SpectralCard",
+    usageCode: `import { SpectralCard } from "@/components/lazy-ui/spectral-card";
+
+export function Demo() {
+  return (
+    <SpectralCard
+      media="/images/piano-girl.webp"
+      width={360}
+      height={640}
+      tone="ember"
+    >
+      <div className="flex h-full items-end p-6 text-white">
+        <div>
+          <p className="text-xs uppercase tracking-[0.24em] text-white/60">
+            Lazy UI
+          </p>
+          <h3 className="text-3xl font-light">Spectral Card</h3>
+        </div>
+      </div>
+    </SpectralCard>
+  );
+}`,
+    api: [
+      {
+        name: "media",
+        type: "string",
+        default: '"/images/piano-girl.webp"',
+        description: "Image source uploaded to the WebGL texture.",
+      },
+      {
+        name: "mediaLabel",
+        type: "string",
+        default: '""',
+        description:
+          "Accessible label for the static reduced-motion fallback layer.",
+      },
+      {
+        name: "mediaRatio",
+        type: "number",
+        default: "auto",
+        description:
+          "Source image width divided by height. Omit to detect it after load.",
+      },
+      {
+        name: "tone",
+        type: '"ember" | "aqua" | "violet" | "mono"',
+        default: '"ember"',
+        description: "Highlight tint and static fallback overlay preset.",
+      },
+      {
+        name: "energy",
+        type: "number",
+        default: "1",
+        description:
+          "Master multiplier for hover distortion, tilt, chroma, and sheen.",
+      },
+      {
+        name: "restZoom",
+        type: "number",
+        default: "0.08",
+        description:
+          "Always-on texture overscan. Keeps the image edge hidden during tilt.",
+      },
+      {
+        name: "hoverZoom",
+        type: "number",
+        default: "0.24",
+        description: "Texture zoom applied while the pointer is active.",
+      },
+      {
+        name: "spectrum",
+        type: "number",
+        default: "0.7",
+        description: "RGB channel separation around the pointer.",
+      },
+      {
+        name: "displace",
+        type: "number",
+        default: "0.85",
+        description: "Localized refraction strength near the pointer.",
+      },
+      {
+        name: "gloss",
+        type: "number",
+        default: "0.45",
+        description: "Diagonal highlight and light grain strength.",
+      },
+      {
+        name: "tiltDepth",
+        type: "number",
+        default: "10",
+        description: "Maximum card rotation in degrees.",
+      },
+      {
+        name: "floatRange",
+        type: "number",
+        default: "10",
+        description: "Pixel translation that follows the pointer.",
+      },
+      {
+        name: "hoverDuration",
+        type: "number",
+        default: "1.8",
+        description:
+          "Duration in seconds for the shader hover value to ease in and out.",
+      },
+      {
+        name: "motionDuration",
+        type: "number",
+        default: "0.45",
+        description:
+          "Duration in seconds for tilt, position, and scale to follow the pointer.",
+      },
+      {
+        name: "alpha",
+        type: "number",
+        default: "1",
+        description: "Canvas texture alpha.",
+      },
+      {
+        name: "width",
+        type: "React.CSSProperties['width']",
+        default: '"100%"',
+        description: "Root width.",
+      },
+      {
+        name: "height",
+        type: "React.CSSProperties['height']",
+        default: '"100%"',
+        description: "Root height.",
+      },
+      {
+        name: "corner",
+        type: "React.CSSProperties['borderRadius']",
+        default: "24",
+        description: "Root clipping radius.",
+      },
+      {
+        name: "children",
+        type: "ReactNode",
+        default: "—",
+        description: "Overlay content rendered above the image surface.",
+      },
+      {
+        name: "className",
+        type: "string",
+        default: "—",
+        description: "Extra class names passed to the root element.",
+      },
+    ],
+    credits: [
+      {
+        label: "GSAP quickTo",
+        href: "https://gsap.com/docs/v3/GSAP/gsap.quickTo()/",
+        description:
+          "Interruptible pointer and transform easing without spawning new tweens per move.",
+      },
+      {
+        label: "WebGL2RenderingContext",
+        href: "https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext",
+        description:
+          "Direct shader rendering without React Three Fiber or raycaster overhead.",
+      },
+      {
+        label: "IntersectionObserver",
+        href: "https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver",
+        description: "Pauses the render loop work when the card is off-screen.",
+      },
+    ],
+  },
   "smooth-cursor": {
     componentName: "SmoothCursor",
     usageCode: `import { SmoothCursor } from "@/components/lazy-ui/smooth-cursor";

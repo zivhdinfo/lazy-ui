@@ -62,6 +62,16 @@ export const components: ComponentItem[] = [
     status: "published",
   },
   {
+    slug: "spectral-card",
+    title: "Spectral Card",
+    description:
+      "A lightweight WebGL image card with GSAP-smoothed pointer tilt, localized refraction, chromatic edges, and static reduced-motion fallback.",
+    category: "Effects",
+    target: "components/lazy-ui/spectral-card/spectral-card.tsx",
+    status: "published",
+    dependencies: ["@gsap/react", "gsap", "motion"],
+  },
+  {
     slug: "smooth-cursor",
     title: "Smooth Cursor",
     description:

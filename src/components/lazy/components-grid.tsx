@@ -167,6 +167,37 @@ const PREVIEW_FOR: Record<string, ComponentType> = {
       );
     };
   }),
+  "spectral-card": lazyPreview(async () => {
+    const { SpectralCard } = await import("@/components/lazy-ui/spectral-card");
+    return function SpectralCardPreview() {
+      return (
+        <div className="absolute inset-0 flex items-center justify-center bg-black p-4">
+          <SpectralCard
+            media="/images/piano-girl.webp"
+            width={120}
+            height={213}
+            tone="aqua"
+            corner={16}
+            restZoom={0.08}
+            hoverZoom={0.22}
+            spectrum={0.68}
+            displace={0.78}
+            gloss={0.5}
+            tiltDepth={8}
+            hoverDuration={1.6}
+            motionDuration={0.38}
+            className="max-h-full max-w-full"
+          >
+            <div className="flex h-full items-end bg-gradient-to-t from-black/65 via-transparent to-transparent p-5 text-white">
+              <span className="text-2xl font-light tracking-normal">
+                Spectral
+              </span>
+            </div>
+          </SpectralCard>
+        </div>
+      );
+    };
+  }),
   "smooth-cursor": lazyPreview(async () => {
     const { SmoothCursor } = await import("@/components/lazy-ui/smooth-cursor");
     return function SmoothCursorPreview() {
