@@ -5,7 +5,7 @@
 <div align="center">
   <table>
     <tr>
-      <td style="border: none; background: transparent;">
+      <td>
         <a href="https://www.producthunt.com/products/lazy-ui?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-lazy-ui" target="_blank" rel="noopener noreferrer"><img alt="Lazy UI - Open-Source UI Components | Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1159202&amp;theme=dark&amp;t=1780133725693"></a>
       </td>
       <td style="border: none; background: transparent;">
