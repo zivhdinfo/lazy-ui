@@ -1,58 +1,57 @@
-# Lazy-ui
+<p align="center">
+  <img src="./public/images/git/logo.png" alt="Lazy UI Logo" width="120" />
+</p>
+<p align="center">
+  A premium, motion-forward component library for React 19, Next.js 16, and Tailwind CSS v4. Clean, highly interactive, and fully compatible with shadcn/ui.
+</p>
+<p align="center">
+  <a href="https://github.com/zivhdinfo/lazy-ui">
+    <img src="https://img.shields.io/github/stars/zivhdinfo/lazy-ui?style=flat&color=white&labelColor=black&logo=github" alt="Stars" />
+  </a>
+  <a href="./LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-black.svg?style=flat&color=white&labelColor=black" alt="License" />
+  </a>
+</p>
 
-Copy-and-paste Tailwind components. Monochrome, motion-forward, shadcn-compatible.
+<p align="center">
+  <img src="./public/images/git/efe12dbe-15ee-4fd1-bbfa-c0501004e951.webp" alt="Lazy UI Showcase" width="100%" style="border-radius: 12px;" />
+</p>
 
-## Stack
 
-- Next.js 16 (App Router) · React 19 · TypeScript
-- Tailwind CSS v4
-- motion (animations) · three / @react-three/fiber (3D)
-- shadcn registry served from `/r/[name].json`
 
-## Routes
+## Features
+*   **40+ High-Fidelity Components** — Carefully crafted text animations, interactive backgrounds, and UI primitives with new additions weekly.
+*   **Pre-Built Blocks** — 5+ fully responsive page sections, with a roadmap targeting 50+ layouts.
+*   **Zero-Bloat Architecture** — Engineered with minimal, tree-shakeable dependencies to keep bundle sizes clean.
+*   **Total Source Control** — Fully customizable components that you can tweak via props or modify the source code directly.
+*   **Frictionless Setup** — Copy-paste ready compatibility with modern React, Next.js, and Tailwind CSS v4.
+---
 
-| Path                    | What                          |
-| ----------------------- | ----------------------------- |
-| `/`                     | Landing                       |
-| `/components`           | Component gallery             |
-| `/components/[slug]`    | Component detail + customize  |
-| `/blocks`               | Block gallery (full sections) |
-| `/blocks/[slug]`        | Block detail + customize      |
-| `/docs`, `/docs/[slug]` | Docs                          |
-| `/r/[name].json`        | shadcn registry endpoint      |
-
-Public URL is `/r/<slug>.json`. Implementation lives in `src/app/r/[...name]/route.ts` because App Router won't bind dynamic params on a `[name].json` segment.
-
-## Develop
-
-```bash
-npm install
-npm run dev
-```
-
-Opens at [http://localhost:3000](http://localhost:3000).
-
-## Install a component via shadcn
-
-Local:
+## Installation
 
 ```bash
-npx shadcn@latest add http://localhost:3000/r/button-magic.json
+npx shadcn@latest add https://2lazyui.com/r/matrix-grid.json
 ```
 
-Production:
+---
 
-```bash
-npx shadcn@latest add https://2lazyui.com/r/button-magic.json
-```
+## Creator
 
-## Adding a component
+*   **Zivhd** — creator & maintainer.
 
-See [CLAUDE.md](./CLAUDE.md) for the file-by-file checklist. Design tokens and motion rules are in [DESIGN.md](./DESIGN.md).
+---
 
-## Scripts
+## Credit
 
-- `npm run dev` — start dev server
-- `npm run build` — production build
-- `npm run start` — run the built app
-- `npm run lint` — eslint
+Lazy UI stands on the shoulders of these incredible libraries and tools:
+*   [motion](https://motion.dev/) — Declarative React animations
+*   [GSAP](https://gsap.com/) — High-performance interactive timelines
+*   [Three.js](https://threejs.org/) & [@react-three/fiber](https://r3f.docs.pmnd.rs/) — WebGL scene integrations
+*   [Radix UI](https://www.radix-ui.com/) — Accessible unstyled primitives
+*   [shadcn/ui](https://ui.shadcn.com/) — Outstanding component registry architecture
+
+---
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
