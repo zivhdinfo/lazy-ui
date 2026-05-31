@@ -14,6 +14,7 @@ import { Preview as ImageZoom } from "./component/image-zoom/preview";
 import { Preview as Progress } from "./component/progress/preview";
 import { Preview as SpectralCard } from "./component/spectral-card/preview";
 import { Preview as SmoothCursor } from "./component/smooth-cursor/preview";
+import { Preview as SpringIconLoader } from "./component/spring-icon-loader/preview";
 import { Preview as Switch } from "./component/switch/preview";
 
 // animate/
@@ -77,6 +78,7 @@ const PREVIEWS: Record<string, PreviewComponent> = {
   progress: Progress,
   "spectral-card": SpectralCard,
   "smooth-cursor": SmoothCursor,
+  "spring-icon-loader": SpringIconLoader,
   switch: Switch,
   // animate/
   "bling-transition": BlingTransition,

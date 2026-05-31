@@ -233,6 +233,24 @@ const PREVIEW_FOR: Record<string, ComponentType> = {
       return <Progress value={60} effect="glow" className="w-44" />;
     };
   }),
+  "spring-icon-loader": lazyPreview(async () => {
+    const {
+      SPRING_ICON_LOADER_DEFAULT_ICONS,
+      SpringIconLoader,
+    } = await import("@/components/lazy-ui/spring-icon-loader");
+    return function SpringIconLoaderPreview() {
+      return (
+        <SpringIconLoader
+          icons={SPRING_ICON_LOADER_DEFAULT_ICONS}
+          size={46}
+          bounceHeight={48}
+          gravity={1700}
+          stretch={0.11}
+          tilt={8}
+        />
+      );
+    };
+  }),
   switch: lazyPreview(async () => {
     const { Switch } = await import("@/components/lazy-ui/switch");
     return function SwitchPreview() {

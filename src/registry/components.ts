@@ -179,6 +179,16 @@ export const components: ComponentItem[] = [
     dependencies: ["radix-ui", "motion"],
   },
   {
+    slug: "spring-icon-loader",
+    title: "Spring Icon Loader",
+    description:
+      "A minimal image-icon loader with GSAP physics, landing-only icon swaps, Motion fades, squash-and-stretch, and responsive ground shadow.",
+    category: "Feedback",
+    target: "components/lazy-ui/spring-icon-loader/spring-icon-loader.tsx",
+    status: "published",
+    dependencies: ["@gsap/react", "gsap", "motion"],
+  },
+  {
     slug: "switch",
     title: "Switch",
     description:

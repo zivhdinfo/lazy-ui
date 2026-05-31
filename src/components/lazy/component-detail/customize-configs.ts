@@ -15,6 +15,7 @@ import { customize as imageZoom } from "./component/image-zoom/customize";
 import { customize as progress } from "./component/progress/customize";
 import { customize as spectralCard } from "./component/spectral-card/customize";
 import { customize as smoothCursor } from "./component/smooth-cursor/customize";
+import { customize as springIconLoader } from "./component/spring-icon-loader/customize";
 import { customize as switchCustomize } from "./component/switch/customize";
 
 // animate/
@@ -75,6 +76,7 @@ export const CUSTOM_CONFIGS: Record<string, CustomizeControl[]> = {
   progress,
   "spectral-card": spectralCard,
   "smooth-cursor": smoothCursor,
+  "spring-icon-loader": springIconLoader,
   switch: switchCustomize,
   // animate/
   "bling-transition": blingTransition,

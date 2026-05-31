@@ -1556,6 +1556,201 @@ export function Demo() {
       },
     ],
   },
+  "spring-icon-loader": {
+    componentName: "SpringIconLoader",
+    usageCode: `import { useState } from "react";
+import { SpringIconLoader } from "@/components/lazy-ui/spring-icon-loader";
+
+const icons = [
+  "/images/loading/1.png",
+  "/images/loading/2.png",
+  "/images/loading/3.png",
+];
+
+export function Demo() {
+  const [loading, setLoading] = useState(true);
+
+  return (
+    <SpringIconLoader
+      icons={icons}
+      loading={loading}
+      size={56}
+      bounceHeight={68}
+      gravity={1550}
+      squash={0.12}
+      stretch={0.1}
+      tilt={7}
+      shadowColor="#94a3b8"
+      shadowOpacity={0.46}
+      onIconChange={({ index }) => console.log("Icon landed", index)}
+      onComplete={() => console.log("Loading complete")}
+    />
+  );
+}`,
+    api: [
+      {
+        name: "icons",
+        type: "(string | { src: string; alt?: string })[]",
+        default: "loading demo icons",
+        description:
+          "Image URLs cycled by the loader. Icons can be strings or `{ src, alt }` objects, and they only change at the landing moment.",
+      },
+      {
+        name: "loading",
+        type: "boolean",
+        default: "true",
+        description:
+          "Controls the loop. `true` keeps bouncing; `false` stops the loader and fires `onComplete` once.",
+      },
+      {
+        name: "initialIndex",
+        type: "number",
+        default: "0",
+        description: "Icon index used for the first rendered image.",
+      },
+      {
+        name: "size",
+        type: "number",
+        default: "48",
+        description: "Icon box size in CSS pixels.",
+      },
+      {
+        name: "bounceHeight",
+        type: "number",
+        default: "58",
+        description: "Jump height in pixels, measured upward from the landing point.",
+      },
+      {
+        name: "gravity",
+        type: "number",
+        default: "1550",
+        description:
+          "Downward acceleration in px/s2. Higher values make each hop faster and heavier.",
+      },
+      {
+        name: "impactHold",
+        type: "number",
+        default: "0.09",
+        description:
+          "Seconds the icon stays on the ground before launching into the next bounce.",
+      },
+      {
+        name: "squash",
+        type: "number",
+        default: "0.12",
+        description:
+          "Squash amount at impact. The icon widens and compresses slightly when it lands.",
+      },
+      {
+        name: "stretch",
+        type: "number",
+        default: "0.1",
+        description:
+          "Velocity-based stretch while the icon launches and falls. Keeps the bounce feeling elastic.",
+      },
+      {
+        name: "tilt",
+        type: "number",
+        default: "7",
+        description:
+          "Airborne left-right rotation in degrees. Direction alternates each landing so the loop feels weightier.",
+      },
+      {
+        name: "iconTransition",
+        type: '"fade" | "blur" | "none"',
+        default: '"blur"',
+        description:
+          "Image transition used only at impact. `blur` adds the smoothest scale + blur fade.",
+      },
+      {
+        name: "shadowColor",
+        type: "string",
+        default: '"#94a3b8"',
+        description:
+          "CSS color for the ground shadow. The gray default is tuned to stay visible on dark previews.",
+      },
+      {
+        name: "shadowOpacity",
+        type: "number",
+        default: "0.46",
+        description:
+          "Master shadow opacity at the landing point. Use this for normal customization.",
+      },
+      {
+        name: "shadowMinScale",
+        type: "number",
+        default: "0.38",
+        description:
+          "Advanced shadow control: smallest width scale at the top of the bounce.",
+      },
+      {
+        name: "shadowMaxOpacity",
+        type: "number",
+        default: "shadowOpacity",
+        description:
+          "Advanced override for landing opacity. Usually use `shadowOpacity` instead.",
+      },
+      {
+        name: "shadowMinOpacity",
+        type: "number",
+        default: "0.08",
+        description: "Advanced shadow control: shadow opacity near the apex.",
+      },
+      {
+        name: "label",
+        type: "string",
+        default: '"Loading"',
+        description: "Accessible label applied to the status root.",
+      },
+      {
+        name: "onIconChange",
+        type: "(event: SpringIconLoaderEvent) => void",
+        default: "—",
+        description:
+          "Fired exactly when the icon touches the ground and the next icon is selected.",
+      },
+      {
+        name: "onBounce",
+        type: "(event: SpringIconLoaderEvent) => void",
+        default: "—",
+        description:
+          "Fired on every landing, including loops where there is only one icon.",
+      },
+      {
+        name: "onComplete",
+        type: "(event: SpringIconLoaderEvent) => void",
+        default: "—",
+        description: "Fired once when `loading` changes from true to false.",
+      },
+      {
+        name: "classNames",
+        type: "SpringIconLoaderClassNames",
+        default: "—",
+        description:
+          "Slot-level class overrides for stage, icon, body, image, and shadow.",
+      },
+      {
+        name: "className",
+        type: "string",
+        default: "—",
+        description: "Extra class names merged onto the root element.",
+      },
+    ],
+    credits: [
+      {
+        label: "GSAP ticker",
+        href: "https://gsap.com/docs/v3/GSAP/gsap.ticker/",
+        description:
+          "Runs the tiny physics loop and cleans up cleanly through `useGSAP`.",
+      },
+      {
+        label: "Motion AnimatePresence",
+        href: "https://motion.dev/docs/react-animate-presence",
+        description:
+          "Crossfades the image layers without changing icons between landings.",
+      },
+    ],
+  },
   switch: {
     componentName: "Switch",
     usageCode: `import { Switch } from "@/components/lazy-ui/switch";
