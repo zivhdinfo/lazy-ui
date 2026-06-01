@@ -8,6 +8,7 @@ import {
   useState,
   type PointerEvent as ReactPointerEvent,
 } from "react";
+import { Video as VideoIcon } from "lucide-react";
 
 import { AnimatedTabs } from "@/components/lazy-ui/animated-tabs";
 import { CodePreview } from "@/components/lazy-ui/code-preview";
@@ -37,6 +38,10 @@ import {
 import { importPathFor, installCmd, PM_TABS, type PmTab } from "./install";
 import { LivePreview } from "./live-preview";
 import {
+  exportPreviewVideo,
+  isPreviewVideoExportSupported,
+} from "./preview-video-export";
+import {
   DEVICE_WIDTHS,
   MIN_PREVIEW_WIDTH,
   STAGE_MIN_HEIGHT,
@@ -45,6 +50,8 @@ import {
   type Mode,
 } from "./stage";
 import { DeviceButton, ToolbarButton } from "./toolbar";
+
+const PREVIEW_VIDEO_DURATION_MS = 5_000;
 
 export function ComponentDetail({
   component,
@@ -59,9 +66,15 @@ export function ComponentDetail({
   const [width, setWidth] = useState<number | null>(null);
   const [dragging, setDragging] = useState(false);
   const [previewKey, setPreviewKey] = useState(0);
+  const [canRecordPreview, setCanRecordPreview] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingProgress, setRecordingProgress] = useState(0);
+  const [recordingError, setRecordingError] = useState<string | null>(null);
 
   const stageRef = useRef<HTMLDivElement | null>(null);
+  const previewFrameRef = useRef<HTMLDivElement | null>(null);
   const draggingRef = useRef(false);
+  const recordingAbortRef = useRef<AbortController | null>(null);
   const [renderedWidth, setRenderedWidth] = useState<number | null>(null);
 
   // Drag handle physics — bend follows pointer velocity, springs back on release.
@@ -111,20 +124,36 @@ export function ComponentDetail({
 
   useEffect(() => cancelSpring, [cancelSpring]);
 
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => {
+      setCanRecordPreview(isPreviewVideoExportSupported());
+    });
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  useEffect(() => {
+    return () => recordingAbortRef.current?.abort();
+  }, []);
+
+  useEffect(() => {
+    if (mode !== "preview") recordingAbortRef.current?.abort();
+  }, [mode]);
+
   // Auto-select initial device based on the user's actual viewport so mobile
   // visitors don't land on the full-width desktop preset. Runs once on mount
   // to avoid overriding subsequent user choices.
   useEffect(() => {
     if (typeof window === "undefined") return;
-    setWidth(DEVICE_WIDTHS[deviceFromViewport(window.innerWidth)]);
+    const raf = requestAnimationFrame(() => {
+      setWidth(DEVICE_WIDTHS[deviceFromViewport(window.innerWidth)]);
+    });
+    return () => cancelAnimationFrame(raf);
   }, []);
 
   // Track rendered width of the frame so the label can show the live value
   // (including during full-width / drag).
   useEffect(() => {
-    const stage = stageRef.current;
-    if (!stage) return;
-    const frame = stage.querySelector<HTMLDivElement>("[data-preview-frame]");
+    const frame = previewFrameRef.current;
     if (!frame) return;
     if (typeof ResizeObserver === "undefined") {
       setRenderedWidth(frame.offsetWidth);
@@ -152,9 +181,7 @@ export function ComponentDetail({
     if (!stage) return;
     const startRect = stage.getBoundingClientRect();
     const startWidth =
-      width ??
-      stage.querySelector<HTMLDivElement>("[data-preview-frame]")?.offsetWidth ??
-      startRect.width;
+      width ?? previewFrameRef.current?.offsetWidth ?? startRect.width;
     setWidth(startWidth);
     draggingRef.current = true;
     setDragging(true);
@@ -230,6 +257,52 @@ export function ComponentDetail({
     setPreviewKey((k) => k + 1);
   }, [initialCustom]);
 
+  const cancelPreviewRecording = useCallback(() => {
+    recordingAbortRef.current?.abort();
+  }, []);
+
+  const startPreviewRecording = useCallback(async () => {
+    if (isRecording) return;
+
+    const frame = previewFrameRef.current;
+    if (!frame) {
+      setRecordingError("Preview frame is not ready.");
+      return;
+    }
+
+    if (!canRecordPreview) {
+      setRecordingError("Video export is not supported in this browser.");
+      return;
+    }
+
+    const controller = new AbortController();
+    recordingAbortRef.current = controller;
+    setRecordingError(null);
+    setRecordingProgress(0);
+    setIsRecording(true);
+
+    try {
+      await exportPreviewVideo({
+        frame,
+        slug: component.slug,
+        durationMs: PREVIEW_VIDEO_DURATION_MS,
+        fps: 60,
+        signal: controller.signal,
+        onProgress: setRecordingProgress,
+      });
+    } catch (error) {
+      if (!controller.signal.aborted) {
+        setRecordingError(videoExportErrorMessage(error));
+      }
+    } finally {
+      if (recordingAbortRef.current === controller) {
+        recordingAbortRef.current = null;
+      }
+      setIsRecording(false);
+      setRecordingProgress(0);
+    }
+  }, [canRecordPreview, component.slug, isRecording]);
+
   const pmPicker = (
     <span className="flex gap-0.5">
       {PM_TABS.map((t) => (
@@ -281,6 +354,13 @@ export function ComponentDetail({
     </CodePreview>
   );
 
+  const recordingRemainingSeconds = Math.max(
+    0,
+    Math.ceil(
+      (PREVIEW_VIDEO_DURATION_MS * (100 - recordingProgress)) / 100 / 1000,
+    ),
+  );
+
   return (
     <main className="main component-detail-main">
       <div className="component-hero reveal">
@@ -321,6 +401,14 @@ export function ComponentDetail({
             </span>
           </div>
           <div className="flex items-center gap-1.5">
+            {recordingError && mode === "preview" && (
+              <span
+                title={recordingError}
+                className="max-w-[220px] truncate text-[11px] text-red-300"
+              >
+                {recordingError}
+              </span>
+            )}
             <div
               role="group"
               aria-label="Preview device"
@@ -351,11 +439,54 @@ export function ComponentDetail({
             <button
               type="button"
               onClick={resetPreview}
+              disabled={isRecording}
               aria-label="Reset preview"
               title="Reset preview"
-              className="inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border border-white/10 bg-white/[0.02] text-neutral-400 transition-colors hover:bg-white/[0.06] hover:text-white"
+              className="inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border border-white/10 bg-white/[0.02] text-neutral-400 transition-colors hover:bg-white/[0.06] hover:text-white disabled:cursor-not-allowed disabled:opacity-45"
             >
               <RefreshIcon />
+            </button>
+            <button
+              type="button"
+              onClick={
+                isRecording ? cancelPreviewRecording : startPreviewRecording
+              }
+              disabled={mode !== "preview" || (!canRecordPreview && !isRecording)}
+              aria-label={
+                isRecording
+                  ? "Cancel video export"
+                  : "Export preview as 5 second WebM"
+              }
+              title={
+                isRecording
+                  ? "Cancel video export"
+                  : canRecordPreview
+                    ? "Export preview as 5 second WebM"
+                    : "Video export is not supported in this browser"
+              }
+              className={[
+                "relative inline-flex h-7 cursor-pointer items-center justify-center overflow-hidden rounded-lg border transition-colors",
+                isRecording
+                  ? "min-w-[66px] gap-1 border-red-500/40 bg-red-500/10 px-2 text-red-200 hover:bg-red-500/15"
+                  : "w-7 border-white/10 bg-white/[0.02] text-neutral-400 hover:bg-white/[0.06] hover:text-white",
+                mode !== "preview" || (!canRecordPreview && !isRecording)
+                  ? "cursor-not-allowed opacity-45"
+                  : "",
+              ].join(" ")}
+            >
+              {isRecording && (
+                <span
+                  aria-hidden
+                  className="absolute inset-y-0 left-0 bg-red-500/25 transition-[width] duration-100 ease-linear"
+                  style={{ width: `${recordingProgress}%` }}
+                />
+              )}
+              <VideoIcon className="relative z-10 h-3.5 w-3.5" aria-hidden />
+              {isRecording && (
+                <span className="relative z-10 font-mono text-[11px]">
+                  {recordingRemainingSeconds}s
+                </span>
+              )}
             </button>
           </div>
         </div>
@@ -378,6 +509,7 @@ export function ComponentDetail({
 
             {/* Preview frame (anchored left, explicit width or full) */}
             <div
+              ref={previewFrameRef}
               data-preview-frame
               className="absolute inset-y-0 left-0 z-10 flex items-center justify-center overflow-hidden rounded-3xl bg-black"
               style={{
@@ -651,4 +783,15 @@ export function ComponentDetail({
       )}
     </main>
   );
+}
+
+function videoExportErrorMessage(error: unknown) {
+  if (error instanceof Error) {
+    if (error.name === "NotAllowedError") {
+      return "Screen capture permission was denied.";
+    }
+    return error.message;
+  }
+
+  return "Video export failed.";
 }
