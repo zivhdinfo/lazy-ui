@@ -333,6 +333,8 @@ function HeroBackground({
 export function HomeHero() {
   const [theme, setTheme] = useState<Theme>("light");
 
+  // First-load intro cover, then the staggered reveal.
+  const [loaded, setLoaded] = useState(false);
   // Reveal sequence: 1 = pill, 2 = title, 3 = description, 4 = CTA + counters.
   const [step, setStep] = useState(0);
   // Bumped only on a user theme toggle, so the background sweeps then (not on
@@ -446,19 +448,26 @@ export function HomeHero() {
     el.classList.add("demo");
   }, [current, reloadKey]);
 
-  // Sequential first-paint reveal (RevealAnimate sweeps): title → description.
+  // Initial page-load intro: hold a cover briefly, then lift it.
   useEffect(() => {
+    const t = window.setTimeout(() => setLoaded(true), 650);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Sequential reveal (RevealAnimate sweeps) once the intro lifts: title → desc.
+  useEffect(() => {
+    if (!loaded) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       // Reduced motion: reveal everything at once (intentional one-shot).
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setStep(99);
       return;
     }
-    const timers = [120, 340, 600, 860].map((delay, i) =>
+    const timers = [60, 280, 540, 800].map((delay, i) =>
       window.setTimeout(() => setStep(i + 1), delay),
     );
     return () => timers.forEach(clearTimeout);
-  }, []);
+  }, [loaded]);
 
   // ── Tab navigation ──
   const navTo = useCallback(
@@ -782,6 +791,21 @@ export function HomeHero() {
           </motion.div>
         </section>
       </main>
+
+      {/* First-load intro cover — fades out once mounted. */}
+      <div className={`lui-loader${loaded ? " is-done" : ""}`} aria-hidden="true">
+        <div className="lui-loader-inner">
+          <span className="lui-loader-mark">
+            <BrandMark size={42} />
+          </span>
+          <span className="lui-loader-word">
+            <b>Lazy</b> UI
+          </span>
+          <span className="lui-loader-bar">
+            <i />
+          </span>
+        </div>
+      </div>
     </div>
   );
 }

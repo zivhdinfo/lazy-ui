@@ -37,10 +37,60 @@ const instrumentSerif = Instrument_Serif({
   display: "swap",
 });
 
+const SITE_URL = "https://2lazyui.com";
+const SITE_DESCRIPTION =
+  "Lazy UI is a copy-paste library of React + Tailwind components, animated backgrounds, and UI primitives that install straight into your app as shadcn registry files - no npm package, source lands fully editable.";
+
 export const metadata: Metadata = {
-  title: "Lazy-ui — Build lazily.",
-  description:
-    "A quietly opinionated Tailwind CSS component library you copy, paste, and ship.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Lazy UI - Great interfaces, minimal effort.",
+    template: "%s - Lazy UI",
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: "Lazy UI",
+  keywords: [
+    "Lazy UI",
+    "React components",
+    "Tailwind CSS",
+    "shadcn registry",
+    "UI component library",
+    "animated backgrounds",
+    "copy paste components",
+    "Next.js components",
+    "WebGL backgrounds",
+    "motion primitives",
+  ],
+  authors: [{ name: "Zivhd", url: "https://github.com/zivhdinfo" }],
+  creator: "Zivhd",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: SITE_URL,
+    siteName: "Lazy UI",
+    title: "Lazy UI - Great interfaces, minimal effort.",
+    description: SITE_DESCRIPTION,
+    locale: "en_US",
+    images: [{ url: "/logo.png", alt: "Lazy UI" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Lazy UI - Great interfaces, minimal effort.",
+    description: SITE_DESCRIPTION,
+    images: ["/logo.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  category: "technology",
 };
 
 export default function RootLayout({
@@ -50,7 +100,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="vi"
+      lang="en"
       className={`dark h-full antialiased ${outfit.variable} ${geistMono.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable}`}
     >
       <body className="flex min-h-full flex-col">{children}</body>
