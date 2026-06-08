@@ -1,12 +1,5 @@
-import { LandingPage } from "@/components/lazy/landing-page";
-import { LazyShell } from "@/components/lazy/lazy-shell";
+import { HomeHero } from "@/components/lazy/home/home-hero";
 
 export default function Home() {
-  return (
-    <div className="lazy-root">
-      <LazyShell>
-        <LandingPage />
-      </LazyShell>
-    </div>
-  );
+  return <HomeHero />;
 }

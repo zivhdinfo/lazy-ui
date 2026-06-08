@@ -1,17 +1,32 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import {
+  Outfit,
+  Geist_Mono,
+  JetBrains_Mono,
+  Instrument_Serif,
+} from "next/font/google";
 
 import "./globals.css";
 
-const geist = Geist({
+// Primary UI face for the whole project. Next.js emits a size-adjusted
+// "Outfit Fallback" automatically, so the resolved stack is
+// `Outfit, "Outfit Fallback", …`.
+const outfit = Outfit({
   subsets: ["latin"],
-  variable: "--font-geist",
+  variable: "--font-outfit",
   display: "swap",
 });
 
 const geistMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-geist-mono",
+  display: "swap",
+});
+
+// Mono accent face used by the new home surface (labels, kbd, addr bar).
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains",
   display: "swap",
 });
 
@@ -36,7 +51,7 @@ export default function RootLayout({
   return (
     <html
       lang="vi"
-      className={`dark h-full antialiased ${geist.variable} ${geistMono.variable} ${instrumentSerif.variable}`}
+      className={`dark h-full antialiased ${outfit.variable} ${geistMono.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable}`}
     >
       <body className="flex min-h-full flex-col">{children}</body>
     </html>

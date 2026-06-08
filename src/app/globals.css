@@ -7,10 +7,10 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist), "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-outfit), "Outfit Fallback", ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), "Geist Mono Fallback", ui-monospace, monospace;
-  --font-heading: var(--font-geist), "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-instrument-serif), "Geist Fallback", serif;
+  --font-heading: var(--font-outfit), "Outfit Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument-serif), "Outfit Fallback", serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -152,10 +152,19 @@
    Component CSS lifted from the design prototype.
    ════════════════════════════════════════════════════ */
 
+/* Lenis smooth-scroll (recommended base styles). The runtime adds the
+   `lenis*` classes to <html>; see home-hero.tsx for the init. */
+html.lenis,
+html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: clip; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
+
 .lazy-root {
   background: var(--bg-0);
   color: var(--fg-1);
-  font-family: var(--font-geist), -apple-system, system-ui, sans-serif;
+  font-family: var(--font-outfit), "Outfit Fallback", -apple-system, system-ui, sans-serif;
   font-size: 14px;
   line-height: 1.5;
   min-height: 100vh;
@@ -2807,7 +2816,7 @@ pre .v { color: #67e8f9; }
   border-radius: 6px;
   padding: 4px 10px;
   font-size: 11px;
-  font-family: var(--font-geist), sans-serif;
+  font-family: var(--font-outfit), sans-serif;
   transition: background 0.2s, color 0.2s;
 }
 .install-copy:hover {
@@ -2893,7 +2902,7 @@ pre .v { color: #67e8f9; }
   border-radius: 8px;
   background: transparent;
   color: var(--fg-3);
-  font-family: var(--font-geist), system-ui, sans-serif;
+  font-family: var(--font-outfit), system-ui, sans-serif;
   font-size: 13.5px;
   font-weight: 400;
   cursor: pointer;
@@ -2923,7 +2932,7 @@ pre .v { color: #67e8f9; }
   display: flex;
   align-items: center;
   gap: 12px;
-  font-family: var(--font-geist), system-ui, sans-serif;
+  font-family: var(--font-outfit), system-ui, sans-serif;
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.12em;
@@ -2986,7 +2995,7 @@ pre .v { color: #67e8f9; }
     rgba(0, 0, 0, 0.5) 55%,
     transparent 100%
   );
-  font-family: var(--font-geist), system-ui, sans-serif;
+  font-family: var(--font-outfit), system-ui, sans-serif;
   font-size: 13.5px;
   font-weight: 500;
   color: var(--fg-1);
@@ -3795,7 +3804,7 @@ pre .v { color: #67e8f9; }
   --lp-info: #3B82F6;
   --lp-info-soft: rgba(59, 130, 246, 0.14);
   --lp-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  --lp-sans: var(--font-geist), "Geist", system-ui, sans-serif;
+  --lp-sans: var(--font-outfit), "Outfit Fallback", system-ui, sans-serif;
   --lp-serif: var(--font-instrument-serif), "Instrument Serif", "Times New Roman", serif;
   --lp-ease: cubic-bezier(0.2, 0, 0, 1);
   --lp-pad-section: 112px;
@@ -5777,4 +5786,482 @@ pre .v { color: #67e8f9; }
   .lp-sk,
   .lp-pulse,
   .lp-mp-caret { animation: none; }
+}
+
+/* ════════════════════════════════════════════════════
+   Lazy UI — Home surface (header + hero + macOS window)
+   Self-contained, light/dark via [data-theme] on .lui-home.
+   Ported from the "Lazy UI Home.html" design handoff.
+   ════════════════════════════════════════════════════ */
+.lui-home {
+  /* light tokens */
+  --bg: #f4f4f2;
+  --bg-soft: #fbfbfa;
+  --surface: #ffffff;
+  --panel: #f5f5f4;
+  --panel-2: #ededec;
+  --text: #0c0c0d;
+  --text-2: #56565d;
+  --text-3: #93939c;
+  --border: #e7e7e4;
+  --border-2: #efefed;
+  --ink: #0c0c0d;
+  --ink-text: #ffffff;
+  --dot: #e0e0dd;
+  --frame: #ffffff;
+  --ring: rgba(12, 12, 13, 0.1);
+  --shadow: 0 1px 2px rgba(12, 12, 13, 0.05), 0 22px 60px -20px rgba(12, 12, 13, 0.22);
+  --shadow-sm: 0 1px 1px rgba(12, 12, 13, 0.05);
+
+  position: relative;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-outfit), "Outfit Fallback", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+.lui-home[data-theme="dark"] {
+  --bg: #0a0a0b;
+  --bg-soft: #0a0a0b;
+  --surface: #111113;
+  --panel: #17171a;
+  --panel-2: #1f1f23;
+  --text: #fafafa;
+  --text-2: #a0a0aa;
+  --text-3: #66666f;
+  --border: #242428;
+  --border-2: #1b1b1f;
+  --ink: #fafafa;
+  --ink-text: #0a0a0b;
+  --dot: #202024;
+  --frame: #000000;
+  --ring: rgba(255, 255, 255, 0.12);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 30px 70px -24px rgba(0, 0, 0, 0.78);
+  --shadow-sm: 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+}
+
+.lui-home * { box-sizing: border-box; }
+.lui-home .mono { font-family: var(--font-jetbrains), ui-monospace, monospace; }
+.lui-home a { color: inherit; text-decoration: none; }
+.lui-home button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+.lui-home ::selection { background: color-mix(in srgb, var(--text) 16%, transparent); color: var(--text); }
+
+.lui-home .wrap { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 30px; }
+
+/* ── Site frame: a fixed matte border around the viewport with concave
+   rounded inner corners (mechanism copied from the "Circular" SaaS layout). */
+.lui-home .site-frame {
+  position: fixed; z-index: 60; pointer-events: none; background: var(--frame);
+}
+.lui-home .site-frame--top { top: 0; left: 0; right: 0; height: 10px; }
+.lui-home .site-frame--bottom { bottom: 0; left: 0; right: 0; height: 10px; }
+.lui-home .site-frame--left { top: 0; left: 0; bottom: 0; width: 10px; }
+.lui-home .site-frame--right { top: 0; right: 0; bottom: 0; width: 10px; }
+
+.lui-home .site-corner {
+  position: fixed; z-index: 59; pointer-events: none; color: var(--frame);
+  width: 50px; height: 50px;
+}
+.lui-home .site-corner--top-left { top: 10px; left: 10px; transform: rotate(90deg); }
+.lui-home .site-corner--top-right { top: 10px; right: 10px; transform: rotate(180deg); }
+.lui-home .site-corner--bottom-left { bottom: 10px; left: 10px; transform: rotate(0deg); }
+.lui-home .site-corner--bottom-right { bottom: 10px; right: 10px; transform: rotate(270deg); }
+
+/* ── Header: a frame-colored pill carved into the top frame bar ── */
+.lui-home .home-header {
+  position: fixed; top: 10px; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 1024px; z-index: 61;
+  display: flex; justify-content: center; padding: 0 10px; pointer-events: none;
+}
+.lui-home .home-header > * { pointer-events: auto; }
+.lui-home .nav-shell {
+  position: relative; width: 100%;
+  background: var(--frame);
+  border-radius: 0 0 32px 32px;
+  box-shadow: 0 26px 50px -24px rgba(0, 0, 0, 0.32);
+}
+.lui-home .nav { display: flex; align-items: center; gap: 22px; height: 70px; padding: 0 22px; }
+/* Concave joins blending each header side into the top frame bar. */
+.lui-home .home-corner {
+  position: absolute; top: 0; width: 50px; height: 50px;
+  color: var(--frame); pointer-events: none;
+}
+.lui-home .home-corner--left { left: -49px; transform: rotate(180deg); }
+.lui-home .home-corner--right { right: -49px; transform: rotate(90deg); }
+.lui-home .brand { display: flex; align-items: center; gap: 9px; font-weight: 600; font-size: 14.5px; letter-spacing: -0.02em; }
+.lui-home .mark {
+  width: 25px; height: 25px; border-radius: 7px;
+  display: grid; place-items: center; flex: none; overflow: hidden;
+}
+.lui-home .mark img { width: 100%; height: 100%; object-fit: contain; }
+.lui-home .brand b { font-weight: 600; }
+.lui-home .brand .z { color: var(--text-3); font-weight: 500; }
+
+.lui-home .nav-links { display: flex; align-items: center; gap: 2px; margin-left: 6px; }
+.lui-home .nav-links a {
+  font-size: 13px; color: var(--text-2); font-weight: 450;
+  padding: 6px 10px; border-radius: 7px; transition: color 0.18s, background 0.18s;
+}
+.lui-home .nav-links a:hover { color: var(--text); background: var(--panel); }
+
+.lui-home .nav-right { display: flex; align-items: center; gap: 7px; margin-left: auto; }
+.lui-home .search {
+  display: flex; align-items: center; gap: 9px;
+  height: 32px; padding: 0 9px 0 11px;
+  border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text-3); font-size: 12.5px; background: var(--surface);
+  transition: border-color 0.18s, color 0.18s;
+}
+.lui-home .search:hover { border-color: var(--text-3); color: var(--text-2); }
+.lui-home .search .kbd {
+  font-size: 10px; font-weight: 500; color: var(--text-3);
+  border: 1px solid var(--border); border-radius: 4px; padding: 2px 4px; line-height: 1;
+}
+.lui-home .icon-btn {
+  width: 32px; height: 32px; border-radius: 8px; flex: none;
+  display: grid; place-items: center; color: var(--text-2);
+  border: 1px solid var(--border); background: var(--surface);
+  transition: color 0.18s, border-color 0.18s;
+}
+.lui-home .icon-btn:hover { color: var(--text); border-color: var(--text-3); }
+.lui-home .icon-btn svg { width: 16px; height: 16px; }
+.lui-home .icon-btn .moon { display: none; }
+.lui-home[data-theme="dark"] .icon-btn .sun { display: none; }
+.lui-home[data-theme="dark"] .icon-btn .moon { display: block; }
+
+.lui-home .btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  font-weight: 500; font-size: 13px; letter-spacing: -0.01em;
+  border-radius: 9px; white-space: nowrap; transition: transform 0.12s ease, background 0.2s, border-color 0.2s, opacity 0.2s;
+}
+.lui-home .btn:active { transform: translateY(1px); }
+.lui-home .btn-solid { background: var(--ink); color: var(--ink-text); padding: 9px 14px; box-shadow: var(--shadow-sm); }
+.lui-home .btn-solid:hover { opacity: 0.88; }
+.lui-home .btn-ghost { border: 1px solid var(--border); color: var(--text); padding: 9px 14px; background: var(--surface); }
+.lui-home .btn-ghost:hover { border-color: var(--text-3); }
+
+/* Hero: centered copy over a parallax background image, with the live-preview
+   window below (saas-style). Layout/spacing are Tailwind utilities in
+   home-hero.tsx; only leaf typography/component styling lives here. */
+.lui-home .hero { position: relative; }
+
+.lui-home .eyebrow {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-family: var(--font-jetbrains), monospace; font-size: 11px; letter-spacing: 0.04em;
+  color: var(--text-3); text-transform: uppercase;
+}
+.lui-home .eyebrow .dotpulse { width: 6px; height: 6px; border-radius: 50%; background: #28c840; box-shadow: 0 0 0 3px color-mix(in srgb, #28c840 18%, transparent); }
+
+/* New-component pill (reused from the old landing) — restyled for the framed
+   light/dark home surface. Realtime: driven by NEW_SLUGS, not hardcoded. */
+.lui-home .lp-new-pill {
+  gap: 10px; max-width: min(100%, 460px);
+  padding: 5px 14px 5px 5px;
+  border: 1px solid var(--border); border-radius: 12px;
+  background: var(--surface); color: var(--text);
+  font-family: var(--font-outfit), "Outfit Fallback", system-ui, sans-serif;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.18s, background 0.18s;
+}
+.lui-home .lp-new-pill:hover { border-color: var(--text-3); background: var(--panel); }
+.lui-home .lp-new-pill-badge {
+  height: 26px; padding: 0 11px; border-radius: 8px;
+  background: var(--ink); color: var(--ink-text);
+  font-family: var(--font-jetbrains), monospace; font-size: 10.5px; font-weight: 600;
+  letter-spacing: 0.06em; box-shadow: none;
+}
+.lui-home .lp-new-pill-names {
+  font-family: var(--font-jetbrains), monospace; font-size: 12px; font-weight: 500;
+  letter-spacing: 0.03em; text-transform: none; color: var(--text-2);
+}
+.lui-home .lp-new-pill-more {
+  height: 22px; padding: 0 8px; border-radius: 6px;
+  background: var(--panel); color: var(--text-3);
+  font-family: var(--font-jetbrains), monospace; font-size: 11px; font-weight: 600;
+}
+
+.lui-home h1 {
+  margin-top: 22px;
+  font-size: clamp(2.4rem, 5vw, 4.25rem);
+  line-height: 1.06; font-weight: 600; letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.lui-home h1 .dim { color: var(--text-3); }
+.lui-home .sub {
+  margin-top: 16px; max-width: 40ch;
+  font-size: 14.5px; color: var(--text-2); font-weight: 400;
+  text-wrap: pretty; line-height: 1.62;
+}
+
+.lui-home .cta-row .btn { padding: 10px 16px; font-size: 13.5px; }
+.lui-home .cta-row .hint { font-family: var(--font-jetbrains), monospace; font-size: 11px; color: var(--text-3); margin-left: 2px; }
+
+.lui-home .stat { padding-right: 22px; margin-right: 22px; border-right: 1px solid var(--border); }
+.lui-home .stat:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+.lui-home .stat .num { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; line-height: 1; }
+.lui-home .stat .lbl { font-family: var(--font-jetbrains), monospace; font-size: 10px; color: var(--text-3); margin-top: 6px; letter-spacing: 0.01em; }
+
+/* ── macOS Safari window ── */
+.lui-home .safari-wrap { position: relative; }
+.lui-home .safari-wrap::after {
+  content: ""; position: absolute; left: 50%; bottom: -34px; transform: translateX(-50%);
+  width: 76%; height: 110px; background: var(--text); opacity: 0.05; filter: blur(46px); border-radius: 50%; z-index: -1;
+}
+.lui-home .safari {
+  border: 1px solid var(--border); border-radius: 13px; overflow: hidden;
+  background: var(--surface); box-shadow: var(--shadow);
+  transition: opacity 0.3s, box-shadow 0.35s;
+  transform-origin: top left; will-change: transform;
+}
+.lui-home .win-body {
+  overflow: hidden; transform-origin: top center;
+  transition: max-height 0.42s cubic-bezier(0.4, 0, 0.15, 1),
+    opacity 0.3s ease,
+    transform 0.42s cubic-bezier(0.4, 0, 0.15, 1),
+    filter 0.42s ease;
+  max-height: 720px;
+}
+.lui-home .toolbar {
+  display: flex; align-items: center; gap: 12px; height: 42px; padding: 0 13px;
+  background: var(--panel); border-bottom: 1px solid var(--border-2);
+}
+.lui-home .lights { display: flex; gap: 8px; flex: none; }
+.lui-home .lights span { width: 12px; height: 12px; border-radius: 50%; display: block; }
+.lui-home .lights .r { background: #ff5f57; box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.12); }
+.lui-home .lights .y { background: #febc2e; box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.12); }
+.lui-home .lights .g { background: #28c840; box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.12); }
+.lui-home .tb-nav { display: flex; align-items: center; gap: 3px; color: var(--text-3); }
+.lui-home .tb-nav button { width: 25px; height: 25px; border-radius: 6px; display: grid; place-items: center; transition: background 0.15s, color 0.15s; }
+.lui-home .tb-nav button:hover:not(:disabled) { background: var(--panel-2); color: var(--text-2); }
+.lui-home .tb-nav svg { width: 15px; height: 15px; }
+.lui-home .tb-nav button:disabled { opacity: 0.35; cursor: default; }
+.lui-home .addr {
+  flex: 1 1 0%; min-width: 0; height: 27px; border-radius: 8px; background: var(--surface);
+  border: 1px solid var(--border-2); display: flex; align-items: center; justify-content: center; gap: 7px;
+  color: var(--text-2); font-size: 12px; max-width: 320px; margin: 0 auto; position: relative;
+  padding: 0 24px 0 10px;
+}
+/* Let the URL truncate instead of forcing the toolbar (and window) wider. */
+.lui-home .addr > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lui-home .addr-short { display: none; }
+.lui-home .addr .lock { width: 10px; height: 10px; color: var(--text-3); }
+.lui-home .addr .host { color: var(--text); font-weight: 450; }
+.lui-home .addr .reload { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 19px; height: 19px; border-radius: 5px; display: grid; place-items: center; color: var(--text-3); transition: background 0.15s, color 0.15s; }
+.lui-home .addr .reload:hover { background: var(--panel-2); color: var(--text); }
+.lui-home .addr .reload svg { width: 12px; height: 12px; transition: transform 0.5s ease; }
+.lui-home .addr .reload.spin svg { transform: rotate(360deg); }
+.lui-home .tb-right { display: flex; align-items: center; gap: 3px; color: var(--text-3); flex: none; }
+.lui-home .tb-right button { width: 25px; height: 25px; border-radius: 6px; display: grid; place-items: center; transition: background 0.15s, color 0.15s; }
+.lui-home .tb-right button:hover { background: var(--panel-2); color: var(--text-2); }
+.lui-home .tb-right svg { width: 15px; height: 15px; }
+
+.lui-home .tabstrip {
+  display: flex; align-items: stretch; gap: 0; height: 37px; padding: 0 7px;
+  background: var(--panel); border-bottom: 1px solid var(--border-2);
+  overflow-x: auto; scrollbar-width: none;
+}
+.lui-home .tabstrip::-webkit-scrollbar { display: none; }
+.lui-home .stab {
+  position: relative; display: inline-flex; align-items: center; gap: 7px; flex: none;
+  padding: 0 24px 0 11px; min-width: 116px; max-width: 164px; white-space: nowrap;
+  font-size: 12px; color: var(--text-3); font-weight: 450;
+  border-radius: 8px; margin: 5px 1px; transition: background 0.15s, color 0.15s;
+}
+.lui-home .stab .fav { width: 13px; height: 13px; opacity: 0.7; flex: none; }
+.lui-home .stab .nm { overflow: hidden; text-overflow: ellipsis; }
+.lui-home .stab .x { position: absolute; right: 7px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; border-radius: 4px; display: grid; place-items: center; opacity: 0; transition: opacity 0.15s, background 0.15s; }
+.lui-home .stab .x svg { width: 9px; height: 9px; }
+.lui-home .stab:hover { color: var(--text-2); background: var(--panel-2); }
+.lui-home .stab:hover .x { opacity: 0.6; }
+.lui-home .stab .x:hover { background: var(--border); opacity: 1; }
+.lui-home .stab.active { background: var(--surface); color: var(--text); font-weight: 500; box-shadow: var(--shadow-sm); }
+.lui-home .stab.active .fav { opacity: 1; }
+.lui-home .stab.active .x { opacity: 0.55; }
+.lui-home .stab + .stab::before { content: ""; position: absolute; left: -2px; top: 9px; bottom: 9px; width: 1px; background: var(--border); }
+.lui-home .stab.active::before, .lui-home .stab.active + .stab::before { background: transparent; }
+.lui-home .newtab { width: 27px; flex: none; display: grid; place-items: center; color: var(--text-3); margin: 5px 0 5px 2px; border-radius: 7px; transition: background 0.15s, color 0.15s; }
+.lui-home .newtab:hover { background: var(--panel-2); color: var(--text-2); }
+.lui-home .newtab svg { width: 14px; height: 14px; }
+
+.lui-home .stage {
+  position: relative; min-height: 440px;
+  display: grid; place-items: center; padding: 46px 22px;
+  background-image: radial-gradient(var(--dot) 1px, transparent 1px);
+  background-size: 20px 20px; background-position: center;
+}
+.lui-home .stage .meta {
+  position: absolute; left: 12px; top: 10px; z-index: 3;
+  font-family: var(--font-jetbrains), monospace; font-size: 10px; color: var(--text-2);
+  display: flex; align-items: center; gap: 8px;
+  padding: 3px 8px; border-radius: 6px;
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  border: 1px solid var(--border-2);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.lui-home .stage .meta .live { display: inline-flex; align-items: center; gap: 6px; }
+.lui-home .stage .meta .live::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: #28c840; animation: lui-pulse 2s infinite; }
+@keyframes lui-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.lui-home .demo { animation: lui-fade 0.32s ease; }
+@keyframes lui-fade { from { transform: translateY(8px); opacity: 0.4; } to { transform: translateY(0); opacity: 1; } }
+
+/* Real-component previews fill the window viewport edge-to-edge. */
+.lui-home .demo-fill { position: absolute; inset: 0; z-index: 1; overflow: hidden; }
+.lui-home .demo-fill > * { position: absolute; inset: 0; }
+.lui-home .stage-loading { display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--text-3); }
+.lui-home .stage-loading span { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.35; animation: lui-dot 1.2s ease-in-out infinite; }
+.lui-home .stage-loading span:nth-child(2) { animation-delay: 0.18s; }
+.lui-home .stage-loading span:nth-child(3) { animation-delay: 0.36s; }
+@keyframes lui-dot { 0%, 80%, 100% { opacity: 0.3; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
+
+/* GitHub stars button — reuse the registry component, override its chrome to
+   the home-surface tokens (its own Tailwind dark: classes key off html.dark,
+   so we force colors here regardless of resolved theme). */
+.lui-home .lui-gh {
+  height: 32px; border-radius: 8px; padding: 0 11px;
+  border-color: var(--border) !important;
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  font-family: var(--font-outfit), "Outfit Fallback", system-ui, sans-serif;
+  font-size: 13px;
+}
+.lui-home .lui-gh:hover { border-color: var(--text-3) !important; background: var(--panel) !important; }
+.lui-home .lui-gh .gs-divider { background: var(--border) !important; }
+.lui-home .lui-gh .font-mono { color: var(--text-3) !important; }
+
+/* ── Window states ── */
+.lui-home .safari.is-min .win-body {
+  max-height: 0; opacity: 0;
+  transform: perspective(900px) scaleY(0.42) scaleX(0.92);
+  filter: blur(1.5px);
+}
+.lui-home .safari.is-min { cursor: pointer; }
+.lui-home .safari.is-min .toolbar::after {
+  content: "Click to expand"; margin-left: auto; font-family: var(--font-jetbrains), monospace;
+  font-size: 10px; color: var(--text-3);
+}
+.lui-home .safari.is-closed { opacity: 0; transform: scale(0.96); pointer-events: none; }
+.lui-home .reopen { position: absolute; inset: 0; display: none; place-items: center; text-align: center; z-index: 3; }
+.lui-home .safari-wrap.closed .reopen { display: grid; }
+.lui-home .reopen .card { border: 1px dashed var(--border); border-radius: 13px; padding: 34px 40px; background: var(--bg-soft); }
+.lui-home .reopen .ttl { font-size: 14px; font-weight: 600; }
+.lui-home .reopen .desc { font-size: 12.5px; color: var(--text-2); margin-top: 5px; }
+.lui-home .reopen .btn { margin-top: 16px; }
+
+.lui-home .zoom-bk { position: fixed; inset: 0; z-index: 90; background: rgba(8, 8, 9, 0.5); backdrop-filter: blur(3px); opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s; }
+.lui-home .zoom-bk.show { opacity: 1; visibility: visible; }
+.lui-home .safari.is-zoom {
+  position: fixed; z-index: 95; inset: 4vh 4vw; max-width: 1100px; margin: 0 auto;
+  border-radius: 14px;
+}
+.lui-home .safari.is-zoom .stage { min-height: calc(92vh - 122px); }
+
+/* ── Demo components (mono) ── */
+.lui-home .d-btns { display: flex; gap: 11px; flex-wrap: wrap; justify-content: center; }
+.lui-home .cmp-btn {
+  display: inline-flex; align-items: center; gap: 7px; font-weight: 500; font-size: 13px;
+  padding: 10px 16px; border-radius: 9px; transition: transform 0.12s, opacity 0.2s, border-color 0.2s, background 0.2s;
+}
+.lui-home .cmp-btn:active { transform: translateY(1px); }
+.lui-home .cmp-btn.solid { background: var(--ink); color: var(--ink-text); }
+.lui-home .cmp-btn.solid:hover { opacity: 0.85; }
+.lui-home .cmp-btn.outline { border: 1px solid var(--border); color: var(--text); background: var(--surface); }
+.lui-home .cmp-btn.outline:hover { border-color: var(--text-3); }
+.lui-home .cmp-btn .arr { transition: transform 0.2s; }
+.lui-home .cmp-btn:hover .arr { transform: translateX(4px); }
+.lui-home .cmp-btn.ghost { color: var(--text-2); }
+.lui-home .cmp-btn.ghost:hover { color: var(--text); background: var(--panel); }
+
+.lui-home .cmp-toggle { display: flex; align-items: center; gap: 13px; }
+.lui-home .switch { width: 48px; height: 28px; border-radius: 100px; background: var(--panel-2); border: 1px solid var(--border); position: relative; transition: background 0.25s, border-color 0.25s; }
+.lui-home .switch i { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--text-3); transition: transform 0.28s cubic-bezier(0.5, 1.6, 0.5, 1), background 0.25s; }
+.lui-home .switch.on { background: var(--ink); border-color: var(--ink); }
+.lui-home .switch.on i { transform: translateX(20px); background: var(--ink-text); }
+.lui-home .cmp-toggle .lab { font-size: 13px; color: var(--text-2); font-family: var(--font-jetbrains), monospace; }
+
+.lui-home .cmp-card {
+  width: 290px; border: 1px solid var(--border); border-radius: 13px; padding: 20px;
+  background: var(--surface); position: relative; overflow: hidden;
+}
+.lui-home .cmp-card .spot { position: absolute; inset: 0; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--text) 9%, transparent), transparent 70%); }
+.lui-home .cmp-card:hover .spot { opacity: 1; }
+.lui-home .cmp-card .ic { width: 32px; height: 32px; border-radius: 8px; background: var(--ink); color: var(--ink-text); display: grid; place-items: center; }
+.lui-home .cmp-card .ic svg { width: 16px; height: 16px; }
+.lui-home .cmp-card h4 { margin-top: 14px; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+.lui-home .cmp-card p { margin-top: 6px; font-size: 13px; color: var(--text-2); line-height: 1.55; }
+
+.lui-home .cmp-input { width: 270px; }
+.lui-home .cmp-input label { display: block; font-size: 11px; color: var(--text-3); font-family: var(--font-jetbrains), monospace; margin-bottom: 8px; letter-spacing: 0.02em; }
+.lui-home .field { display: flex; align-items: center; gap: 9px; height: 42px; padding: 0 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); transition: border-color 0.2s, box-shadow 0.2s; }
+.lui-home .field:focus-within { border-color: var(--text); box-shadow: 0 0 0 3px var(--ring); }
+.lui-home .field svg { width: 15px; height: 15px; color: var(--text-3); flex: none; }
+.lui-home .field input { flex: 1; border: none; outline: none; background: none; font-family: inherit; font-size: 13.5px; color: var(--text); min-width: 0; }
+.lui-home .field input::placeholder { color: var(--text-3); }
+.lui-home .field .ent { font-family: var(--font-jetbrains), monospace; font-size: 10.5px; color: var(--text-3); border: 1px solid var(--border); border-radius: 5px; padding: 2px 6px; }
+
+.lui-home .cmp-badges { display: flex; gap: 9px; flex-wrap: wrap; justify-content: center; max-width: 280px; }
+.lui-home .chip { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-jetbrains), monospace; font-size: 11px; font-weight: 500; padding: 5px 10px; border-radius: 100px; border: 1px solid var(--border); color: var(--text-2); background: var(--surface); }
+.lui-home .chip .d { width: 5px; height: 5px; border-radius: 50%; background: var(--text); }
+.lui-home .chip.solid { background: var(--ink); color: var(--ink-text); border-color: var(--ink); }
+.lui-home .chip.solid .d { background: var(--ink-text); }
+
+/* ── Responsive ── */
+/* The hero grid, columns, spacing and fold-height are Tailwind utilities on
+   the markup. These rules only cover chrome that can't live in utilities:
+   the dot-grid wash, the nav collapse, and the Safari window internals. */
+
+/* Frame + carved header collapse to a plain full-width bar on small screens. */
+@media (max-width: 850px) {
+  .lui-home .site-frame,
+  .lui-home .site-corner,
+  .lui-home .home-corner { display: none; }
+  .lui-home .home-header { top: 0; left: 0; transform: none; max-width: none; padding: 0; }
+  .lui-home .nav-shell { border-radius: 0 0 26px 26px; box-shadow: var(--shadow); }
+}
+/* Collapse the inline nav links + search into just brand / theme / GitHub. */
+@media (max-width: 900px) {
+  .lui-home .nav-links, .lui-home .search { display: none; }
+  .lui-home .nav { gap: 12px; }
+}
+/* Phone: tighter header + compact Safari chrome. */
+@media (max-width: 640px) {
+  .lui-home .home-header { padding: 0 10px; }
+  .lui-home .nav { height: 60px; padding: 0 6px; gap: 8px; }
+  .lui-home .home-header.scrolled { padding-top: 8px; }
+  .lui-home .home-header.scrolled .nav-shell { max-width: 100%; }
+  .lui-home .home-header.scrolled .nav { height: 52px; }
+  .lui-home .brand { font-size: 13.5px; }
+  .lui-home .nav-right { gap: 6px; }
+
+  .lui-home .toolbar { height: 38px; padding: 0 10px; gap: 8px; }
+  .lui-home .tb-nav { display: none; }
+  .lui-home .addr { height: 25px; font-size: 11px; gap: 5px; }
+  .lui-home .addr-full { display: none; }
+  .lui-home .addr-short { display: inline; }
+  .lui-home .addr .reload { width: 18px; height: 18px; }
+  .lui-home .tb-right button:first-child { display: none; }
+  .lui-home .tabstrip { height: 34px; padding: 0 5px; }
+  .lui-home .stab { min-width: 92px; padding: 0 22px 0 9px; font-size: 11.5px; margin: 4px 1px; }
+  .lui-home .stab .fav { width: 12px; height: 12px; }
+  .lui-home .newtab { margin: 4px 0 4px 2px; }
+  .lui-home .stage { min-height: 248px; }
+  .lui-home .stage .meta { font-size: 9.5px; left: 10px; top: 8px; }
+  .lui-home .safari-wrap::after { display: none; }
+}
+/* Very narrow: drop the star count so the header doesn't clip. */
+@media (max-width: 420px) {
+  .lui-home .lui-gh .gs-divider, .lui-home .lui-gh .font-mono { display: none; }
+  .lui-home .stab { min-width: 84px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lui-home .demo,
+  .lui-home .stage .meta .live::before { animation: none; }
+  .lui-home .win-body,
+  .lui-home .nav-shell,
+  .lui-home .nav { transition: none; }
 }
