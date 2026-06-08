@@ -319,7 +319,8 @@ export function SpectralCard({
     frameY: QuickTo;
     rotationX: QuickTo;
     rotationY: QuickTo;
-    scale: QuickTo;
+    scaleX: QuickTo;
+    scaleY: QuickTo;
   } | null>(null);
 
   useGSAP(
@@ -340,7 +341,8 @@ export function SpectralCard({
         y: 0,
         rotationX: 0,
         rotationY: 0,
-        scale: 1.06,
+        scaleX: 1.06,
+        scaleY: 1.06,
       });
 
       gsapDriveRef.current = {
@@ -360,7 +362,11 @@ export function SpectralCard({
           duration: frameTime,
           ease,
         }),
-        scale: gsap.quickTo(frame, "scale", {
+        scaleX: gsap.quickTo(frame, "scaleX", {
+          duration: frameTime,
+          ease,
+        }),
+        scaleY: gsap.quickTo(frame, "scaleY", {
           duration: frameTime,
           ease,
         }),
@@ -625,7 +631,9 @@ export function SpectralCard({
     drive.frameY(active ? dy * liftAmount : 0);
     drive.rotationX(active ? -dy * tiltAmount : 0);
     drive.rotationY(active ? dx * tiltAmount : 0);
-    drive.scale(active ? 1.06 + 0.025 * strength : 1.06);
+    const scaleTarget = active ? 1.06 + 0.025 * strength : 1.06;
+    drive.scaleX(scaleTarget);
+    drive.scaleY(scaleTarget);
   };
 
   const toneSpec = TONES[tone] ?? TONES.ember;
