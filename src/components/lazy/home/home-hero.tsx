@@ -1,7 +1,13 @@
 "use client";
 
 import Lenis from "lenis";
-import { motion, useMotionValue, useSpring, type MotionValue } from "motion/react";
+import {
+  AnimatePresence,
+  motion,
+  useMotionValue,
+  useSpring,
+  type MotionValue,
+} from "motion/react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import {
@@ -41,6 +47,7 @@ const GH_REPO = "lazy-ui";
 
 const HERO_EASE = [0.23, 1, 0.32, 1] as const;
 const PARALLAX_INTENSITY = 20;
+const LOADER_LOGO = 56;
 
 // ── Icons ────────────────────────────────────────────────────────────────
 
@@ -333,8 +340,13 @@ function HeroBackground({
 export function HomeHero() {
   const [theme, setTheme] = useState<Theme>("light");
 
-  // First-load intro cover, then the staggered reveal.
-  const [loaded, setLoaded] = useState(false);
+  // First-load intro: a cover whose logo flies into the header logo slot.
+  const [done, setDone] = useState(false); // flight landed → lift the cover
+  const [flight, setFlight] = useState<{ x: number; y: number; scale: number } | null>(
+    null,
+  );
+  const headerBrandRef = useRef<HTMLAnchorElement>(null);
+  const flyRef = useRef<HTMLDivElement>(null);
   // Reveal sequence: 1 = pill, 2 = title, 3 = description, 4 = CTA + counters.
   const [step, setStep] = useState(0);
   // Bumped only on a user theme toggle, so the background sweeps then (not on
@@ -448,15 +460,36 @@ export function HomeHero() {
     el.classList.add("demo");
   }, [current, reloadKey]);
 
-  // Initial page-load intro: hold a cover briefly, then lift it.
+  // Initial intro: hold briefly, then measure the header logo slot and fly the
+  // cover's logo into it. Reduced motion skips straight to the docked state.
   useEffect(() => {
-    const t = window.setTimeout(() => setLoaded(true), 650);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const t = window.setTimeout(() => setDone(true), 0);
+      return () => clearTimeout(t);
+    }
+    // Hold while the cluster "draws", then measure the header brand slot and
+    // glide the whole cluster (mark + wordmark) into it.
+    const t = window.setTimeout(() => {
+      const fly = flyRef.current;
+      const target = headerBrandRef.current;
+      if (fly && target) {
+        const fr = fly.getBoundingClientRect();
+        const tr = target.getBoundingClientRect();
+        setFlight({
+          x: tr.left + tr.width / 2 - (fr.left + fr.width / 2),
+          y: tr.top + tr.height / 2 - (fr.top + fr.height / 2),
+          scale: tr.width / fr.width,
+        });
+      } else {
+        setDone(true);
+      }
+    }, 1300);
     return () => clearTimeout(t);
   }, []);
 
-  // Sequential reveal (RevealAnimate sweeps) once the intro lifts: title → desc.
+  // Sequential reveal (RevealAnimate sweeps) once the cover lifts: title → desc.
   useEffect(() => {
-    if (!loaded) return;
+    if (!done) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       // Reduced motion: reveal everything at once (intentional one-shot).
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -467,7 +500,7 @@ export function HomeHero() {
       window.setTimeout(() => setStep(i + 1), delay),
     );
     return () => timers.forEach(clearTimeout);
-  }, [loaded]);
+  }, [done]);
 
   // ── Tab navigation ──
   const navTo = useCallback(
@@ -530,7 +563,13 @@ export function HomeHero() {
           <CornerSvg className="home-corner home-corner--left" />
           <CornerSvg className="home-corner home-corner--right" />
           <div className="nav">
-            <Link className="brand" href="/" aria-label="Lazy UI home">
+            <Link
+              ref={headerBrandRef}
+              className="brand"
+              href="/"
+              aria-label="Lazy UI home"
+              style={{ opacity: done ? 1 : 0 }}
+            >
               <span className="mark">
                 <BrandMark size={25} />
               </span>
@@ -792,20 +831,49 @@ export function HomeHero() {
         </section>
       </main>
 
-      {/* First-load intro cover — fades out once mounted. */}
-      <div className={`lui-loader${loaded ? " is-done" : ""}`} aria-hidden="true">
-        <div className="lui-loader-inner">
-          <span className="lui-loader-mark">
-            <BrandMark size={42} />
-          </span>
-          <span className="lui-loader-word">
-            <b>Lazy</b> UI
-          </span>
-          <span className="lui-loader-bar">
-            <i />
-          </span>
-        </div>
-      </div>
+      {/* First-load intro — the logo flies into the header logo slot, then the
+          cover lifts (mechanism inspired by animate-ui's radial intro). */}
+      <AnimatePresence>
+        {!done && (
+          <motion.div
+            key="lui-loader"
+            className="lui-loader-root"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.55, ease: HERO_EASE }}
+            aria-hidden="true"
+          >
+            <div className="lui-loader-stage">
+              {/* The whole brand cluster glides into the header slot… */}
+              <motion.div
+                ref={flyRef}
+                className="lui-loader-fly"
+                initial={{ x: 0, y: 0, scale: 1 }}
+                animate={flight ?? { x: 0, y: 0, scale: 1 }}
+                transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1] }}
+                onAnimationComplete={() => {
+                  if (flight) setDone(true);
+                }}
+              >
+                {/* …and "draws" in with a left-to-right wipe first. */}
+                <motion.div
+                  className="lui-loader-cluster"
+                  initial={{ clipPath: "inset(0 100% 0 0)", filter: "blur(6px)", opacity: 0.5 }}
+                  animate={{ clipPath: "inset(0 0% 0 0)", filter: "blur(0px)", opacity: 1 }}
+                  transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+                >
+                  <span className="lui-loader-mark">
+                    <BrandMark size={LOADER_LOGO} />
+                  </span>
+                  <span className="lui-loader-word">
+                    <b>Lazy</b> UI
+                  </span>
+                </motion.div>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
