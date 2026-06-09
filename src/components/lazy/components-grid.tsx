@@ -328,6 +328,34 @@ const PREVIEW_FOR: Record<string, ComponentType> = {
       );
     };
   }),
+  "border-glow": lazyPreview(async () => {
+    const { BorderGlow } = await import("@/components/lazy-ui/border-glow");
+    return function BorderGlowPreview() {
+      return (
+        <div className="absolute inset-0 flex items-center justify-center bg-[radial-gradient(circle_at_50%_30%,#141016_0%,#050505_70%)] p-6">
+          <BorderGlow
+            mode="auto"
+            colors={["#a78bfa", "#f0abfc", "#67e8f9"]}
+            radius={16}
+            thickness={1.5}
+            coneSpread={64}
+            glowSize={18}
+            sparkleCount={5}
+            className="w-full max-w-[220px]"
+          >
+            <div className="flex flex-col gap-1.5 p-5">
+              <span className="text-[9px] font-medium tracking-[0.2em] text-white/55 uppercase">
+                Border glow
+              </span>
+              <span className="text-base font-semibold tracking-tight text-white">
+                Built to feel finished.
+              </span>
+            </div>
+          </BorderGlow>
+        </div>
+      );
+    };
+  }),
   "circle-cipher": lazyPreview(async () => {
     const { CircleCipher } = await import(
       "@/components/lazy-ui/circle-cipher"

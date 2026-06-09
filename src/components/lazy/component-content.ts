@@ -5031,6 +5031,135 @@ export function Demo() {
       },
     ],
   },
+  "border-glow": {
+    componentName: "BorderGlow",
+    usageCode: `import { BorderGlow } from "@/components/lazy-ui/border-glow";
+
+// In "cursor" mode every card listens to the pointer, so a whole grid
+// lights up wherever the cursor goes — not just the card under it.
+export function Demo() {
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      {["Own every line.", "Install via URL.", "Animated by default.", "Typed & accessible."].map(
+        (title) => (
+          <BorderGlow
+            key={title}
+            mode="cursor"
+            cursorRadius={180}
+            colors={["#a78bfa", "#f0abfc", "#67e8f9"]}
+            radius={16}
+          >
+            <div className="p-6">
+              <h3 className="text-base font-semibold text-white">{title}</h3>
+            </div>
+          </BorderGlow>
+        ),
+      )}
+    </div>
+  );
+}`,
+    api: [
+      {
+        name: "mode",
+        type: '"auto" | "cursor" | "hover"',
+        default: '"auto"',
+        description:
+          '"auto" sweeps a soft gradient arc around the border on a loop. "cursor" points the arc toward the pointer and fades it in by proximity even from outside the card — so a whole grid lights up at once. "hover" does the same but only while the pointer is over this card.',
+      },
+      {
+        name: "colors",
+        type: "string[]",
+        default: '["#a78bfa","#f0abfc","#67e8f9"]',
+        description:
+          "Colors blended around the border ring. The travelling arc reveals whichever stretch it passes over. Two or more read best.",
+      },
+      {
+        name: "thickness",
+        type: "number",
+        default: "1.5",
+        description: "Border width in CSS pixels.",
+      },
+      {
+        name: "radius",
+        type: "number",
+        default: "20",
+        description: "Corner radius in CSS pixels, inherited by every layer.",
+      },
+      {
+        name: "coneSpread",
+        type: "number",
+        default: "58",
+        description:
+          "Half-width of the lit arc in degrees. Smaller values give a tight comet; larger ones light most of the rim.",
+      },
+      {
+        name: "glowSize",
+        type: "number",
+        default: "22",
+        description:
+          "Outer glow blur radius in CSS pixels — the soft halo around the lit arc. 0 keeps just the crisp arc with no halo.",
+      },
+      {
+        name: "intensity",
+        type: "number",
+        default: "1",
+        description:
+          "Overall brightness multiplier for the arc and its glow. Lower keeps the effect subtle.",
+      },
+      {
+        name: "speed",
+        type: "number",
+        default: "1",
+        description: "Sweep speed multiplier — auto mode only.",
+      },
+      {
+        name: "cursorRadius",
+        type: "number",
+        default: "200",
+        description:
+          "Cursor mode only. Activation distance in CSS pixels measured from the card's edges — the arc lights within this distance and fades out beyond it.",
+      },
+      {
+        name: "bling",
+        type: "boolean",
+        default: "true",
+        description:
+          "Toggle the bling — twinkles that appear only while the card is hovered, clustered at the lit border point (not across the whole card). Suppressed under reduced motion.",
+      },
+      {
+        name: "sparkleCount",
+        type: "number",
+        default: "8",
+        description: "How many bling twinkles to render. 0 disables them.",
+      },
+      {
+        name: "seed",
+        type: "number",
+        default: "1",
+        description:
+          "Seed for the bling offsets. The same seed renders the same scatter, so it stays hydration-stable.",
+      },
+      {
+        name: "background",
+        type: "string",
+        default: '"#0b0b0f"',
+        description:
+          "Inner surface fill behind the content. Keep it dark so the border and glow read against it.",
+      },
+      {
+        name: "children",
+        type: "ReactNode",
+        default: "—",
+        description: "Content rendered on the inner surface.",
+      },
+      {
+        name: "className",
+        type: "string",
+        default: "—",
+        description: "Extra class names merged onto the root container.",
+      },
+    ],
+  },
 };
 
 export function contentFor(slug: string): ComponentContent | undefined {

@@ -20,6 +20,7 @@ import { customize as switchCustomize } from "./component/switch/customize";
 
 // animate/
 import { customize as blingTransition } from "./animate/bling-transition/customize";
+import { customize as borderGlow } from "./animate/border-glow/customize";
 import { customize as circleCipher } from "./animate/circle-cipher/customize";
 import { customize as counter } from "./animate/counter/customize";
 import { customize as liquidReveal } from "./animate/liquid-reveal/customize";
@@ -81,6 +82,7 @@ export const CUSTOM_CONFIGS: Record<string, CustomizeControl[]> = {
   switch: switchCustomize,
   // animate/
   "bling-transition": blingTransition,
+  "border-glow": borderGlow,
   "circle-cipher": circleCipher,
   counter,
   "liquid-reveal": liquidReveal,

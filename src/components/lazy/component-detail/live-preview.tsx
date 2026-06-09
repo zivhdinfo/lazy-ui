@@ -19,6 +19,7 @@ import { Preview as Switch } from "./component/switch/preview";
 
 // animate/
 import { Preview as BlingTransition } from "./animate/bling-transition/preview";
+import { Preview as BorderGlow } from "./animate/border-glow/preview";
 import { Preview as CircleCipher } from "./animate/circle-cipher/preview";
 import { Preview as Counter } from "./animate/counter/preview";
 import { Preview as LiquidReveal } from "./animate/liquid-reveal/preview";
@@ -83,6 +84,7 @@ const PREVIEWS: Record<string, PreviewComponent> = {
   switch: Switch,
   // animate/
   "bling-transition": BlingTransition,
+  "border-glow": BorderGlow,
   "circle-cipher": CircleCipher,
   counter: Counter,
   "liquid-reveal": LiquidReveal,

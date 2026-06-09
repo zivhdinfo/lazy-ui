@@ -435,6 +435,16 @@ export const components: ComponentItem[] = [
     status: "published",
   },
   {
+    slug: "border-glow",
+    title: "Border Glow",
+    description:
+      "A conic gradient border that spins, with a brighter comet sweep, edge twinkles, an ambient halo, and a cursor-tracked highlight. Honors reduced motion.",
+    category: "Animate",
+    target: "components/lazy-ui/border-glow/border-glow.tsx",
+    status: "published",
+    dependencies: ["motion"],
+  },
+  {
     slug: "stack-list",
     title: "Stack List",
     description:

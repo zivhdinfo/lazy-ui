@@ -39,6 +39,7 @@ export const STAGE_MIN_HEIGHT: Record<string, number> = {
   "ripple-surface": 560,
   "liquid-chrome": 560,
   "bling-transition": 560,
+  "border-glow": 680,
   "particle-halo": 560,
   "liquid-reveal": 560,
   "liquid-transition": 560,

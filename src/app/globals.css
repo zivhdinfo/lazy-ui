@@ -5810,6 +5810,10 @@ pre .v { color: #67e8f9; }
   --dot: #e0e0dd;
   --frame: #ffffff;
   --ring: rgba(12, 12, 13, 0.1);
+  /* Border-glow arc — monochrome gray→black gradient on the white tiles. */
+  --glow-1: #71717a;
+  --glow-2: #3f3f46;
+  --glow-3: #09090b;
   --shadow: 0 1px 2px rgba(12, 12, 13, 0.05), 0 22px 60px -20px rgba(12, 12, 13, 0.22);
   --shadow-sm: 0 1px 1px rgba(12, 12, 13, 0.05);
 
@@ -5841,6 +5845,10 @@ pre .v { color: #67e8f9; }
   --dot: #202024;
   --frame: #000000;
   --ring: rgba(255, 255, 255, 0.12);
+  /* Border-glow arc — monochrome gray→white gradient on the dark surface. */
+  --glow-1: #71717a;
+  --glow-2: #a1a1aa;
+  --glow-3: #fafafa;
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 30px 70px -24px rgba(0, 0, 0, 0.78);
   --shadow-sm: 0 1px 0 rgba(255, 255, 255, 0.03) inset;
 }
@@ -5969,6 +5977,30 @@ pre .v { color: #67e8f9; }
    window below (saas-style). Layout/spacing are Tailwind utilities in
    home-hero.tsx; only leaf typography/component styling lives here. */
 .lui-home .hero { position: relative; }
+
+/* Hero → "Why" seam: dissolve the parallax background image into the page
+   canvas so the bottom edge never reads as a hard line. The fade sits between
+   the bg (-z-10) and the copy (z auto), so it only touches the image — the
+   masked Safari window above it is already transparent by this point. Eased,
+   multi-stop so the dissolve is gradual instead of snapping at a single stop;
+   paired with the cover panel on .features below for a seamless overlap. */
+.lui-home .hero::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: -1px;
+  height: 340px;
+  z-index: -5;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    color-mix(in srgb, var(--bg) 40%, transparent) 42%,
+    color-mix(in srgb, var(--bg) 78%, transparent) 68%,
+    color-mix(in srgb, var(--bg) 96%, transparent) 86%,
+    var(--bg) 100%
+  );
+  pointer-events: none;
+}
 
 .lui-home .eyebrow {
   display: inline-flex; align-items: center; gap: 9px;
@@ -6284,4 +6316,139 @@ pre .v { color: #67e8f9; }
   .lui-home .win-body,
   .lui-home .nav-shell,
   .lui-home .nav { transition: none; }
+}
+
+/* ── "Why" feature strip: bento of value claims (DESIGN.md §8). Sits below the
+   hero on the page canvas; all colors inherit the .lui-home tokens. ── */
+.lui-home .features {
+  position: relative;
+  isolation: isolate;
+  background: var(--bg);
+  padding: 40px 0 120px;
+}
+/* Seam cover: a --bg panel that reaches up into the hero's faded tail and
+   masks the join. Transparent at its top so the cover has no hard edge of its
+   own, and fully opaque --bg before it reaches the features content. Sits on a
+   negative layer (above the hero image, below the bento) thanks to the
+   stacking context above; paired with the hero's downward fade, the overlap
+   reads as one continuous surface rather than two abutting sections. */
+.lui-home .features::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: -200px;
+  height: 240px;
+  z-index: -1;
+  background: linear-gradient(to bottom, transparent 0%, var(--bg) 60%);
+  pointer-events: none;
+}
+.lui-home .features-head { max-width: 640px; margin-bottom: 40px; }
+.lui-home .features-title {
+  margin: 14px 0 0; font-size: 34px; font-weight: 600;
+  letter-spacing: -0.02em; line-height: 1.05; color: var(--text);
+}
+.lui-home .features-lead {
+  margin: 14px 0 0; font-size: 16px; line-height: 1.55; color: var(--text-2);
+}
+
+.lui-home .bento {
+  display: grid; grid-template-columns: repeat(6, 1fr);
+  grid-auto-rows: minmax(150px, auto); gap: 12px;
+}
+/* Each tile is a BorderGlow: the motion wrapper (glow-cell) owns the grid span
+   and the hover lift, the glow (glow-card) fills it, and tile-inner carries the
+   resting 1px border + padding so the card reads before the cursor lights it. */
+.lui-home .glow-cell {
+  display: flex;
+  transition: transform 0.22s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+.lui-home .glow-cell:hover { transform: translateY(-2px); }
+.lui-home .glow-card { flex: 1; min-width: 0; height: 100%; }
+.lui-home .tile-inner {
+  position: relative; display: flex; flex-direction: column;
+  height: 100%; padding: 22px; border-radius: 20px;
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+.lui-home .tile-inner--anchor { justify-content: space-between; }
+.lui-home .tile-inner--cap { justify-content: center; gap: 8px; }
+
+/* Auto-placement does the mosaic: anchor (3×2) at top-left, two wide (×3)
+   stack on its right, three capsules (×2) fill the last row. */
+.lui-home .tile--anchor { grid-column: span 3; grid-row: span 2; }
+.lui-home .tile--wide { grid-column: span 3; }
+.lui-home .tile--cap { grid-column: span 2; }
+
+.lui-home .tile-eyebrow {
+  font-family: var(--font-jetbrains), ui-monospace, monospace;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text-3);
+}
+.lui-home .tile-title {
+  margin: 12px 0 0; font-size: 24px; font-weight: 600;
+  letter-spacing: -0.015em; line-height: 1.15; color: var(--text);
+}
+.lui-home .tile-title--sm { font-size: 18px; letter-spacing: -0.01em; }
+.lui-home .tile-body {
+  margin: 10px 0 0; font-size: 13px; line-height: 1.55; color: var(--text-2);
+}
+.lui-home .tile-code {
+  font-family: var(--font-jetbrains), ui-monospace, monospace;
+  font-size: 12px; color: var(--text);
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 5px; padding: 1px 5px;
+}
+
+/* Anchor snippet — a faux install command pinned to the bottom of the tile. */
+.lui-home .tile-snippet {
+  display: flex; align-items: center; gap: 9px; margin-top: 24px;
+  font-size: 12.5px; color: var(--text-2);
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 9px; padding: 11px 13px;
+}
+.lui-home .tile-snippet .snip-prompt { color: var(--text-3); }
+.lui-home .tile-snippet .snip-em { color: var(--text); font-weight: 500; }
+
+/* Motion tile — bars that pulse on the DESIGN 2.4s loop. */
+.lui-home .tile-bars {
+  display: flex; align-items: flex-end; gap: 6px;
+  height: 34px; margin-top: auto; padding-top: 16px;
+}
+.lui-home .tile-bars span {
+  flex: 1; border-radius: 3px; background: var(--text);
+  opacity: 0.18; transform-origin: bottom;
+  animation: lui-bar 2.4s var(--ease-in-out, cubic-bezier(0.65, 0, 0.35, 1)) infinite;
+}
+.lui-home .tile-bars span:nth-child(2) { animation-delay: 0.18s; }
+.lui-home .tile-bars span:nth-child(3) { animation-delay: 0.36s; }
+.lui-home .tile-bars span:nth-child(4) { animation-delay: 0.54s; }
+.lui-home .tile-bars span:nth-child(5) { animation-delay: 0.72s; }
+@keyframes lui-bar {
+  0%, 100% { transform: scaleY(0.35); opacity: 0.16; }
+  50% { transform: scaleY(1); opacity: 0.4; }
+}
+
+/* Capsule stat — big number / wordmark, label beneath. */
+.lui-home .tile-stat {
+  font-size: 40px; font-weight: 600; letter-spacing: -0.03em;
+  line-height: 1; color: var(--text);
+}
+
+/* Tablet: collapse the 6-col mosaic into a 2-col stack. */
+@media (max-width: 850px) {
+  .lui-home .features { padding: 24px 0 80px; }
+  .lui-home .features-title { font-size: 28px; }
+  .lui-home .bento { grid-template-columns: repeat(2, 1fr); }
+  .lui-home .tile--anchor,
+  .lui-home .tile--wide,
+  .lui-home .tile--cap { grid-column: span 2; grid-row: auto; }
+}
+/* Phone: single column. */
+@media (max-width: 640px) {
+  .lui-home .bento { grid-template-columns: 1fr; }
+  .lui-home .tile--anchor,
+  .lui-home .tile--wide,
+  .lui-home .tile--cap { grid-column: span 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lui-home .tile-bars span { animation: none; opacity: 0.28; transform: scaleY(0.7); }
 }

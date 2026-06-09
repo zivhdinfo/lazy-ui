@@ -36,6 +36,8 @@ import type { ComponentItem } from "@/registry/types";
 import { BrandMark } from "../brand-mark";
 import { NEW_SLUGS } from "../sidebar";
 
+import { HomeFeatures } from "./home-features";
+
 // Self-contained Lazy UI home surface (header + split hero + a macOS Safari
 // window that swaps real registry components). Light/dark follows the system
 // and persists a manual toggle. All styling lives under `.lui-home`.
@@ -845,6 +847,8 @@ export function HomeHero() {
             </div>
           </motion.div>
         </section>
+
+        <HomeFeatures />
       </main>
 
       {/* First-load intro — the logo flies into the header logo slot, then the
