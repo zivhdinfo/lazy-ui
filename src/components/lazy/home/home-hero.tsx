@@ -40,6 +40,8 @@ import { BrandMark } from "../brand-mark";
 import { NEW_SLUGS } from "../sidebar";
 
 import { HomeFeatures } from "./home-features";
+import { HomeFooter } from "./home-footer";
+import { DiscordIcon } from "./home-icons";
 import { HomeMarquee } from "./home-marquee";
 
 // Self-contained Lazy UI home surface (header + split hero + a macOS Safari
@@ -64,6 +66,10 @@ const LOADER_LOGO = 56;
 // sweep so the one announcement of fresh work catches the eye. The colors blend
 // around the border arc as it sweeps (BorderGlow auto mode).
 const NEW_PILL_GLOW = ["#a78bfa", "#f0abfc", "#67e8f9"];
+
+// Discord brand palette for the header Community button's glow arc.
+const DISCORD_GLOW = ["#5865f2", "#8c9eff", "#404eed"];
+const DISCORD_INVITE = "https://discord.gg/gCqzeefZ8M";
 
 // Hero copy entrance — the saas signature: a staggered vertical blur fade-up
 // (opacity + y + blur resolve together), driven by a parent stagger container.
@@ -613,14 +619,29 @@ export function HomeHero() {
               <Link href="/docs">Docs</Link>
             </nav>
             <div className="nav-right">
-              <button className="search" aria-label="Search components">
-                <Svg style={{ width: 13, height: 13 }} strokeWidth={2}>
-                  <circle cx="11" cy="11" r="8" />
-                  <path d="m21 21-4.3-4.3" />
-                </Svg>
-                Search
-                <span className="kbd mono">⌘K</span>
-              </button>
+              <BorderGlow
+                mode="auto"
+                colors={DISCORD_GLOW}
+                background="var(--panel)"
+                radius={9}
+                thickness={1.5}
+                coneSpread={42}
+                glowSize={10}
+                intensity={1}
+                speed={0.9}
+                bling={false}
+                className="nav-community-glow"
+              >
+                <a
+                  href={DISCORD_INVITE}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="nav-community"
+                >
+                  <DiscordIcon width={15} height={15} />
+                  Community
+                </a>
+              </BorderGlow>
               <button className="icon-btn" onClick={toggleTheme} aria-label="Toggle theme">
                 <Svg className="sun">
                   <circle cx="12" cy="12" r="4" />
@@ -895,6 +916,8 @@ export function HomeHero() {
         <HomeFeatures />
 
         <HomeMarquee />
+
+        <HomeFooter />
       </main>
 
       {/* First-load intro — the logo flies into the header logo slot, then the
