@@ -20,7 +20,7 @@ export function Preview({ values }: { values: CustomizeValues }) {
       />
       <label
         htmlFor="checkbox-preview"
-        className="text-sm text-neutral-200 select-none"
+        className="text-sm text-[var(--text)] select-none"
       >
         Accept terms and conditions
       </label>

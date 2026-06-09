@@ -295,7 +295,7 @@ const PREVIEW_FOR: Record<string, ComponentType> = {
           value={count}
           separator=","
           effect="3d"
-          className="text-3xl font-semibold tracking-normal text-neutral-100"
+          className="text-3xl font-semibold tracking-normal text-[var(--text)]"
         />
       );
     };
@@ -306,7 +306,7 @@ const PREVIEW_FOR: Record<string, ComponentType> = {
     );
     return function RevealAnimatePreview() {
       return (
-        <RevealAnimate className="text-lg font-light text-neutral-100">
+        <RevealAnimate className="text-lg font-light text-[var(--text)]">
           Reveal me
         </RevealAnimate>
       );
@@ -511,7 +511,7 @@ const PREVIEW_FOR: Record<string, ComponentType> = {
     );
     return function ShinyTextPreview() {
       return (
-        <ShinyText className="text-2xl font-semibold text-neutral-100">
+        <ShinyText className="text-2xl font-semibold text-[var(--text)]">
           Shiny Text
         </ShinyText>
       );
@@ -526,7 +526,7 @@ const PREVIEW_FOR: Record<string, ComponentType> = {
         <SpinningText
           radius={4}
           duration={12}
-          className="text-xs font-medium text-neutral-200"
+          className="text-xs font-medium text-[var(--text)]"
         >
           {"lazy-ui • build lazily • "}
         </SpinningText>
@@ -542,7 +542,7 @@ const PREVIEW_FOR: Record<string, ComponentType> = {
         <TextFlip
           text="Hover to flip"
           trigger="hover"
-          className="cursor-default text-2xl font-light text-neutral-100"
+          className="cursor-default text-2xl font-light text-[var(--text)]"
         />
       );
     };
@@ -555,7 +555,7 @@ const PREVIEW_FOR: Record<string, ComponentType> = {
       return (
         <TextRise
           text="Rise up"
-          className="text-2xl font-light text-neutral-100"
+          className="text-2xl font-light text-[var(--text)]"
         />
       );
     };
@@ -569,7 +569,7 @@ const PREVIEW_FOR: Record<string, ComponentType> = {
         <TextScramble
           text="Scramble"
           trigger="hover"
-          className="cursor-default text-2xl font-light text-neutral-100"
+          className="cursor-default text-2xl font-light text-[var(--text)]"
         />
       );
     };
@@ -582,7 +582,7 @@ const PREVIEW_FOR: Record<string, ComponentType> = {
       return (
         <TextSpin
           text="Spin"
-          className="text-2xl font-light text-neutral-100"
+          className="text-2xl font-light text-[var(--text)]"
         />
       );
     };
@@ -595,7 +595,7 @@ const PREVIEW_FOR: Record<string, ComponentType> = {
       return (
         <TextWarp
           text="Warp"
-          className="text-2xl font-light text-neutral-100"
+          className="text-2xl font-light text-[var(--text)]"
         />
       );
     };
@@ -840,7 +840,7 @@ const PREVIEW_FOR: Record<string, ComponentType> = {
 
 function TabPanel({ label }: { label: string }) {
   return (
-    <div className="flex h-20 items-center justify-center text-xs text-neutral-400">
+    <div className="flex h-20 items-center justify-center text-xs text-[var(--text-2)]">
       {label} pane
     </div>
   );
@@ -923,16 +923,25 @@ function ShowcaseCard({
           variant="dashed"
           size={40}
           dotSize={3}
-          color="rgba(255,255,255,0.08)"
+          color="var(--preview-grid)"
           style={{ zIndex: -1 }}
         />
         {mounted && Preview ? <Preview /> : <PreviewSkeleton />}
       </div>
-      <Link
-        href={`/components/${item.slug}`}
-        className="showcase-title-overlay"
-      >
-        <span className="showcase-title-overlay-text">{item.title}</span>
+      <Link href={`/components/${item.slug}`} className="showcase-foot">
+        <span className="showcase-foot-name">{item.title}</span>
+        <svg
+          className="showcase-foot-arrow"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M7 17 17 7M7 7h10v10" />
+        </svg>
       </Link>
     </div>
   );

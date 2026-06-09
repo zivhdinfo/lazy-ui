@@ -13,7 +13,7 @@ export function Preview({ values }: { values: CustomizeValues }) {
         intensity={(values.intensity ?? 0.32) as number}
         variant={(values.variant ?? "beam") as ShinyTextVariant}
         disabled={(values.disabled ?? false) as boolean}
-        className="text-5xl font-semibold text-neutral-100"
+        className="text-5xl font-semibold text-[var(--text)]"
       >
         Shiny Text
       </ShinyText>

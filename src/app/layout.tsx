@@ -7,6 +7,10 @@ import {
 } from "next/font/google";
 
 import "./globals.css";
+// Docs/component surface (.lui-docs). Imported as a route stylesheet — not via
+// an @import inside globals.css — so it is render-blocking and bundled, never
+// applying a frame late (which briefly flashed the old layout on first paint).
+import "./lui-docs.css";
 
 // Primary UI face for the whole project. Next.js emits a size-adjusted
 // "Outfit Fallback" automatically, so the resolved stack is
@@ -93,6 +97,12 @@ export const metadata: Metadata = {
   category: "technology",
 };
 
+// Resolve the persisted theme (shared "lazyui-theme" key) and write it to
+// <html data-theme> before first paint. The docs surface (.lui-docs) keys its
+// light/dark tokens off this attribute, so navigating between docs routes never
+// flashes the wrong theme. Runs synchronously, ahead of hydration.
+const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem('lazyui-theme');if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.dataset.theme=t;}catch(e){}})();`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -101,9 +111,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`dark h-full antialiased ${outfit.variable} ${geistMono.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable}`}
     >
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        {children}
+      </body>
     </html>
   );
 }

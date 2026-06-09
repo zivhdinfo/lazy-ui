@@ -27,7 +27,7 @@ export function Preview({ values }: { values: CustomizeValues }) {
         stagger={stagger}
         duration={duration}
         perspective={perspective}
-        className="cursor-default text-5xl font-light text-neutral-100"
+        className="cursor-default text-5xl font-light text-[var(--text)]"
       />
     </div>
   );

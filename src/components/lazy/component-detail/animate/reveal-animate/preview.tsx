@@ -9,7 +9,7 @@ export function Preview({ values }: { values: CustomizeValues }) {
         trigger={(values.trigger ?? true) as boolean}
         from={(values.from ?? "left") as "left" | "right"}
         duration={(values.duration ?? 450) as number}
-        className="text-2xl font-light text-neutral-100"
+        className="text-2xl font-light text-[var(--text)]"
       >
         Reveal me, hide me.
       </RevealAnimate>

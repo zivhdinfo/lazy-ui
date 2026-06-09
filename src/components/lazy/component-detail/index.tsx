@@ -387,8 +387,8 @@ export function ComponentDetail({
               <CodeIcon />
               <span>Code</span>
             </ToolbarButton>
-            <span aria-hidden className="mx-1 h-4 w-px bg-white/10" />
-            <span className="flex min-w-0 items-center gap-1.5 font-mono text-[12px] text-neutral-400">
+            <span aria-hidden className="mx-1 h-4 w-px bg-[var(--border)]" />
+            <span className="flex min-w-0 items-center gap-1.5 font-mono text-[12px] text-[var(--text-2)]">
               <span className="max-w-[280px] truncate">{component.slug}</span>
               <CopyButton
                 content={cmd}
@@ -396,7 +396,7 @@ export function ComponentDetail({
                 textAs="tooltip"
                 label={`Copy ${pm} install command`}
                 iconAnimate="draw"
-                className="text-neutral-500 hover:text-white"
+                className="text-[var(--text-3)] hover:text-[var(--text)]"
               />
             </span>
           </div>
@@ -412,7 +412,7 @@ export function ComponentDetail({
             <div
               role="group"
               aria-label="Preview device"
-              className="inline-flex items-center gap-0.5 rounded-lg border border-white/10 bg-white/[0.02] p-0.5"
+              className="inline-flex items-center gap-0.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] p-0.5"
             >
               <DeviceButton
                 active={activeDevice === "desktop"}
@@ -442,7 +442,7 @@ export function ComponentDetail({
               disabled={isRecording}
               aria-label="Reset preview"
               title="Reset preview"
-              className="inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border border-white/10 bg-white/[0.02] text-neutral-400 transition-colors hover:bg-white/[0.06] hover:text-white disabled:cursor-not-allowed disabled:opacity-45"
+              className="inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--text-2)] transition-colors hover:bg-[var(--panel)] hover:text-[var(--text)] disabled:cursor-not-allowed disabled:opacity-45"
             >
               <RefreshIcon />
             </button>
@@ -468,7 +468,7 @@ export function ComponentDetail({
                 "relative inline-flex h-7 cursor-pointer items-center justify-center overflow-hidden rounded-lg border transition-colors",
                 isRecording
                   ? "min-w-[66px] gap-1 border-red-500/40 bg-red-500/10 px-2 text-red-200 hover:bg-red-500/15"
-                  : "w-7 border-white/10 bg-white/[0.02] text-neutral-400 hover:bg-white/[0.06] hover:text-white",
+                  : "w-7 border-[var(--border)] bg-[var(--surface)] text-[var(--text-2)] hover:bg-[var(--panel)] hover:text-[var(--text)]",
                 mode !== "preview" || (!canRecordPreview && !isRecording)
                   ? "cursor-not-allowed opacity-45"
                   : "",
@@ -495,7 +495,7 @@ export function ComponentDetail({
         {mode === "preview" ? (
           <div
             ref={stageRef}
-            className="relative rounded-3xl border border-white/10 bg-white/[0.02]"
+            className="relative rounded-3xl border border-[var(--border)] bg-[var(--surface)]"
             style={{ minHeight: STAGE_MIN_HEIGHT[component.slug] ?? 500 }}
           >
             {/* Dotted grid background — SVG-based, stays crisp at any zoom. */}
@@ -503,7 +503,7 @@ export function ComponentDetail({
               variant="dots"
               size={20}
               dotSize={3}
-              color="rgba(255,255,255,0.08)"
+              color="var(--preview-grid)"
               className="rounded-3xl"
             />
 
@@ -511,7 +511,7 @@ export function ComponentDetail({
             <div
               ref={previewFrameRef}
               data-preview-frame
-              className="absolute inset-y-0 left-0 z-10 flex items-center justify-center overflow-hidden rounded-3xl bg-black"
+              className="absolute inset-y-0 left-0 z-10 flex items-center justify-center overflow-hidden rounded-3xl bg-[var(--preview-bg)]"
               style={{
                 width: width === null ? "100%" : `${width}px`,
                 transition: dragging ? "none" : "width 0.3s ease-in-out",
@@ -536,7 +536,7 @@ export function ComponentDetail({
               onMouseEnter={() => setHoverHandle(true)}
               onMouseLeave={() => setHoverHandle(false)}
               className={`absolute top-1/2 z-20 -ml-3 flex h-[120px] w-6 -translate-y-1/2 cursor-ew-resize items-center justify-center transition-colors ${
-                dragging || hoverHandle ? "text-white" : "text-white/30"
+                dragging || hoverHandle ? "text-[var(--text)]" : "text-[var(--text-3)]"
               }`}
               style={{
                 left: width === null ? "100%" : `${width}px`,
@@ -556,7 +556,7 @@ export function ComponentDetail({
             </div>
           </div>
         ) : (
-          <div className="preview-shell-code overflow-hidden rounded-xl border border-white/10 bg-black">
+          <div className="preview-shell-code overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)]">
             {sourceBlock}
           </div>
         )}

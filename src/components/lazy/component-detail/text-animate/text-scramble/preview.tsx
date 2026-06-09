@@ -25,7 +25,7 @@ export function Preview({ values }: { values: CustomizeValues }) {
         tickMs={tickMs}
         charset={charset}
         replayKey={replayKey}
-        className="cursor-default text-3xl font-mono text-neutral-100"
+        className="cursor-default text-3xl font-mono text-[var(--text)]"
       />
     </div>
   );

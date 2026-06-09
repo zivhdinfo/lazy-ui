@@ -22,7 +22,7 @@ export function Preview({ values }: { values: CustomizeValues }) {
         key={key}
         text="Rise into place."
         {...p}
-        className="text-5xl font-light text-neutral-100"
+        className="text-5xl font-light text-[var(--text)]"
       />
     </div>
   );

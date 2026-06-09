@@ -1,15 +1,15 @@
 import type { ReactNode } from "react";
 
-import { LazyShell } from "./lazy-shell";
+import { DocsChrome } from "./docs-chrome";
 import { Sidebar } from "./sidebar";
 
 export function DocsShell({ children }: { children: ReactNode }) {
   return (
-    <LazyShell>
+    <DocsChrome>
       <div className="shell">
         <Sidebar />
         {children}
       </div>
-    </LazyShell>
+    </DocsChrome>
   );
 }

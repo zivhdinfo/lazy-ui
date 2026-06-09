@@ -52,10 +52,8 @@ export default async function ComponentDetailPage({
   const source = getComponentSource(component.target);
 
   return (
-    <div className="lazy-root">
-      <DocsShell>
-        <ComponentDetail component={component} source={source} />
-      </DocsShell>
-    </div>
+    <DocsShell>
+      <ComponentDetail component={component} source={source} />
+    </DocsShell>
   );
 }

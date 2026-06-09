@@ -44,10 +44,8 @@ export default async function DocsTopicRoute({ params }: DocsTopicRouteProps) {
   }
 
   return (
-    <div className="lazy-root">
-      <DocsShell>
-        <DocsTopicPage topic={topic} />
-      </DocsShell>
-    </div>
+    <DocsShell>
+      <DocsTopicPage topic={topic} />
+    </DocsShell>
   );
 }

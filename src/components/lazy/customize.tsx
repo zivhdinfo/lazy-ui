@@ -133,14 +133,14 @@ export function CustomizePanel({
   return (
     <div
       className={[
-        "flex flex-col gap-2.5 rounded-xl border border-white/[0.06] bg-white/[0.015] p-2.5",
+        "flex flex-col gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-2 shadow-[var(--shadow-sm)]",
         className,
       ]
         .filter(Boolean)
         .join(" ")}
     >
       <div className="flex items-center justify-between gap-3 px-1">
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-3)]">
           {title}
         </span>
         {canExport && (
@@ -148,7 +148,7 @@ export function CustomizePanel({
             type="button"
             onClick={() => setShowUsage((v) => !v)}
             aria-expanded={showUsage}
-            className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-neutral-900/80 px-2.5 py-1 text-[10.5px] font-medium text-neutral-200 transition-colors hover:border-white/20 hover:bg-neutral-800/80"
+            className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border)] bg-[var(--panel)] px-2.5 py-1 text-[10.5px] font-medium text-[var(--text)] transition-colors hover:border-[var(--text-3)] hover:bg-[var(--panel-2)]"
           >
             <svg
               width="11"
@@ -275,11 +275,11 @@ function controlItemClass(c: CustomizeControl): string {
   if (c.type === "slider") {
     return c.wide
       ? "min-w-0 flex-[1_1_calc(50%-4px)]"
-      : "min-w-0 flex-[1_1_280px]";
+      : "min-w-0 flex-[1_1_220px]";
   }
   if (c.type === "text") return "min-w-0 flex-[1_1_100%]";
-  if (c.type === "toggle") return "min-w-0 max-w-[260px] flex-[1_1_160px]";
-  return "min-w-0 flex-[1_1_280px]";
+  if (c.type === "toggle") return "min-w-0 max-w-[240px] flex-[1_1_150px]";
+  return "min-w-0 flex-[1_1_220px]";
 }
 
 function renderControl(
@@ -345,12 +345,12 @@ function TextRow({
   onChange: (value: string) => void;
 }) {
   return (
-    <label className="flex h-full min-h-12 items-center gap-3 rounded-lg border border-white/10 bg-neutral-900/80 px-3 py-2 transition-colors focus-within:border-white/25">
-      <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wider text-neutral-500">
+    <label className="flex h-full min-h-12 items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 transition-colors focus-within:border-[var(--text-3)]">
+      <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wider text-[var(--text-3)]">
         {label}
       </span>
       <input
-        className="min-w-0 flex-1 bg-transparent text-[12px] text-neutral-200 outline-none placeholder:text-neutral-600"
+        className="min-w-0 flex-1 bg-transparent text-[12px] text-[var(--text)] outline-none placeholder:text-[var(--text-3)]"
         spellCheck={false}
         value={value}
         placeholder={placeholder}
@@ -372,11 +372,11 @@ function SelectRow({
   onChange: (value: string) => void;
 }) {
   return (
-    <div className="flex h-full min-h-12 items-center justify-between gap-3 rounded-lg border border-white/10 bg-neutral-900/80 px-3 py-2">
-      <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wider text-neutral-500">
+    <div className="flex h-full min-h-12 items-center justify-between gap-3 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2">
+      <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wider text-[var(--text-3)]">
         {label}
       </span>
-      <div className="flex min-w-0 max-w-full flex-nowrap gap-0.5 overflow-x-auto rounded-md border border-white/[0.06] bg-black/30 p-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex min-w-0 max-w-full flex-nowrap gap-0.5 overflow-x-auto rounded-md border border-[var(--border)] bg-[var(--panel)] p-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {options.map((o) => {
           const active = o.value === value;
           return (
@@ -388,8 +388,8 @@ function SelectRow({
               className={[
                 "shrink-0 whitespace-nowrap rounded px-2 py-1 text-[11px] leading-tight transition-colors",
                 active
-                  ? "bg-white text-black"
-                  : "text-neutral-400 hover:text-neutral-200",
+                  ? "bg-[var(--ink)] text-[var(--ink-text)]"
+                  : "text-[var(--text-2)] hover:text-[var(--text)]",
               ].join(" ")}
             >
               {o.label}
@@ -416,21 +416,21 @@ function ToggleRow({
       role="switch"
       aria-checked={value}
       onClick={() => onChange(!value)}
-      className="flex h-full min-h-12 w-full items-center justify-between gap-3 rounded-lg border border-white/10 bg-neutral-900/80 px-3 py-2 transition-colors hover:border-white/20"
+      className="flex h-full min-h-12 w-full items-center justify-between gap-3 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 transition-colors hover:border-[var(--text-3)]"
     >
-      <span className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">
+      <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-3)]">
         {label}
       </span>
       <span
         className={[
           "relative h-5 w-9 rounded-full transition-colors",
-          value ? "bg-white" : "bg-neutral-700",
+          value ? "bg-[var(--ink)]" : "bg-[var(--panel-2)]",
         ].join(" ")}
       >
         <span
           className={[
-            "absolute top-0.5 size-4 rounded-full bg-neutral-950 shadow transition-[left] duration-200 ease-out",
-            value ? "left-[18px]" : "left-0.5",
+            "absolute top-0.5 size-4 rounded-full shadow transition-[left] duration-200 ease-out",
+            value ? "left-[18px] bg-[var(--ink-text)]" : "left-0.5 bg-[var(--text-3)]",
           ].join(" ")}
         />
       </span>

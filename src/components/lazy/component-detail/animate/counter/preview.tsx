@@ -51,9 +51,9 @@ export function Preview({ values }: { values: CustomizeValues }) {
         easing={easing}
         decimals={decimals}
         separator=","
-        className="text-5xl font-semibold tracking-normal text-neutral-100"
+        className="text-5xl font-semibold tracking-normal text-[var(--text)]"
       />
-      <span className="text-xs uppercase text-neutral-500">active users</span>
+      <span className="text-xs uppercase text-[var(--text-3)]">active users</span>
     </div>
   );
 }

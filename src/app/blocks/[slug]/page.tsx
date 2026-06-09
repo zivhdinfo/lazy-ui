@@ -50,10 +50,8 @@ export default async function BlockDetailPage({ params }: BlockDetailPageProps) 
   const source = getComponentSource(block.target);
 
   return (
-    <div className="lazy-root">
-      <BlocksShell>
-        <ComponentDetail component={block} source={source} />
-      </BlocksShell>
-    </div>
+    <BlocksShell>
+      <ComponentDetail component={block} source={source} />
+    </BlocksShell>
   );
 }

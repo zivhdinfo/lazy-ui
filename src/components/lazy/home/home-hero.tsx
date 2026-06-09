@@ -435,12 +435,20 @@ export function HomeHero() {
   useEffect(() => {
     const saved = localStorage.getItem(THEME_KEY) as Theme | null;
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const resolved = saved ?? (mq.matches ? "dark" : "light");
     // Theme can only be resolved on the client after mount (SSR renders light
     // to keep hydration stable), so this one-shot sync is intentional.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setTheme(saved ?? (mq.matches ? "dark" : "light"));
+    setTheme(resolved);
+    // Mirror onto <html data-theme> so the shared docs surface picks up the
+    // same choice when navigating home → components without a flash.
+    document.documentElement.dataset.theme = resolved;
     const onChange = (e: MediaQueryListEvent) => {
-      if (!localStorage.getItem(THEME_KEY)) setTheme(e.matches ? "dark" : "light");
+      if (!localStorage.getItem(THEME_KEY)) {
+        const next = e.matches ? "dark" : "light";
+        setTheme(next);
+        document.documentElement.dataset.theme = next;
+      }
     };
     mq.addEventListener("change", onChange);
     return () => mq.removeEventListener("change", onChange);
@@ -497,6 +505,7 @@ export function HomeHero() {
     setTheme((t) => {
       const next: Theme = t === "dark" ? "light" : "dark";
       localStorage.setItem(THEME_KEY, next);
+      document.documentElement.dataset.theme = next;
       return next;
     });
     setThemeSweeps((n) => n + 1);

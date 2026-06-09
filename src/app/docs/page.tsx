@@ -6,9 +6,5 @@ export default function DocsPage() {
   const sources = Object.fromEntries(
     getPublishedComponents().map((c) => [c.slug, getComponentSource(c.target)]),
   );
-  return (
-    <div className="lazy-root">
-      <LazyApp sources={sources} />
-    </div>
-  );
+  return <LazyApp sources={sources} />;
 }

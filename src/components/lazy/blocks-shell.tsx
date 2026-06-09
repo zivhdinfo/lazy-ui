@@ -1,16 +1,16 @@
 import type { ReactNode } from "react";
 
-import { LazyShell } from "./lazy-shell";
+import { DocsChrome } from "./docs-chrome";
 
 /**
  * Shell used by the /blocks gallery and /blocks/<slug> detail pages.
- * Top navbar (LazyShell) + a centered full-width main area — no sidebar,
+ * Carved header (DocsChrome) + a centered full-width main area — no sidebar,
  * no right column. Keeps blocks out of the per-component docs chrome.
  */
 export function BlocksShell({ children }: { children: ReactNode }) {
   return (
-    <LazyShell>
+    <DocsChrome>
       <div className="blocks-shell">{children}</div>
-    </LazyShell>
+    </DocsChrome>
   );
 }

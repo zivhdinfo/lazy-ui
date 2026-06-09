@@ -1,0 +1,760 @@
+/* ════════════════════════════════════════════════════
+   Lazy UI — docs / component surface (.lui-docs)
+
+   A minimal light/dark surface that matches the home (.lui-home):
+   a fixed matte frame with concave rounded corners, a carved header
+   pill, and token-driven chrome. Theme follows the system and persists
+   a manual toggle in the SAME localStorage key as the home
+   ("lazyui-theme"), so navigating home → components keeps the choice.
+
+   Design note: code blocks and the live component-preview stages stay
+   dark in BOTH themes by intent — code reads best dark, and the bulk of
+   the registry previews are authored against dark backgrounds. Only the
+   page chrome (frame, header, sidebar, titles, tabs, cards, tables,
+   install steps, buttons) follows light/dark.
+
+   Most existing docs rules reference legacy tokens (--fg-*, --bg-*,
+   --line-*, --silver-*). Rather than override every rule, we remap those
+   legacy names to the new theme-aware tokens inside this scope, so they
+   adapt automatically. We only override hardcoded rgba(255,255,255,…)
+   whites and the serif / silver-gradient treatments.
+   ════════════════════════════════════════════════════ */
+
+.lui-docs {
+  /* ── New surface tokens (mirror .lui-home, light) ── */
+  --bg: #f4f4f2;
+  --bg-soft: #fbfbfa;
+  --surface: #ffffff;
+  --panel: #f5f5f4;
+  --panel-2: #ededec;
+  --text: #0c0c0d;
+  --text-2: #56565d;
+  --text-3: #93939c;
+  --border: #e7e7e4;
+  --border-2: #efefed;
+  --ink: #0c0c0d;
+  --ink-text: #ffffff;
+  --dot: #e0e0dd;
+  --frame: #ffffff;
+  --ring: rgba(12, 12, 13, 0.1);
+  --glow-1: #71717a;
+  --glow-2: #3f3f46;
+  --glow-3: #09090b;
+  --shadow: 0 1px 2px rgba(12, 12, 13, 0.05), 0 22px 60px -20px rgba(12, 12, 13, 0.22);
+  --shadow-sm: 0 1px 1px rgba(12, 12, 13, 0.05);
+
+  /* Live-preview stage backdrop — follows the theme (light surface in light). */
+  --preview-bg: #fafafa;
+  --preview-grid: rgba(0, 0, 0, 0.05);
+
+  /* ── Legacy-token remap → theme-aware values ──
+     so .main / .sb-* / .showcase-* / .api-table / etc. adapt for free. */
+  --bg-0: var(--bg);
+  --bg-1: var(--surface);
+  --bg-2: var(--panel);
+  --bg-3: var(--panel-2);
+  --bg-4: var(--panel-2);
+  --fg-0: var(--text);
+  --fg-1: var(--text);
+  --fg-2: var(--text-2);
+  --fg-3: var(--text-3);
+  --fg-4: var(--text-3);
+  --fg-5: color-mix(in srgb, var(--text-3) 55%, transparent);
+  --line-1: var(--border);
+  --line-2: color-mix(in srgb, var(--text) 13%, transparent);
+  --line-3: color-mix(in srgb, var(--text) 22%, transparent);
+  /* Silver accent → monochrome ink. */
+  --silver-0: var(--text);
+  --silver-1: var(--text);
+  --silver-2: var(--text-2);
+  --silver-3: var(--text-3);
+  --silver-grad: var(--ink);
+  --silver-shine: var(--ink);
+  --silver-soft: linear-gradient(180deg, color-mix(in srgb, var(--text) 12%, transparent), color-mix(in srgb, var(--text) 3%, transparent));
+  /* Mono face → JetBrains, matching the home's mono accents. */
+  --font-geist-mono: var(--font-jetbrains);
+  /* Header height clearance for the sticky sidebar + content top padding. */
+  --shell-top: 100px;
+
+  position: relative;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-outfit), "Outfit Fallback", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+html[data-theme="dark"] .lui-docs {
+  --bg: #0a0a0b;
+  --bg-soft: #0a0a0b;
+  --surface: #111113;
+  --panel: #17171a;
+  --panel-2: #1f1f23;
+  --text: #fafafa;
+  --text-2: #a0a0aa;
+  --text-3: #66666f;
+  --border: #242428;
+  --border-2: #1b1b1f;
+  --ink: #fafafa;
+  --ink-text: #0a0a0b;
+  --dot: #202024;
+  --frame: #000000;
+  --ring: rgba(255, 255, 255, 0.12);
+  --glow-1: #71717a;
+  --glow-2: #a1a1aa;
+  --glow-3: #fafafa;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 30px 70px -24px rgba(0, 0, 0, 0.78);
+  --shadow-sm: 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+  --preview-bg: #0a0a0b;
+  --preview-grid: rgba(255, 255, 255, 0.07);
+}
+
+.lui-docs ::selection {
+  background: color-mix(in srgb, var(--text) 16%, transparent);
+  color: var(--text);
+}
+.lui-docs .mono {
+  font-family: var(--font-jetbrains), ui-monospace, monospace;
+}
+
+/* ── Fixed matte frame + concave rounded corners ──────────────────── */
+.lui-docs .site-frame {
+  position: fixed;
+  z-index: 60;
+  pointer-events: none;
+  background: var(--frame);
+}
+.lui-docs .site-frame--top { top: 0; left: 0; right: 0; height: 10px; }
+.lui-docs .site-frame--bottom { bottom: 0; left: 0; right: 0; height: 10px; }
+.lui-docs .site-frame--left { top: 0; left: 0; bottom: 0; width: 10px; }
+.lui-docs .site-frame--right { top: 0; right: 0; bottom: 0; width: 10px; }
+.lui-docs .site-corner {
+  position: fixed;
+  z-index: 59;
+  pointer-events: none;
+  color: var(--frame);
+  width: 50px;
+  height: 50px;
+}
+.lui-docs .site-corner--top-left { top: 10px; left: 10px; transform: rotate(90deg); }
+.lui-docs .site-corner--top-right { top: 10px; right: 10px; transform: rotate(180deg); }
+.lui-docs .site-corner--bottom-left { bottom: 10px; left: 10px; transform: rotate(0deg); }
+.lui-docs .site-corner--bottom-right { bottom: 10px; right: 10px; transform: rotate(270deg); }
+
+/* ── Carved header pill ───────────────────────────────────────────── */
+.lui-docs .home-header {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1100px;
+  z-index: 61;
+  display: flex;
+  justify-content: center;
+  padding: 0 10px;
+  pointer-events: none;
+}
+.lui-docs .home-header > * { pointer-events: auto; }
+.lui-docs .nav-shell {
+  position: relative;
+  width: 100%;
+  background: var(--frame);
+  border-radius: 0 0 32px 32px;
+  box-shadow: 0 26px 50px -24px rgba(0, 0, 0, 0.32);
+}
+.lui-docs .nav {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  height: 66px;
+  padding: 0 20px;
+}
+.lui-docs .home-corner {
+  position: absolute;
+  top: 0;
+  width: 50px;
+  height: 50px;
+  color: var(--frame);
+  pointer-events: none;
+}
+.lui-docs .home-corner--left { left: -49px; transform: rotate(180deg); }
+.lui-docs .home-corner--right { right: -49px; transform: rotate(90deg); }
+
+.lui-docs .brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 600;
+  font-size: 14.5px;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.lui-docs .brand .mark {
+  width: 25px;
+  height: 25px;
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+  flex: none;
+  overflow: hidden;
+}
+.lui-docs .brand .mark img { width: 100%; height: 100%; object-fit: contain; }
+.lui-docs .brand b { font-weight: 600; }
+.lui-docs .brand .z { color: var(--text-3); font-weight: 500; }
+
+.lui-docs .nav-links { display: flex; align-items: center; gap: 2px; margin-left: 4px; }
+.lui-docs .nav-links a {
+  font-size: 13px;
+  color: var(--text-2);
+  font-weight: 450;
+  padding: 6px 10px;
+  border-radius: 7px;
+  transition: color 0.18s, background 0.18s;
+}
+.lui-docs .nav-links a:hover { color: var(--text); background: var(--panel); }
+.lui-docs .nav-links a.active { color: var(--text); background: var(--panel); font-weight: 500; }
+
+.lui-docs .nav-right { display: flex; align-items: center; gap: 7px; margin-left: auto; }
+
+.lui-docs .docs-search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: 32px;
+  padding: 0 9px 0 11px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-3);
+  font-size: 12.5px;
+  background: var(--surface);
+  transition: border-color 0.18s, color 0.18s;
+}
+.lui-docs .docs-search:hover { border-color: var(--text-3); color: var(--text-2); }
+.lui-docs .docs-search svg { width: 15px; height: 15px; }
+.lui-docs .docs-search .kbd {
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 5px;
+  line-height: 1;
+}
+
+.lui-docs .icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  color: var(--text-2);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  transition: color 0.18s, border-color 0.18s;
+}
+.lui-docs .icon-btn:hover { color: var(--text); border-color: var(--text-3); }
+.lui-docs .icon-btn svg { width: 16px; height: 16px; }
+.lui-docs .icon-btn .moon { display: none; }
+html[data-theme="dark"] .lui-docs .icon-btn .sun { display: none; }
+html[data-theme="dark"] .lui-docs .icon-btn .moon { display: block; }
+
+/* Mobile menu trigger — hidden on desktop, shown when the inline links collapse. */
+.lui-docs .docs-menu-btn { display: none; }
+
+/* GitHub stars button — force the home-surface tokens over its own dark: classes. */
+.lui-docs .lui-gh {
+  height: 32px;
+  border-radius: 8px;
+  padding: 0 11px;
+  border-color: var(--border) !important;
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  font-family: var(--font-outfit), "Outfit Fallback", system-ui, sans-serif;
+  font-size: 13px;
+}
+.lui-docs .lui-gh:hover { border-color: var(--text-3) !important; background: var(--panel) !important; }
+.lui-docs .lui-gh .gs-divider { background: var(--border) !important; }
+.lui-docs .lui-gh .font-mono { color: var(--text-3) !important; }
+
+/* ── Search overlay ──────────────────────────────────────────────── */
+.lui-docs-search-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  justify-content: center;
+  padding: 14vh 20px 20px;
+}
+.lui-docs-search-backdrop {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--text) 22%, transparent);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.lui-docs-search-panel {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  height: max-content;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.lui-docs-search-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  height: 52px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-3);
+}
+.lui-docs-search-field input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: none;
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--text);
+}
+.lui-docs-search-field input::placeholder { color: var(--text-3); }
+.lui-docs-search-field button {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  color: var(--text-3);
+  transition: background 0.15s, color 0.15s;
+}
+.lui-docs-search-field button:hover { background: var(--panel); color: var(--text); }
+.lui-docs-search-results {
+  max-height: 52vh;
+  overflow-y: auto;
+  padding: 6px;
+}
+.lui-docs-search-result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 11px;
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 13.5px;
+  transition: background 0.14s;
+}
+.lui-docs-search-result:hover { background: var(--panel); }
+.lui-docs-search-result small {
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 11px;
+  color: var(--text-3);
+}
+.lui-docs-search-empty {
+  padding: 22px 12px;
+  text-align: center;
+  color: var(--text-3);
+  font-size: 13px;
+}
+
+/* ── Mobile drawer (sidebar sections) ────────────────────────────── */
+.lui-docs-drawer-layer { position: fixed; inset: 0; z-index: 110; }
+.lui-docs-drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--text) 22%, transparent);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+.lui-docs-drawer-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: min(320px, 86vw);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  padding: 18px 14px 28px;
+  overflow-y: auto;
+}
+.lui-docs-drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.lui-docs-drawer-head .brand { font-size: 14px; }
+.lui-docs-drawer-head button {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  color: var(--text-2);
+}
+.lui-docs-drawer-section { margin-bottom: 16px; }
+.lui-docs-drawer-section-title {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin: 0 0 6px 8px;
+}
+.lui-docs-drawer-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: 7px;
+  font-size: 13.5px;
+  color: var(--text-2);
+  transition: background 0.14s, color 0.14s;
+}
+.lui-docs-drawer-link:hover { background: var(--panel); color: var(--text); }
+.lui-docs-drawer-link.active { background: var(--panel); color: var(--text); font-weight: 500; }
+.lui-docs-drawer-link .new-tag {
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: var(--ink);
+  color: var(--ink-text);
+}
+
+/* ── Layout ──────────────────────────────────────────────────────── */
+/* Desktop: sidebar pinned to the far left (just inside the frame), content
+   fills the rest with a readable cap. Drops the centered max-width container. */
+.lui-docs .shell {
+  max-width: none;
+  margin: 0;
+  padding: var(--shell-top) 40px 0 26px;
+  gap: 24px;
+}
+/* Content sits centered + wide within the column to the right of the sidebar. */
+.lui-docs .main {
+  max-width: 1560px;
+  margin-inline: auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+.lui-docs .blocks-shell { padding-top: var(--shell-top); }
+
+@media (max-width: 967px) {
+  .lui-docs .shell { padding-left: 20px; padding-right: 20px; }
+}
+
+/* ── Sidebar refinements (override white-on-dark assumptions + accent) ── */
+.lui-docs .sidebar { scrollbar-color: var(--border) transparent; }
+.lui-docs .sidebar::-webkit-scrollbar-thumb { background: var(--border); }
+.lui-docs .sb-sidebar-head { border-bottom-color: var(--border); }
+.lui-docs .sb-sidebar-kicker {
+  font-family: var(--font-jetbrains), monospace;
+  color: var(--text-3);
+}
+.lui-docs .sb-sidebar-count {
+  font-family: var(--font-jetbrains), monospace;
+  color: var(--text-3);
+  border-color: var(--border);
+  background: var(--panel);
+}
+.lui-docs .sb-section-title { color: var(--text-3); }
+.lui-docs .sb-section.active .sb-section-title { color: var(--text); }
+.lui-docs .sb-section-meta {
+  font-family: var(--font-jetbrains), monospace;
+  color: color-mix(in srgb, var(--text-3) 80%, transparent);
+}
+.lui-docs .sb-list { border-left-color: var(--border); }
+.lui-docs .sb-section.active .sb-list { border-left-color: var(--text-3); }
+.lui-docs .sb-item { color: var(--text-3); }
+.lui-docs .sb-item:hover { color: var(--text); }
+.lui-docs .sb-item.active { color: var(--text); }
+.lui-docs .sb-link:hover { background: color-mix(in srgb, var(--text) 4%, transparent); }
+.lui-docs .sb-link:focus-visible { outline-color: var(--text); }
+/* Active pill — quiet panel fill with an ink rail, no glow. */
+.lui-docs .sb-active-bg {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-left: 0;
+}
+.lui-docs .sb-motion-indicator {
+  background: var(--ink);
+  box-shadow: none;
+}
+/* "New" tag — ink fill, matching the home's badge. */
+.lui-docs .sb-item .new-tag {
+  font-family: var(--font-jetbrains), monospace;
+  background: var(--ink);
+  color: var(--ink-text);
+  border: 0;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.lui-docs .sb-item:hover .new-tag,
+.lui-docs .sb-item.active .new-tag {
+  color: var(--ink-text);
+  border: 0;
+}
+
+/* ── Display typography: drop the serif, use Outfit tight tracking ── */
+.lui-docs .page-title {
+  font-family: var(--font-outfit), "Outfit Fallback", system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.04;
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  color: var(--text);
+}
+.lui-docs .page-title em,
+.lui-docs .page-title .dim {
+  font-style: normal;
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  color: var(--text-3);
+  animation: none;
+}
+.lui-docs .page-sub { color: var(--text-2); }
+.lui-docs .crumb { color: var(--text-3); }
+.lui-docs .crumb .sep { color: color-mix(in srgb, var(--text-3) 60%, transparent); }
+.lui-docs .crumb .cur { color: var(--text); }
+
+.lui-docs h2.block-title {
+  font-family: var(--font-outfit), "Outfit Fallback", system-ui, sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.lui-docs .block-sub { color: var(--text-2); }
+
+.lui-docs .component-title { letter-spacing: -0.035em; }
+
+/* Inline-code chips inside section copy. */
+.lui-docs .block-sub code,
+.lui-docs .manual-hint code,
+.lui-docs .manual-files code {
+  font-family: var(--font-jetbrains), monospace;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--text) !important;
+  padding: 1px 6px;
+  font-size: 12px;
+}
+
+/* ── Listing: tabs + section headings + cards ────────────────────── */
+.lui-docs .showcase-tabs { border-bottom-color: var(--border); }
+.lui-docs .showcase-tab {
+  font-family: var(--font-outfit), "Outfit Fallback", system-ui, sans-serif;
+  color: var(--text-3);
+}
+.lui-docs .showcase-tab:hover { color: var(--text); }
+.lui-docs .showcase-tab.is-active {
+  background: var(--panel);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+.lui-docs .showcase-tab-count {
+  font-family: var(--font-jetbrains), monospace;
+  color: var(--text-3);
+}
+.lui-docs .showcase-tab.is-active .showcase-tab-count { color: var(--text-2); }
+.lui-docs .showcase-section-heading {
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--text-3);
+}
+.lui-docs .showcase-section-heading::after { background: var(--border); }
+.lui-docs .showcase-section-count {
+  font-family: var(--font-jetbrains), monospace;
+  color: var(--text-3);
+}
+
+.lui-docs .showcase-grid {
+  grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
+  gap: 14px;
+}
+/* Card = preview on top + a clean name footer (no dark overlay band). */
+.lui-docs .showcase-card {
+  display: flex;
+  flex-direction: column;
+  height: 244px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.28s var(--ease-out), border-color 0.3s, box-shadow 0.3s;
+}
+.lui-docs .showcase-card:hover {
+  border-color: var(--text-3);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
+}
+.lui-docs .showcase-preview {
+  position: relative;
+  inset: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  background: var(--preview-bg);
+}
+.lui-docs .showcase-foot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 11px 14px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+.lui-docs .showcase-foot-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lui-docs .showcase-foot-arrow {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  color: var(--text-3);
+  transition: transform 0.2s var(--ease-out), color 0.2s;
+}
+.lui-docs .showcase-card:hover .showcase-foot-arrow {
+  transform: translate(2px, -2px);
+  color: var(--text);
+}
+/* The footer link stretches over the whole card so any click navigates. */
+.lui-docs .showcase-foot::after {
+  content: "";
+  position: absolute;
+  inset: -1000px 0 0 0;
+  z-index: 2;
+}
+.lui-docs .showcase-skeleton-dot { background: var(--text-3); }
+
+/* ── Props (API reference) table ─────────────────────────────────── */
+.lui-docs .api-table {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+.lui-docs .api-table thead th {
+  font-family: var(--font-jetbrains), monospace;
+  color: var(--text-3);
+  background: var(--panel);
+  border-bottom-color: var(--border);
+}
+.lui-docs .api-table tbody tr,
+.lui-docs .api-table tbody td { border-top-color: var(--border); }
+.lui-docs .api-table td.name {
+  font-family: var(--font-jetbrains), monospace;
+  color: var(--text);
+}
+.lui-docs .api-table td.type {
+  font-family: var(--font-jetbrains), monospace;
+  color: var(--text-2);
+}
+.lui-docs .api-table td.default {
+  font-family: var(--font-jetbrains), monospace;
+  color: var(--text-3);
+}
+.lui-docs .api-table td.desc { color: var(--text-2); }
+
+/* ── Manual install panel ────────────────────────────────────────── */
+.lui-docs .manual-step-label { color: var(--text-2); }
+.lui-docs .manual-step-num {
+  font-family: var(--font-jetbrains), monospace;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.lui-docs .manual-hint { color: var(--text-2); }
+.lui-docs .manual-files {
+  background: var(--panel);
+  border: 1px solid var(--border);
+}
+.lui-docs .manual-files li { color: var(--text-2); }
+
+/* ── Credits cards ───────────────────────────────────────────────── */
+.lui-docs .credits-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+.lui-docs .credits-card:hover {
+  background: var(--panel);
+  border-color: var(--border);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+.lui-docs .credits-label { color: var(--text); }
+.lui-docs .credits-desc { color: var(--text-2); }
+
+/* ── Meta pills ──────────────────────────────────────────────────── */
+.lui-docs .meta-pill {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text-3);
+}
+.lui-docs .meta-pill strong { color: var(--text); }
+.lui-docs .meta-pill code { font-family: var(--font-jetbrains), monospace; color: var(--text); }
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+@media (max-width: 850px) {
+  .lui-docs { --shell-top: 84px; }
+  .lui-docs .site-frame,
+  .lui-docs .site-corner,
+  .lui-docs .home-corner { display: none; }
+  .lui-docs .home-header { top: 0; left: 0; transform: none; max-width: none; padding: 0; }
+  .lui-docs .nav-shell { border-radius: 0 0 22px 22px; box-shadow: var(--shadow); }
+}
+/* Sidebar collapses to the drawer at the same breakpoint the global rule
+   hides .sidebar, so the component list stays reachable. */
+@media (max-width: 967px) {
+  .lui-docs .docs-menu-btn { display: grid; }
+}
+@media (max-width: 900px) {
+  .lui-docs .nav-links,
+  .lui-docs .docs-search { display: none; }
+  .lui-docs .nav { gap: 12px; }
+}
+@media (max-width: 640px) {
+  .lui-docs .nav { height: 58px; padding: 0 10px; gap: 8px; }
+  .lui-docs .brand { font-size: 13.5px; }
+  .lui-docs .nav-right { gap: 6px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lui-docs,
+  .lui-docs .showcase-card { transition: none; }
+}

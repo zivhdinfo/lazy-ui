@@ -13,8 +13,8 @@ export function Preview({ values }: { values: CustomizeValues }) {
         duration={duration}
         radius={radius}
         reverse={reverse}
-        center={<span className="text-2xl text-neutral-100">★</span>}
-        className="text-[12px] tracking-[0.18em] text-neutral-200"
+        center={<span className="text-2xl text-[var(--text)]">★</span>}
+        className="text-[12px] tracking-[0.18em] text-[var(--text)]"
       >
         BUILD LAZILY • BUILD LAZILY •
       </SpinningText>

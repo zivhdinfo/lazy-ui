@@ -11,10 +11,8 @@ export const metadata = {
 export default function BlocksPage() {
   const blocks = getPublishedBlocks();
   return (
-    <div className="lazy-root">
-      <BlocksShell>
-        <BlocksGallery items={blocks} />
-      </BlocksShell>
-    </div>
+    <BlocksShell>
+      <BlocksGallery items={blocks} />
+    </BlocksShell>
   );
 }
