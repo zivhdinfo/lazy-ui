@@ -1,11 +1,12 @@
 "use client";
 
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion, useReducedMotion } from "motion/react";
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 import { BorderGlow } from "@/components/lazy-ui/border-glow";
 import { Counter } from "@/components/lazy-ui/counter";
-import { RevealAnimate } from "@/components/lazy-ui/reveal-animate";
 import {
   getPublishedBlocks,
   getPublishedComponentsOnly,
@@ -17,78 +18,50 @@ import {
 // tokens cascade in — no theme prop needed. Visualizations are CSS-only to
 // avoid stacking another WebGL context on top of the hero's canvases.
 
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
 const REVEAL_EASE = [0.16, 1, 0.3, 1] as const;
+
+// Bento entrance — the ai-saas ImageReveal vocabulary: each tile is scrubbed to
+// the scroll position (not a one-shot whileInView), so it resolves buttery-
+// smooth as it travels through the viewport. Tiles pull IN from the two sides:
+// direction is decided by the tile's real position — anything whose centre sits
+// left of the grid midline flies in from the left edge, the rest from the right.
+// `REVEAL_PULL` is how far (% of the tile's own width) it starts off to its side.
+const REVEAL_PULL = 90;
+const REVEAL_FROM_BASE = { scale: 0.88, filter: "blur(16px)", opacity: 0 } as const;
+
+// Heading entrance — same blur fade-up vocabulary as the tiles and the hero,
+// staggered line by line (eyebrow → title → lead).
+const HEAD_STAGGER = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.12, delayChildren: 0.05 } },
+};
 
 // Monochrome border arc — black/white/gray only, per the home's one-accent rule
 // (DESIGN.md §2). Theme-aware tokens (see globals.css): a gray→black gradient on
 // light, gray→white on dark. Three stops give the comet its gradient sweep.
 const GLOW = ["var(--glow-1)", "var(--glow-2)", "var(--glow-3)"];
 
-export function HomeFeatures() {
-  const reduced = useReducedMotion();
-  const componentCount = useMemo(() => getPublishedComponentsOnly().length, []);
-  const blockCount = useMemo(() => getPublishedBlocks().length, []);
-
-  // Counter animates when its `value` changes — hold at 0 until the tile
-  // enters the viewport, then flip to the real total (same trick as the hero).
-  const [counted, setCounted] = useState(false);
-
-  // Heading reveal — staged masked sweep (RevealAnimate), the same motion
-  // vocabulary as the hero (pill → title → lead). `headIn` flips once the head
-  // scrolls into view; then the steps cascade so each line wipes in after the
-  // one above it. Reduced motion jumps straight to the revealed state.
-  const [headIn, setHeadIn] = useState(false);
-  const [headStep, setHeadStep] = useState(0);
-
-  useEffect(() => {
-    if (!headIn) return;
-    if (reduced) {
-      // Reduced motion: skip the cascade, show the heading at once (one-shot).
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setHeadStep(99);
-      return;
-    }
-    const timers = [80, 260, 460].map((delay, i) =>
-      window.setTimeout(() => setHeadStep(i + 1), delay),
-    );
-    return () => timers.forEach(clearTimeout);
-  }, [headIn, reduced]);
-
-  // Per-tile entrance — a blurred fade-up that resolves into focus, echoing the
-  // hero's blur-in reveal. Staggered by index. Reduced motion → final state.
-  const reveal = (i: number) =>
-    reduced
-      ? {}
-      : {
-          initial: { opacity: 0, y: 32, filter: "blur(8px)" },
-          whileInView: { opacity: 1, y: 0, filter: "blur(0px)" },
-          viewport: { margin: "-12%" },
-          transition: { duration: 0.85, ease: REVEAL_EASE, delay: i * 0.07 },
-        };
-
-  // Each bento tile is a BorderGlow whose arc lights toward the pointer — the
-  // whole grid responds at once (mode="cursor"). The motion wrapper owns the
-  // grid span + reveal; the glow fills it; `tile-inner` carries the resting
-  // 1px border so cards stay defined before the cursor lights them.
-  const GlowTile = ({
-    span,
-    inner,
-    index,
-    onViewportEnter,
-    children,
-  }: {
-    span: string;
-    inner?: string;
-    index: number;
-    onViewportEnter?: () => void;
-    children: ReactNode;
-  }) => (
-    <motion.div
-      className={`glow-cell ${span}`}
-      {...reveal(index)}
-      whileHover={reduced ? undefined : { y: -2 }}
-      onViewportEnter={onViewportEnter}
-    >
+// Each bento tile is a BorderGlow whose arc lights toward the pointer — the
+// whole grid responds at once (mode="cursor"). The `glow-cell` owns the grid
+// span + the GSAP scrub transform; the glow fills it; `tile-inner` carries the
+// resting 1px border (and the hover lift, so it never fights GSAP's transform).
+function GlowTile({
+  span,
+  inner,
+  count,
+  children,
+}: {
+  span: string;
+  inner?: string;
+  count?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <div className={`glow-cell ${span}${count ? " glow-cell--count" : ""}`}>
       <BorderGlow
         mode="cursor"
         colors={GLOW}
@@ -106,41 +79,127 @@ export function HomeFeatures() {
       >
         <div className={`tile-inner${inner ? ` ${inner}` : ""}`}>{children}</div>
       </BorderGlow>
-    </motion.div>
+    </div>
   );
+}
+
+export function HomeFeatures() {
+  const reduced = useReducedMotion();
+  const componentCount = useMemo(() => getPublishedComponentsOnly().length, []);
+  const blockCount = useMemo(() => getPublishedBlocks().length, []);
+
+  // Counter animates when its `value` changes — hold at 0 until the tile
+  // enters the viewport, then flip to the real total (same trick as the hero).
+  const [counted, setCounted] = useState(false);
+
+  // Heading reveal — a blur fade-up cascade (eyebrow → title → lead), the same
+  // vocabulary as the hero and the tiles. Reduced motion → plain opacity.
+  const headItem = reduced
+    ? { hidden: { opacity: 0 }, visible: { opacity: 1 } }
+    : {
+        hidden: { opacity: 0, y: 24, filter: "blur(8px)" },
+        visible: { opacity: 1, y: 0, filter: "blur(0px)" },
+      };
+  const headItemTransition = { duration: reduced ? 0.2 : 0.8, ease: REVEAL_EASE };
+
+  // GSAP scrub reveal — each `.glow-cell` is tied to its own scroll travel
+  // (ImageReveal mechanism). Lives in a gsap.context so every tween + trigger
+  // is reverted on unmount. Reduced motion skips it entirely (tiles render at
+  // rest). The counter tile flips `counted` from its own trigger's onEnter.
+  const bentoRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (reduced) {
+      // Reduced motion: no scrub, so show the real counts immediately (one-shot).
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setCounted(true);
+      return;
+    }
+    const root = bentoRef.current;
+    if (!root) return;
+
+    const ctx = gsap.context(() => {
+      const cells = gsap.utils.toArray<HTMLElement>(".glow-cell", root);
+      const rootRect = root.getBoundingClientRect();
+      const midX = rootRect.left + rootRect.width / 2;
+      cells.forEach((cell) => {
+        const r = cell.getBoundingClientRect();
+        const fromLeft = r.left + r.width / 2 < midX;
+        gsap.fromTo(
+          cell,
+          {
+            ...REVEAL_FROM_BASE,
+            xPercent: fromLeft ? -REVEAL_PULL : REVEAL_PULL,
+            transformOrigin: fromLeft ? "0% 50%" : "100% 50%",
+            willChange: "transform, filter",
+          },
+          {
+            xPercent: 0,
+            scale: 1,
+            filter: "blur(0px)",
+            opacity: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: cell,
+              start: "clamp(top bottom)",
+              end: "clamp(top 45%)",
+              scrub: true,
+            },
+          },
+        );
+      });
+
+      const countCell = root.querySelector<HTMLElement>(".glow-cell--count");
+      if (countCell) {
+        ScrollTrigger.create({
+          trigger: countCell,
+          start: "top 85%",
+          onEnter: () => setCounted(true),
+        });
+      }
+    }, root);
+
+    return () => ctx.revert();
+  }, [reduced]);
 
   return (
     <section className="features" id="why" aria-labelledby="why-title">
       <div className="wrap">
         <motion.div
           className="features-head"
-          onViewportEnter={() => setHeadIn(true)}
-          onViewportLeave={() => {
-            setHeadIn(false);
-            setHeadStep(0);
-          }}
+          variants={HEAD_STAGGER}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ margin: "-15%" }}
         >
-          <span className="eyebrow">
+          <motion.span
+            className="eyebrow"
+            variants={headItem}
+            transition={headItemTransition}
+          >
             <span className="dotpulse" />
-            <RevealAnimate trigger={headStep >= 1}>Why</RevealAnimate>
-          </span>
-          <h2 id="why-title" className="features-title">
-            <RevealAnimate trigger={headStep >= 2}>
-              Built to feel finished.
-            </RevealAnimate>
-          </h2>
-          <p className="features-lead">
-            <RevealAnimate trigger={headStep >= 3}>
-              Backgrounds, animation, and primitives that drop into your React
-              app and look done — without the dependency tax.
-            </RevealAnimate>
-          </p>
+            Why
+          </motion.span>
+          <motion.h2
+            id="why-title"
+            className="features-title"
+            variants={headItem}
+            transition={headItemTransition}
+          >
+            Built to feel finished.
+          </motion.h2>
+          <motion.p
+            className="features-lead"
+            variants={headItem}
+            transition={headItemTransition}
+          >
+            Backgrounds, animation, and primitives that drop into your React
+            app and look done — without the dependency tax.
+          </motion.p>
         </motion.div>
 
-        <div className="bento">
+        <div className="bento" ref={bentoRef}>
           {/* Anchor — strongest claim, spans two rows. */}
-          <GlowTile span="tile--anchor" inner="tile-inner--anchor" index={1}>
+          <GlowTile span="tile--anchor" inner="tile-inner--anchor">
             <span className="tile-eyebrow">Source</span>
             <h3 className="tile-title">Own every line.</h3>
             <p className="tile-body">
@@ -157,7 +216,7 @@ export function HomeFeatures() {
           </GlowTile>
 
           {/* Companions — span-3. */}
-          <GlowTile span="tile--wide" index={2}>
+          <GlowTile span="tile--wide">
             <span className="tile-eyebrow">Registry</span>
             <h3 className="tile-title">Install via URL.</h3>
             <p className="tile-body">
@@ -166,7 +225,7 @@ export function HomeFeatures() {
             </p>
           </GlowTile>
 
-          <GlowTile span="tile--wide" index={3}>
+          <GlowTile span="tile--wide">
             <span className="tile-eyebrow">Motion</span>
             <h3 className="tile-title">Animated by default.</h3>
             <p className="tile-body">
@@ -183,12 +242,7 @@ export function HomeFeatures() {
           </GlowTile>
 
           {/* Capsules — span-2. */}
-          <GlowTile
-            span="tile--cap"
-            inner="tile-inner--cap"
-            index={4}
-            onViewportEnter={() => setCounted(true)}
-          >
+          <GlowTile span="tile--cap" inner="tile-inner--cap" count>
             <div className="tile-stat">
               <Counter
                 value={counted ? componentCount : 0}
@@ -201,7 +255,7 @@ export function HomeFeatures() {
             </span>
           </GlowTile>
 
-          <GlowTile span="tile--cap" inner="tile-inner--cap" index={5}>
+          <GlowTile span="tile--cap" inner="tile-inner--cap">
             <span className="tile-eyebrow">Quality</span>
             <h3 className="tile-title tile-title--sm">Typed &amp; accessible.</h3>
             <p className="tile-body">
@@ -209,7 +263,7 @@ export function HomeFeatures() {
             </p>
           </GlowTile>
 
-          <GlowTile span="tile--cap" inner="tile-inner--cap" index={6}>
+          <GlowTile span="tile--cap" inner="tile-inner--cap">
             <div className="tile-stat">MIT</div>
             <span className="tile-eyebrow">Open license · yours to ship</span>
           </GlowTile>

@@ -6032,10 +6032,46 @@ pre .v { color: #67e8f9; }
   letter-spacing: 0.03em; text-transform: none; color: var(--text-2);
 }
 .lui-home .lp-new-pill-more {
+  position: relative; overflow: hidden;
   height: 22px; padding: 0 8px; border-radius: 6px;
   background: var(--panel); color: var(--text-3);
   font-family: var(--font-jetbrains), monospace; font-size: 11px; font-weight: 600;
 }
+/* A bright diagonal glare that sweeps across the +N chip every 3s. The streak
+   crosses fast (first ~0.5s) then idles off-screen for the rest of the loop. */
+.lui-home .lp-new-pill-more::after {
+  content: "";
+  position: absolute; top: 0; bottom: 0; left: 0;
+  width: 45%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.85) 50%,
+    transparent 100%
+  );
+  transform: translateX(-200%) skewX(-18deg);
+  pointer-events: none;
+  animation: lui-pill-shine 3s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) infinite;
+}
+@keyframes lui-pill-shine {
+  0% { transform: translateX(-200%) skewX(-18deg); }
+  16%, 100% { transform: translateX(320%) skewX(-18deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lui-home .lp-new-pill-more::after { animation: none; display: none; }
+}
+/* The pill is wrapped in a BorderGlow, which owns the border + surface + glow.
+   The inner Link keeps only its layout (flex/gap/padding) — its own border,
+   background and shadow are dropped so they don't double up on the glow box. */
+.lui-home .lp-new-pill-glow { max-width: min(100%, 460px); }
+.lui-home .lp-new-pill-glow .lp-new-pill {
+  max-width: none;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+}
+.lui-home .lp-new-pill-glow .lp-new-pill:hover { background: transparent; }
 
 .lui-home h1 {
   margin-top: 22px;
@@ -6325,6 +6361,13 @@ pre .v { color: #67e8f9; }
   isolation: isolate;
   background: var(--bg);
   padding: 40px 0 120px;
+  /* Tiles scrub IN from the two side edges (large xPercent). Clip on the
+     full-width SECTION — not the tight .wrap — so the off-screen travel can't
+     spawn a page scrollbar, while the bento's own glow halos (which sit well
+     inside the wrap, far from the section edges) are never cut. `clip` clips X
+     only; overflow-y stays visible so the ::before seam reaching up into the
+     hero is unaffected. */
+  overflow-x: clip;
 }
 /* Seam cover: a --bg panel that reaches up into the hero's faded tail and
    masks the join. Transparent at its top so the cover has no hard edge of its
@@ -6355,20 +6398,19 @@ pre .v { color: #67e8f9; }
   display: grid; grid-template-columns: repeat(6, 1fr);
   grid-auto-rows: minmax(150px, auto); gap: 12px;
 }
-/* Each tile is a BorderGlow: the motion wrapper (glow-cell) owns the grid span
-   and the hover lift, the glow (glow-card) fills it, and tile-inner carries the
-   resting 1px border + padding so the card reads before the cursor lights it. */
-.lui-home .glow-cell {
-  display: flex;
-  transition: transform 0.22s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
-}
-.lui-home .glow-cell:hover { transform: translateY(-2px); }
+/* Each tile is a BorderGlow: glow-cell owns the grid span and the GSAP scrub
+   transform (so it carries no CSS transform of its own — they'd fight), the glow
+   (glow-card) fills it, and tile-inner carries the resting 1px border + padding
+   and the hover lift so the lift never collides with the scrub transform. */
+.lui-home .glow-cell { display: flex; }
 .lui-home .glow-card { flex: 1; min-width: 0; height: 100%; }
 .lui-home .tile-inner {
   position: relative; display: flex; flex-direction: column;
   height: 100%; padding: 22px; border-radius: 20px;
   box-shadow: inset 0 0 0 1px var(--border);
+  transition: transform 0.22s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
 }
+.lui-home .glow-cell:hover .tile-inner { transform: translateY(-2px); }
 .lui-home .tile-inner--anchor { justify-content: space-between; }
 .lui-home .tile-inner--cap { justify-content: center; gap: 8px; }
 

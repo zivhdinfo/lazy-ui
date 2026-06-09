@@ -1,12 +1,16 @@
 "use client";
 
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import {
   AnimatePresence,
   motion,
   useMotionValue,
+  useReducedMotion,
   useSpring,
   type MotionValue,
+  type Variants,
 } from "motion/react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -22,10 +26,10 @@ import {
   type SVGProps,
 } from "react";
 
+import { BorderGlow } from "@/components/lazy-ui/border-glow";
 import { Counter } from "@/components/lazy-ui/counter";
 import { GithubStarsButton } from "@/components/lazy-ui/github-stars-button/github-stars-button";
 import { LiquidTransition } from "@/components/lazy-ui/liquid-transition";
-import { RevealAnimate } from "@/components/lazy-ui/reveal-animate";
 import {
   getPublishedBlocks,
   getPublishedComponentsOnly,
@@ -47,9 +51,35 @@ const THEME_KEY = "lazyui-theme";
 const GH_OWNER = "zivhdinfo";
 const GH_REPO = "lazy-ui";
 
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
 const HERO_EASE = [0.23, 1, 0.32, 1] as const;
 const PARALLAX_INTENSITY = 20;
 const LOADER_LOGO = 56;
+
+// Gradient glow ring for the "New components" pill — a vibrant violet→pink→cyan
+// sweep so the one announcement of fresh work catches the eye. The colors blend
+// around the border arc as it sweeps (BorderGlow auto mode).
+const NEW_PILL_GLOW = ["#a78bfa", "#f0abfc", "#67e8f9"];
+
+// Hero copy entrance — the saas signature: a staggered vertical blur fade-up
+// (opacity + y + blur resolve together), driven by a parent stagger container.
+// Replaces the earlier horizontal mask-sweep so the home reveal matches the
+// blur-in vocabulary the feature tiles already use.
+const HERO_STAGGER: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.15, delayChildren: 0.1 } },
+};
+const HERO_ITEM: Variants = {
+  hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
+  visible: { opacity: 1, y: 0, filter: "blur(0px)" },
+};
+const HERO_ITEM_REDUCED: Variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+};
 
 // ── Icons ────────────────────────────────────────────────────────────────
 
@@ -340,6 +370,10 @@ function HeroBackground({
 // ── Home ────────────────────────────────────────────────────────────────
 
 export function HomeHero() {
+  const reduced = useReducedMotion();
+  const heroItem = reduced ? HERO_ITEM_REDUCED : HERO_ITEM;
+  const heroItemTransition = { duration: reduced ? 0.2 : 0.8, ease: HERO_EASE };
+
   const [theme, setTheme] = useState<Theme>("light");
 
   // First-load intro: a cover whose logo flies into the header logo slot.
@@ -349,8 +383,8 @@ export function HomeHero() {
   );
   const headerBrandRef = useRef<HTMLAnchorElement>(null);
   const flyRef = useRef<HTMLDivElement>(null);
-  // Reveal sequence: 1 = pill, 2 = title, 3 = description, 4 = CTA + counters.
-  const [step, setStep] = useState(0);
+  // Stats counters hold at 0 until the copy has revealed, then count up.
+  const [counted, setCounted] = useState(false);
   // Hero copy is in view on load; flips false when it scrolls out so the reveal
   // retracts and replays on return (same behavior as the Why strip).
   const [heroIn, setHeroIn] = useState(true);
@@ -406,7 +440,9 @@ export function HomeHero() {
   }, []);
 
   // Lenis smooth scroll — same config as the saas reference (expo-out easing,
-  // 1.6s glide). Disabled under reduced-motion; cleaned up on unmount.
+  // 1.6s glide). Disabled under reduced-motion; cleaned up on unmount. ScrollTrigger
+  // is driven off Lenis (update on every scroll tick) so the bento's scrubbed
+  // reveals stay glued to the smoothed scroll position instead of native scroll.
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
@@ -419,6 +455,8 @@ export function HomeHero() {
       wheelMultiplier: 1,
       touchMultiplier: 2,
     });
+
+    lenis.on("scroll", ScrollTrigger.update);
 
     let frame = 0;
     const raf = (time: number) => {
@@ -492,23 +530,6 @@ export function HomeHero() {
     return () => clearTimeout(t);
   }, []);
 
-  // Sequential reveal (RevealAnimate sweeps) once the cover lifts: title → desc.
-  // Gated on `heroIn` too, so the cascade replays whenever the copy re-enters
-  // the viewport after scrolling away.
-  useEffect(() => {
-    if (!done || !heroIn) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      // Reduced motion: reveal everything at once (intentional one-shot).
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setStep(99);
-      return;
-    }
-    const timers = [60, 280, 540, 800].map((delay, i) =>
-      window.setTimeout(() => setStep(i + 1), delay),
-    );
-    return () => timers.forEach(clearTimeout);
-  }, [done, heroIn]);
-
   // ── Tab navigation ──
   const navTo = useCallback(
     (id: TabId) => {
@@ -551,7 +572,6 @@ export function HomeHero() {
   const backDisabled = hIndex <= 0;
   const fwdDisabled = hIndex >= history.length - 1;
   const activeTab = TABS.find((t) => t.id === current) ?? TABS[0];
-  const counted = step >= 4;
 
   return (
     <div className="lui-home" data-theme={theme}>
@@ -632,45 +652,66 @@ export function HomeHero() {
               inside the frame with rounded bottom corners. */}
           <HeroBackground theme={theme} sweeps={themeSweeps} bgX={bgX} bgY={bgY} />
 
-          {/* Centered copy — viewport-gated so the staged reveal retracts when
+          {/* Centered copy — viewport-gated so the blur-up reveal retracts when
               scrolled away and replays on return. */}
           <motion.div
             className="flex justify-center px-6 pt-[150px] max-[850px]:justify-start max-[850px]:pt-[120px] sm:pt-[200px]"
             onViewportEnter={() => setHeroIn(true)}
             onViewportLeave={() => {
-              if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+              if (reduced) return;
               setHeroIn(false);
-              setStep(0);
+              setCounted(false);
             }}
             viewport={{ margin: "-20%" }}
           >
-            <div className="flex max-w-3xl flex-col items-center text-center max-[850px]:w-full max-[850px]:items-start max-[850px]:text-left">
-              <RevealAnimate trigger={step >= 1}>
+            {/* Staggered blur fade-up — the saas hero vocabulary. Gated on the
+                loader landing (`done`) and the copy being in view (`heroIn`). */}
+            <motion.div
+              className="flex max-w-3xl flex-col items-center text-center max-[850px]:w-full max-[850px]:items-start max-[850px]:text-left"
+              variants={HERO_STAGGER}
+              initial="hidden"
+              animate={done && heroIn ? "visible" : "hidden"}
+            >
+              <motion.div variants={heroItem} transition={heroItemTransition}>
                 {newComponents.length > 0 ? (
                   (() => {
                     const visible =
                       newComponents.length > 1 ? newComponents.slice(0, 1) : newComponents;
                     const hidden = newComponents.length - visible.length;
                     return (
-                      <Link
-                        href="/components?tab=new"
-                        className="lp-new-pill"
-                        aria-label={`${newComponents.length} new component${
-                          newComponents.length === 1 ? "" : "s"
-                        }: ${newComponents.map((c) => c.title).join(", ")}`}
+                      <BorderGlow
+                        mode="auto"
+                        colors={NEW_PILL_GLOW}
+                        background="var(--surface)"
+                        thickness={1.5}
+                        radius={12}
+                        coneSpread={42}
+                        glowSize={12}
+                        intensity={0.95}
+                        speed={0.9}
+                        bling={false}
+                        className="lp-new-pill-glow"
                       >
-                        <span className="lp-new-pill-badge">
-                          New component{newComponents.length === 1 ? "" : "s"}
-                        </span>
-                        <span className="lp-new-pill-names">
-                          {visible.map((c) => c.title).join(" · ")}
-                        </span>
-                        {hidden > 0 && (
-                          <span className="lp-new-pill-more" aria-hidden>
-                            +{hidden}
+                        <Link
+                          href="/components?tab=new"
+                          className="lp-new-pill"
+                          aria-label={`${newComponents.length} new component${
+                            newComponents.length === 1 ? "" : "s"
+                          }: ${newComponents.map((c) => c.title).join(", ")}`}
+                        >
+                          <span className="lp-new-pill-badge">
+                            New component{newComponents.length === 1 ? "" : "s"}
                           </span>
-                        )}
-                      </Link>
+                          <span className="lp-new-pill-names">
+                            {visible.map((c) => c.title).join(" · ")}
+                          </span>
+                          {hidden > 0 && (
+                            <span className="lp-new-pill-more" aria-hidden>
+                              +{hidden}
+                            </span>
+                          )}
+                        </Link>
+                      </BorderGlow>
                     );
                   })()
                 ) : (
@@ -679,27 +720,26 @@ export function HomeHero() {
                     {componentCount} components · {blockCount} blocks
                   </span>
                 )}
-              </RevealAnimate>
+              </motion.div>
 
-              <h1>
-                <RevealAnimate trigger={step >= 2}>
-                  Great interfaces, <span className="dim">minimal effort.</span>
-                </RevealAnimate>
-              </h1>
+              <motion.h1 variants={heroItem} transition={heroItemTransition}>
+                Great interfaces, <span className="dim">minimal effort.</span>
+              </motion.h1>
 
-              <p className="sub">
-                <RevealAnimate trigger={step >= 3}>
-                  Copy-paste backgrounds, animations, and UI primitives that install
-                  straight into your React app as shadcn registry files — no npm
-                  package, source lands fully editable.
-                </RevealAnimate>
-              </p>
+              <motion.p
+                className="sub"
+                variants={heroItem}
+                transition={heroItemTransition}
+              >
+                Copy-paste backgrounds, animations, and UI primitives that install
+                straight into your React app as shadcn registry files — no npm
+                package, source lands fully editable.
+              </motion.p>
 
               <motion.div
                 className="cta-row mt-7 flex flex-wrap items-center justify-center gap-2.5 max-[850px]:w-full max-[850px]:justify-start"
-                initial={{ opacity: 0, y: 12 }}
-                animate={step >= 4 ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
-                transition={{ duration: 0.55, ease: HERO_EASE }}
+                variants={heroItem}
+                transition={heroItemTransition}
               >
                 <Link href="/components" className="btn btn-solid">
                   Browse components
@@ -712,9 +752,11 @@ export function HomeHero() {
 
               <motion.div
                 className="mt-9 flex flex-wrap items-stretch justify-center gap-y-2 max-[850px]:justify-start"
-                initial={{ opacity: 0, y: 12 }}
-                animate={step >= 4 ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
-                transition={{ duration: 0.55, delay: 0.08, ease: HERO_EASE }}
+                variants={heroItem}
+                transition={heroItemTransition}
+                onAnimationComplete={(def) => {
+                  if (def === "visible") setCounted(true);
+                }}
               >
                 <div className="stat">
                   <div className="num">
@@ -733,7 +775,7 @@ export function HomeHero() {
                   <div className="lbl">open license</div>
                 </div>
               </motion.div>
-            </div>
+            </motion.div>
           </motion.div>
 
           {/* macOS Safari window (live preview) — sits below the copy like the
