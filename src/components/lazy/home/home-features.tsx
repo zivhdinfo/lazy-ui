@@ -210,7 +210,7 @@ export function HomeFeatures() {
             <div className="tile-snippet mono" aria-hidden="true">
               <span className="snip-prompt">$</span>
               <span>
-                npx shadcn@latest add <span className="snip-em">button</span>
+                npx shadcn@latest add <span className="snip-em">2lazyui.com/r/pixel-cursor.json</span>
               </span>
             </div>
           </GlowTile>
