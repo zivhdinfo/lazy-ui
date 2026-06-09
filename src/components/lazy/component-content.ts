@@ -2284,6 +2284,89 @@ export function Demo() {
       },
     ],
   },
+  "pixel-cursor": {
+    componentName: "PixelCursor",
+    usageCode: `import { PixelCursor } from "@/components/lazy-ui/pixel-cursor";
+
+export function Demo() {
+  return (
+    <div className="relative h-96 w-full overflow-hidden bg-black">
+      <PixelCursor
+        color="#ffffff"
+        edgeColor1="#7c3aed"
+        edgeColor2="#22d3ee"
+        lag={0.8}
+      />
+    </div>
+  );
+}`,
+    api: [
+      {
+        name: "color",
+        type: "string",
+        default: '"#ffffff"',
+        description:
+          "Core color. Fills the brightest pixels at the center of the cursor trail.",
+      },
+      {
+        name: "edgeColor1",
+        type: "string",
+        default: '"#7c3aed"',
+        description: "Secondary color for the mid-strength ring of pixels.",
+      },
+      {
+        name: "edgeColor2",
+        type: "string",
+        default: '"#22d3ee"',
+        description: "Secondary color for the faintest outer ring of pixels.",
+      },
+      {
+        name: "pixelSize",
+        type: "number",
+        default: "8",
+        description:
+          "Square pixel size in pixels. Larger values light fewer, chunkier pixels.",
+      },
+      {
+        name: "spread",
+        type: "number",
+        default: "70",
+        description: "Brush radius around the cursor, in pixels.",
+      },
+      {
+        name: "density",
+        type: "number",
+        default: "0.6",
+        description:
+          "Fraction (0..1) of cells eligible to light. Lower values thin the trail into a sparser speckle.",
+      },
+      {
+        name: "persistence",
+        type: "number",
+        default: "1.5",
+        description: "Trail half-life — higher values make pixels linger longer.",
+      },
+      {
+        name: "lag",
+        type: "number",
+        default: "0",
+        description:
+          "How far the pixels lag behind the cursor (0..1). 0 follows instantly; higher values trail further behind with more delay.",
+      },
+      {
+        name: "opacity",
+        type: "number",
+        default: "1",
+        description: "Multiplier applied to the final draw alpha.",
+      },
+      {
+        name: "className",
+        type: "string",
+        default: "—",
+        description: "Extra class names merged onto the root container.",
+      },
+    ],
+  },
   "liquid-reveal": {
     componentName: "LiquidReveal",
     usageCode: `import { LiquidReveal } from "@/components/lazy-ui/liquid-reveal";

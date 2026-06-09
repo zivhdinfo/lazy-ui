@@ -316,6 +316,16 @@ export const components: ComponentItem[] = [
     status: "published",
   },
   {
+    slug: "pixel-cursor",
+    title: "Pixel cursor",
+    description:
+      "A cursor-following pixel trail — a speed-gated brush lights sparse square pixels on a Canvas2D grid, banded into a bright core color and two secondary outer rings as the signal decays.",
+    category: "Animate",
+    target: "components/lazy-ui/pixel-cursor/pixel-cursor.tsx",
+    status: "published",
+    dependencies: ["motion"],
+  },
+  {
     slug: "particle-halo",
     title: "Particle Halo",
     description:

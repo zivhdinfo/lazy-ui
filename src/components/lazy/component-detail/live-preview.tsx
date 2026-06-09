@@ -24,6 +24,7 @@ import { Preview as Counter } from "./animate/counter/preview";
 import { Preview as LiquidReveal } from "./animate/liquid-reveal/preview";
 import { Preview as LiquidTransition } from "./animate/liquid-transition/preview";
 import { Preview as MatrixGrid } from "./animate/matrix-grid/preview";
+import { Preview as PixelCursor } from "./animate/pixel-cursor/preview";
 import { Preview as ParticleHalo } from "./animate/particle-halo/preview";
 import { Preview as RevealAnimate } from "./animate/reveal-animate/preview";
 import { Preview as StackList } from "./animate/stack-list/preview";
@@ -87,6 +88,7 @@ const PREVIEWS: Record<string, PreviewComponent> = {
   "liquid-reveal": LiquidReveal,
   "liquid-transition": LiquidTransition,
   "matrix-grid": MatrixGrid,
+  "pixel-cursor": PixelCursor,
   "particle-halo": ParticleHalo,
   "reveal-animate": RevealAnimate,
   "stack-list": StackList,

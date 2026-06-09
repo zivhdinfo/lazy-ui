@@ -389,6 +389,22 @@ const PREVIEW_FOR: Record<string, ComponentType> = {
       );
     };
   }),
+  "pixel-cursor": lazyPreview(async () => {
+    const { PixelCursor } = await import("@/components/lazy-ui/pixel-cursor");
+    return function PixelCursorPreview() {
+      return (
+        <Fill>
+          <PixelCursor
+            color="#ffffff"
+            edgeColor1="#7c3aed"
+            edgeColor2="#22d3ee"
+            pixelSize={7}
+            className="absolute inset-0 bg-black"
+          />
+        </Fill>
+      );
+    };
+  }),
 
   "particle-halo": lazyPreview(async () => {
     const { ParticleHalo } = await import("@/components/lazy-ui/particle-halo");

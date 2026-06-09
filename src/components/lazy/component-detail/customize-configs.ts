@@ -25,6 +25,7 @@ import { customize as counter } from "./animate/counter/customize";
 import { customize as liquidReveal } from "./animate/liquid-reveal/customize";
 import { customize as liquidTransition } from "./animate/liquid-transition/customize";
 import { customize as matrixGrid } from "./animate/matrix-grid/customize";
+import { customize as pixelCursor } from "./animate/pixel-cursor/customize";
 import { customize as particleHalo } from "./animate/particle-halo/customize";
 import { customize as revealAnimate } from "./animate/reveal-animate/customize";
 import { customize as stackList } from "./animate/stack-list/customize";
@@ -85,6 +86,7 @@ export const CUSTOM_CONFIGS: Record<string, CustomizeControl[]> = {
   "liquid-reveal": liquidReveal,
   "liquid-transition": liquidTransition,
   "matrix-grid": matrixGrid,
+  "pixel-cursor": pixelCursor,
   "particle-halo": particleHalo,
   "reveal-animate": revealAnimate,
   "stack-list": stackList,

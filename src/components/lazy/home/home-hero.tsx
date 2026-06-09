@@ -25,6 +25,7 @@ import {
 import { Counter } from "@/components/lazy-ui/counter";
 import { GithubStarsButton } from "@/components/lazy-ui/github-stars-button/github-stars-button";
 import { LiquidTransition } from "@/components/lazy-ui/liquid-transition";
+import { PixelCursor } from "@/components/lazy-ui/pixel-cursor";
 import { RevealAnimate } from "@/components/lazy-ui/reveal-animate";
 import {
   getPublishedBlocks,
@@ -624,6 +625,21 @@ export function HomeHero() {
           {/* Parallax background — Liquid Transition between light/dark images,
               inside the frame with rounded bottom corners. */}
           <HeroBackground theme={theme} sweeps={themeSweeps} bgX={bgX} bgY={bgY} />
+
+          {/* Cursor pixel trail — black → gray → white, layered above the
+              background but kept pointer-transparent so it never blocks the
+              copy or the Safari window controls. */}
+          <PixelCursor
+            color="#09090b"
+            edgeColor1="#71717a"
+            edgeColor2="#ffffff"
+            pixelSize={5}
+            spread={10}
+            density={0.75}
+            persistence={2.9}
+            lag={0.95}
+            className="z-20"
+          />
 
           {/* Centered copy */}
           <div className="flex justify-center px-6 pt-[150px] max-[850px]:justify-start max-[850px]:pt-[120px] sm:pt-[200px]">
