@@ -6,6 +6,8 @@ import {
   Instrument_Serif,
 } from "next/font/google";
 
+import { WebglFpsWatchdog } from "@/components/lazy/perf/webgl-fps-watchdog";
+
 import "./globals.css";
 // Docs/component surface (.lui-docs). Imported as a route stylesheet — not via
 // an @import inside globals.css — so it is render-blocking and bundled, never
@@ -116,6 +118,7 @@ export default function RootLayout({
     >
       <body className="flex min-h-full flex-col">
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        <WebglFpsWatchdog />
         {children}
       </body>
     </html>

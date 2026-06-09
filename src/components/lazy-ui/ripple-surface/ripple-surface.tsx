@@ -524,14 +524,22 @@ export function RippleSurface({
       io.disconnect();
       document.removeEventListener("visibilitychange", handleVisibility);
       // Unbind before deleting — some drivers leak VRAM if buffers are still
-      // bound to a deleted VAO. Don't lose the context: React reuses the
-      // canvas DOM node on HMR/remount and a killed context can't be
-      // re-acquired.
+      // bound to a deleted VAO.
       gl.bindVertexArray(null);
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
       gl.deleteProgram(program);
       gl.deleteBuffer(buf);
       gl.deleteVertexArray(vao);
+      // Free the context itself, not just its buffers — a detached canvas
+      // keeps its live WebGL context, and browsers cap live contexts (~16)
+      // then evict the oldest, so leaking one per navigation eventually janks
+      // the whole app. Deferred + isConnected-guarded: a StrictMode/HMR
+      // remount reuses this same <canvas>, and a lost context can't be
+      // re-acquired on the same element — so only release it on a real unmount.
+      setTimeout(() => {
+        if (!canvas.isConnected)
+          gl.getExtension("WEBGL_lose_context")?.loseContext();
+      }, 0);
     };
   }, [reduced]);
 

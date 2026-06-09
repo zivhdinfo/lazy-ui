@@ -562,15 +562,23 @@ export function SlimeBackground({
       io.disconnect();
       document.removeEventListener("visibilitychange", handleVisibility);
       // Detach buffers from VAO before deleting — some drivers leak VRAM if
-      // the VAO is freed while its attribute buffer is still bound. Don't
-      // call WEBGL_lose_context here: React can reuse the same <canvas> DOM
-      // node on remount/HMR, and a killed context can't be re-acquired,
-      // which causes shader compile errors on the second mount.
+      // the VAO is freed while its attribute buffer is still bound.
       gl.bindVertexArray(null);
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
       gl.deleteProgram(program);
       gl.deleteBuffer(buf);
       gl.deleteVertexArray(vao);
+      // Free the context itself, not just its buffers — a detached canvas
+      // keeps its live WebGL context, and browsers cap live contexts (~16)
+      // then evict the oldest, so leaking one per navigation eventually janks
+      // the whole app. Deferred + isConnected-guarded so a StrictMode/HMR
+      // remount that reuses this same <canvas> keeps its context — a lost
+      // context can't be re-acquired on the same element, which is the compile
+      // error this guard previously sidestepped by never releasing at all.
+      setTimeout(() => {
+        if (!canvas.isConnected)
+          gl.getExtension("WEBGL_lose_context")?.loseContext();
+      }, 0);
     };
   }, [reduced]);
 
