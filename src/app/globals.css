@@ -6494,3 +6494,74 @@ pre .v { color: #67e8f9; }
 @media (prefers-reduced-motion: reduce) {
   .lui-home .tile-bars span { animation: none; opacity: 0.28; transform: scaleY(0.7); }
 }
+
+/* ── Component marquee ──────────────────────────────────────────────────
+   Breadth beat after the bento: three rows of the catalogue scrolling in
+   alternating directions. GSAP drives the xPercent loop (see home-marquee.tsx);
+   the rows live inside the same centred .wrap as the hero + bento. */
+.lui-home .marquee {
+  position: relative;
+  isolation: isolate;
+  background: var(--bg);
+  padding: 0 0 120px;
+}
+/* Fixed-height block; each row distributes its share via flex-grow (animated by
+   GSAP). basis 0 → row height = grow_i / Σgrow, so grow {1,0,0}=100%,
+   {1,1,0}=50/50, {1,1,1}=thirds. */
+.lui-home .mq-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 64px;
+  height: var(--mq-block-h, 168px); /* ≈ 3*band + 2*gap; tune to taste */
+}
+/* Each row clips its scrolling (and scaled-up) track and fades the chips into
+   the page at both edges. GSAP animates flex-grow + opacity for the accordion.
+   The row is a flex box that centres its track vertically, so a track scaled up
+   to fill a tall band stays centred and isn't clipped at the top. */
+.lui-home .mq-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  flex: 0 0 0;
+  min-height: 0;
+  padding: 0;
+  will-change: flex-grow, opacity;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+}
+.lui-home .mq-track {
+  display: flex;
+  align-items: center;
+  flex: none; /* don't let the row's flexbox shrink the full-width track */
+  width: max-content;
+  gap: 10px;
+  padding-right: 10px; /* trailing gap keeps the -50% loop seam seamless */
+  will-change: transform;
+}
+
+.lui-home .mq-chip {
+  flex: none;
+  display: block;
+  font-size: 12px;
+  color: var(--text-3);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 5px 12px;
+  white-space: nowrap;
+  transition: border-color 0.2s, color 0.2s;
+}
+.lui-home .mq-chip:hover { color: var(--text); border-color: var(--text-3); }
+
+@media (max-width: 850px) {
+  .lui-home .marquee { padding-bottom: 80px; }
+}
+/* Reduced motion: the GSAP effect is skipped, so restore a static resting
+   layout — all three rows visible at equal thirds, no scale. */
+@media (prefers-reduced-motion: reduce) {
+  .lui-home .mq-rows { height: auto; }
+  .lui-home .mq-row { flex-grow: 1; visibility: visible; opacity: 1; }
+  .lui-home .mq-track { transform: none; }
+}

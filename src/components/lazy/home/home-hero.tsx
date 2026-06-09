@@ -40,6 +40,7 @@ import { BrandMark } from "../brand-mark";
 import { NEW_SLUGS } from "../sidebar";
 
 import { HomeFeatures } from "./home-features";
+import { HomeMarquee } from "./home-marquee";
 
 // Self-contained Lazy UI home surface (header + split hero + a macOS Safari
 // window that swaps real registry components). Light/dark follows the system
@@ -458,12 +459,13 @@ export function HomeHero() {
 
     lenis.on("scroll", ScrollTrigger.update);
 
-    let frame = 0;
-    const raf = (time: number) => {
-      lenis.raf(time);
-      frame = requestAnimationFrame(raf);
-    };
-    frame = requestAnimationFrame(raf);
+    // Drive Lenis from gsap.ticker (not a standalone rAF) so Lenis and
+    // ScrollTrigger share one clock — the canonical integration that lets
+    // ScrollTrigger pinning behave under smooth scroll. lagSmoothing(0) stops
+    // GSAP from jumping after a dropped frame; restored on cleanup.
+    const tick = (time: number) => lenis.raf(time * 1000); // ticker is seconds; Lenis wants ms
+    gsap.ticker.add(tick);
+    gsap.ticker.lagSmoothing(0);
 
     // In-page anchor links glide instead of jumping.
     const onAnchorClick = (e: globalThis.MouseEvent) => {
@@ -479,7 +481,8 @@ export function HomeHero() {
 
     return () => {
       document.removeEventListener("click", onAnchorClick);
-      cancelAnimationFrame(frame);
+      gsap.ticker.remove(tick);
+      gsap.ticker.lagSmoothing(500, 33);
       lenis.destroy();
     };
   }, []);
@@ -890,6 +893,8 @@ export function HomeHero() {
         </section>
 
         <HomeFeatures />
+
+        <HomeMarquee />
       </main>
 
       {/* First-load intro — the logo flies into the header logo slot, then the
