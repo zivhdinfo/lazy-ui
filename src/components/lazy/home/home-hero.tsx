@@ -25,7 +25,6 @@ import {
 import { Counter } from "@/components/lazy-ui/counter";
 import { GithubStarsButton } from "@/components/lazy-ui/github-stars-button/github-stars-button";
 import { LiquidTransition } from "@/components/lazy-ui/liquid-transition";
-import { PixelCursor } from "@/components/lazy-ui/pixel-cursor";
 import { RevealAnimate } from "@/components/lazy-ui/reveal-animate";
 import {
   getPublishedBlocks,
@@ -352,6 +351,9 @@ export function HomeHero() {
   const flyRef = useRef<HTMLDivElement>(null);
   // Reveal sequence: 1 = pill, 2 = title, 3 = description, 4 = CTA + counters.
   const [step, setStep] = useState(0);
+  // Hero copy is in view on load; flips false when it scrolls out so the reveal
+  // retracts and replays on return (same behavior as the Why strip).
+  const [heroIn, setHeroIn] = useState(true);
   // Bumped only on a user theme toggle, so the background sweeps then (not on
   // the initial system-theme resolution).
   const [themeSweeps, setThemeSweeps] = useState(0);
@@ -491,8 +493,10 @@ export function HomeHero() {
   }, []);
 
   // Sequential reveal (RevealAnimate sweeps) once the cover lifts: title → desc.
+  // Gated on `heroIn` too, so the cascade replays whenever the copy re-enters
+  // the viewport after scrolling away.
   useEffect(() => {
-    if (!done) return;
+    if (!done || !heroIn) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       // Reduced motion: reveal everything at once (intentional one-shot).
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -503,7 +507,7 @@ export function HomeHero() {
       window.setTimeout(() => setStep(i + 1), delay),
     );
     return () => timers.forEach(clearTimeout);
-  }, [done]);
+  }, [done, heroIn]);
 
   // ── Tab navigation ──
   const navTo = useCallback(
@@ -628,23 +632,18 @@ export function HomeHero() {
               inside the frame with rounded bottom corners. */}
           <HeroBackground theme={theme} sweeps={themeSweeps} bgX={bgX} bgY={bgY} />
 
-          {/* Cursor pixel trail — black → gray → white, layered above the
-              background but kept pointer-transparent so it never blocks the
-              copy or the Safari window controls. */}
-          <PixelCursor
-            color="#09090b"
-            edgeColor1="#71717a"
-            edgeColor2="#ffffff"
-            pixelSize={5}
-            spread={10}
-            density={0.75}
-            persistence={2.9}
-            lag={0.95}
-            className="z-20"
-          />
-
-          {/* Centered copy */}
-          <div className="flex justify-center px-6 pt-[150px] max-[850px]:justify-start max-[850px]:pt-[120px] sm:pt-[200px]">
+          {/* Centered copy — viewport-gated so the staged reveal retracts when
+              scrolled away and replays on return. */}
+          <motion.div
+            className="flex justify-center px-6 pt-[150px] max-[850px]:justify-start max-[850px]:pt-[120px] sm:pt-[200px]"
+            onViewportEnter={() => setHeroIn(true)}
+            onViewportLeave={() => {
+              if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+              setHeroIn(false);
+              setStep(0);
+            }}
+            viewport={{ margin: "-20%" }}
+          >
             <div className="flex max-w-3xl flex-col items-center text-center max-[850px]:w-full max-[850px]:items-start max-[850px]:text-left">
               <RevealAnimate trigger={step >= 1}>
                 {newComponents.length > 0 ? (
@@ -735,7 +734,7 @@ export function HomeHero() {
                 </div>
               </motion.div>
             </div>
-          </div>
+          </motion.div>
 
           {/* macOS Safari window (live preview) — sits below the copy like the
               sample's dashboard mock. */}

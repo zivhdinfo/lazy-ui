@@ -1,10 +1,11 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 
 import { BorderGlow } from "@/components/lazy-ui/border-glow";
 import { Counter } from "@/components/lazy-ui/counter";
+import { RevealAnimate } from "@/components/lazy-ui/reveal-animate";
 import {
   getPublishedBlocks,
   getPublishedComponentsOnly,
@@ -32,15 +33,37 @@ export function HomeFeatures() {
   // enters the viewport, then flip to the real total (same trick as the hero).
   const [counted, setCounted] = useState(false);
 
-  // Per-tile fade-up; staggered by index. Reduced motion → render final state.
+  // Heading reveal — staged masked sweep (RevealAnimate), the same motion
+  // vocabulary as the hero (pill → title → lead). `headIn` flips once the head
+  // scrolls into view; then the steps cascade so each line wipes in after the
+  // one above it. Reduced motion jumps straight to the revealed state.
+  const [headIn, setHeadIn] = useState(false);
+  const [headStep, setHeadStep] = useState(0);
+
+  useEffect(() => {
+    if (!headIn) return;
+    if (reduced) {
+      // Reduced motion: skip the cascade, show the heading at once (one-shot).
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setHeadStep(99);
+      return;
+    }
+    const timers = [80, 260, 460].map((delay, i) =>
+      window.setTimeout(() => setHeadStep(i + 1), delay),
+    );
+    return () => timers.forEach(clearTimeout);
+  }, [headIn, reduced]);
+
+  // Per-tile entrance — a blurred fade-up that resolves into focus, echoing the
+  // hero's blur-in reveal. Staggered by index. Reduced motion → final state.
   const reveal = (i: number) =>
     reduced
       ? {}
       : {
-          initial: { opacity: 0, y: 28 },
-          whileInView: { opacity: 1, y: 0 },
-          viewport: { once: true, margin: "-15%" },
-          transition: { duration: 0.9, ease: REVEAL_EASE, delay: i * 0.06 },
+          initial: { opacity: 0, y: 32, filter: "blur(8px)" },
+          whileInView: { opacity: 1, y: 0, filter: "blur(0px)" },
+          viewport: { margin: "-12%" },
+          transition: { duration: 0.85, ease: REVEAL_EASE, delay: i * 0.07 },
         };
 
   // Each bento tile is a BorderGlow whose arc lights toward the pointer — the
@@ -63,6 +86,7 @@ export function HomeFeatures() {
     <motion.div
       className={`glow-cell ${span}`}
       {...reveal(index)}
+      whileHover={reduced ? undefined : { y: -2 }}
       onViewportEnter={onViewportEnter}
     >
       <BorderGlow
@@ -88,17 +112,29 @@ export function HomeFeatures() {
   return (
     <section className="features" id="why" aria-labelledby="why-title">
       <div className="wrap">
-        <motion.div className="features-head" {...reveal(0)}>
+        <motion.div
+          className="features-head"
+          onViewportEnter={() => setHeadIn(true)}
+          onViewportLeave={() => {
+            setHeadIn(false);
+            setHeadStep(0);
+          }}
+          viewport={{ margin: "-15%" }}
+        >
           <span className="eyebrow">
             <span className="dotpulse" />
-            Why
+            <RevealAnimate trigger={headStep >= 1}>Why</RevealAnimate>
           </span>
           <h2 id="why-title" className="features-title">
-            Built to feel finished.
+            <RevealAnimate trigger={headStep >= 2}>
+              Built to feel finished.
+            </RevealAnimate>
           </h2>
           <p className="features-lead">
-            Backgrounds, animation, and primitives that drop into your React app
-            and look done — without the dependency tax.
+            <RevealAnimate trigger={headStep >= 3}>
+              Backgrounds, animation, and primitives that drop into your React
+              app and look done — without the dependency tax.
+            </RevealAnimate>
           </p>
         </motion.div>
 
