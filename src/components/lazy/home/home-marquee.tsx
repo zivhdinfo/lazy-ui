@@ -66,7 +66,11 @@ export function HomeMarquee() {
   // scaled to match its band height (3 → 1.5 → 1), so the chips fill the tall
   // band when few rows show and settle to their resting size at thirds. The loop
   // writes xPercent and the reveal writes scale on the same track — different
-  // transform components, so GSAP composes them without overwriting.
+  // transform components, so GSAP composes them without overwriting. The same
+  // accordion runs on both breakpoints via gsap.matchMedia — only the pin tech
+  // differs: desktop (≥851px) uses pinType "transform" (it scrolls under Lenis),
+  // mobile (≤850px) uses "fixed" so the pin doesn't jitter on native momentum
+  // scroll.
   const rowsRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (reduced) return;
@@ -87,50 +91,69 @@ export function HomeMarquee() {
           repeat: -1,
         });
       });
-      const pause = () => loops.forEach((t) => t.pause());
-      const resume = () => loops.forEach((t) => t.resume());
-      root.addEventListener("pointerenter", pause);
-      root.addEventListener("pointerleave", resume);
+      // Pause the loops only on real hover — on touch, pointerenter fires on tap
+      // and would freeze the marquee until the finger lifts.
+      if (window.matchMedia("(hover: hover)").matches) {
+        const pause = () => loops.forEach((t) => t.pause());
+        const resume = () => loops.forEach((t) => t.resume());
+        root.addEventListener("pointerenter", pause);
+        root.addEventListener("pointerleave", resume);
+      }
 
       const rowEls = gsap.utils.toArray<HTMLElement>(".mq-row", root);
       if (section && rowEls.length >= 3) {
         const [r1, r2, r3] = rowEls;
         const [t1, t2, t3] = tracks;
-
-        gsap.set(r1, { flexGrow: 1, autoAlpha: 1 });
-        gsap.set([r2, r3], { flexGrow: 0, autoAlpha: 0 });
         gsap.set([t1, t2, t3], { transformOrigin: "center center" });
-        gsap.set(t1, { scale: 3 });
-        gsap.set(t2, { scale: 1.5 });
-        gsap.set(t3, { scale: 1 });
 
-        const tl = gsap.timeline({
-          defaults: { ease: "none" },
-          scrollTrigger: {
-            // Pin a touch below the top so the fixed header (≈80px) never
-            // covers the pinned heading.
-            trigger: section,
-            start: "top top+=100",
-            // Longer pin range = a taller pin-spacer = more scroll room below,
-            // so the 3rd row finishes revealing well before scroll runs out.
-            end: "+=240%",
-            scrub: 1,
-            pin: true,
-            anticipatePin: 1,
-            pinType: "transform",
-            invalidateOnRefresh: true,
-          },
-        });
-        // Stage A: 100% → 50/50
-        tl.to(r2, { flexGrow: 1, autoAlpha: 1, duration: 1 }, 0)
-          .to(t1, { scale: 1.5, duration: 1 }, 0);
-        // Stage B: 50/50 → thirds
-        tl.to(r3, { flexGrow: 1, autoAlpha: 1, duration: 1 }, ">")
-          .to([t1, t2], { scale: 1, duration: 1 }, "<")
-          .to(t3, { scale: 1, duration: 1 }, "<");
-        // Trailing hold so the reveal finishes with scroll room to spare,
-        // never cut off at the very bottom.
-        tl.to({}, { duration: 0.5 });
+        // Same accordion on both breakpoints — only the pin technique differs.
+        // Desktop scrolls under Lenis (smoothed wheel), where pinType "transform"
+        // keeps the pin glued to the smoothed position. Mobile scrolls with
+        // native momentum on the compositor thread, where "transform" pinning
+        // lags and jitters (the original jank), so it uses "fixed". The flex-grow
+        // height morph stays cheap here — 3 items in a 150px box, and the chips
+        // inside don't reflow — so with the jitter gone the morph is smooth.
+        const buildAccordion = (pinType: "transform" | "fixed") => {
+          gsap.set(r1, { flexGrow: 1, autoAlpha: 1 });
+          gsap.set([r2, r3], { flexGrow: 0, autoAlpha: 0 });
+          gsap.set(t1, { scale: 3 });
+          gsap.set(t2, { scale: 1.5 });
+          gsap.set(t3, { scale: 1 });
+
+          const tl = gsap.timeline({
+            defaults: { ease: "none" },
+            scrollTrigger: {
+              // Pin a touch below the top so the fixed header (≈80px) never
+              // covers the pinned heading.
+              trigger: section,
+              start: "top top+=100",
+              // Longer pin range = a taller pin-spacer = more scroll room below,
+              // so the 3rd row finishes revealing well before scroll runs out.
+              end: "+=240%",
+              scrub: 1,
+              pin: true,
+              anticipatePin: 1,
+              pinType,
+              invalidateOnRefresh: true,
+            },
+          });
+          // Stage A: 100% → 50/50
+          tl.to(r2, { flexGrow: 1, autoAlpha: 1, duration: 1 }, 0)
+            .to(t1, { scale: 1.5, duration: 1 }, 0);
+          // Stage B: 50/50 → thirds
+          tl.to(r3, { flexGrow: 1, autoAlpha: 1, duration: 1 }, ">")
+            .to([t1, t2], { scale: 1, duration: 1 }, "<")
+            .to(t3, { scale: 1, duration: 1 }, "<");
+          // Trailing hold so the reveal finishes with scroll room to spare,
+          // never cut off at the very bottom.
+          tl.to({}, { duration: 0.5 });
+        };
+
+        // matchMedia builds the active branch and reverts it on breakpoint flip;
+        // the outer ctx.revert() tears both down on unmount.
+        const mm = gsap.matchMedia();
+        mm.add("(min-width: 851px)", () => buildAccordion("transform"));
+        mm.add("(max-width: 850px)", () => buildAccordion("fixed"));
       }
     }, root);
 

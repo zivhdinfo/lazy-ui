@@ -6537,7 +6537,7 @@ pre .v { color: #67e8f9; }
   flex: 0 0 0;
   min-height: 0;
   padding: 0;
-  will-change: flex-grow, opacity;
+  will-change: opacity;
   -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
   mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
 }
