@@ -123,9 +123,10 @@ export function DocsChrome({ children }: { children: ReactNode }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [query, setQuery] = useState("");
 
-  // Mobile nav sheet: the desktop sidebar, wrapped in a card with an
-  // animated enter/exit and a blurred backdrop over the page content.
-  const sheet = useMountTransition(drawerOpen, 240);
+  // Mobile nav sheet: the desktop sidebar, wrapped in a card that slides in
+  // from the left over a blurred backdrop. Keep mounted long enough for the
+  // 0.34s slide-out to finish before unmounting.
+  const sheet = useMountTransition(drawerOpen, 360);
 
   const sections = useMemo(() => getSidebarSections(), []);
   const searchItems = useMemo(
@@ -362,9 +363,6 @@ export function DocsChrome({ children }: { children: ReactNode }) {
                   <b>Lazy</b> <span className="z">UI</span>
                 </span>
               </Link>
-              <button type="button" aria-label="Close navigation" onClick={() => setDrawerOpen(false)}>
-                <X size={16} aria-hidden />
-              </button>
             </div>
             <Sidebar onNavigate={() => setDrawerOpen(false)} />
           </div>

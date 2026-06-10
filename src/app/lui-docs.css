@@ -377,16 +377,25 @@ html[data-theme="dark"] .lui-docs .icon-btn .moon { display: block; }
   /* Opened only by the hamburger, which is hidden ≥968px — belt-and-braces. */
   .lui-docs-msheet-layer { display: none; }
 }
+/* No `opacity` here — opacity < 1 silently disables backdrop-filter in Chrome,
+   which is why the blur didn't show. Animate the blur radius + dim instead, so
+   the filter is always live (just easing 0 → 14px). */
 .lui-docs-msheet-backdrop {
   position: absolute;
   inset: 0;
   border: 0;
   cursor: pointer;
-  background: color-mix(in srgb, var(--text) 14%, transparent);
-  backdrop-filter: blur(8px) saturate(120%);
-  -webkit-backdrop-filter: blur(8px) saturate(120%);
-  opacity: 0;
-  transition: opacity 0.24s var(--ease-out);
+  background: transparent;
+  backdrop-filter: blur(0px) saturate(100%);
+  -webkit-backdrop-filter: blur(0px) saturate(100%);
+  transition: background 0.3s var(--ease-out),
+    backdrop-filter 0.3s var(--ease-out),
+    -webkit-backdrop-filter 0.3s var(--ease-out);
+}
+.lui-docs-msheet-layer[data-open="true"] .lui-docs-msheet-backdrop {
+  background: color-mix(in srgb, var(--text) 20%, transparent);
+  backdrop-filter: blur(16px) saturate(118%);
+  -webkit-backdrop-filter: blur(16px) saturate(118%);
 }
 .lui-docs-msheet-card {
   position: absolute;
@@ -404,27 +413,26 @@ html[data-theme="dark"] .lui-docs .icon-btn .moon { display: block; }
      header + list, not the card, so the sticky header can sit flush at top: 0. */
   overflow-y: auto;
   overscroll-behavior: contain;
-  scrollbar-width: thin;
   scrollbar-gutter: stable;
-  transform-origin: top left;
+  /* Slide in from off the left edge. */
   opacity: 0;
-  transform: translateY(-8px) scale(0.97);
-  transition: opacity 0.24s var(--ease-out), transform 0.24s var(--ease-out);
+  transform: translateX(-112%);
+  transition: opacity 0.22s var(--ease-out), transform 0.34s var(--ease-out);
 }
-.lui-docs-msheet-layer[data-open="true"] .lui-docs-msheet-backdrop { opacity: 1; }
 .lui-docs-msheet-layer[data-open="true"] .lui-docs-msheet-card {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: translateX(0);
 }
-/* Pinned to the top of the scrolling card so the close button stays in reach. */
+/* Pinned to the top of the scrolling card. z-index sits above the list links
+   (which carry z-index: 1 for the hover pill) so scrolled rows pass *behind* the
+   opaque header instead of bleeding through it. */
 .lui-docs-msheet-head {
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 5;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 12px 12px 10px 14px;
+  padding: 12px 14px;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   border-radius: 18px 18px 0 0;
@@ -487,13 +495,42 @@ html[data-theme="dark"] .lui-docs .icon-btn .moon { display: block; }
 
 /* ── Sidebar (shadcn-style: collapsible groups, flat sub-lists) ─────── */
 .lui-docs .sidebar {
-  scrollbar-color: var(--border) transparent;
   /* Always reserve the scrollbar gutter so expanding/collapsing a category
      (which toggles overflow) never shifts the rail horizontally. */
   scrollbar-gutter: stable;
 }
-.lui-docs .sidebar::-webkit-scrollbar-thumb { background: var(--border); }
 .lui-docs .sb-sidebar { padding-top: 24px; }
+
+/* Custom slim scrollbar — a soft rounded thumb with breathing room, shared by
+   the desktop rail and the mobile card so neither scroll feels crude. */
+.lui-docs .sidebar,
+.lui-docs .lui-docs-msheet-card {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--text) 22%, transparent) transparent;
+}
+.lui-docs .sidebar::-webkit-scrollbar,
+.lui-docs .lui-docs-msheet-card::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.lui-docs .sidebar::-webkit-scrollbar-track,
+.lui-docs .lui-docs-msheet-card::-webkit-scrollbar-track {
+  background: transparent;
+}
+.lui-docs .sidebar::-webkit-scrollbar-thumb,
+.lui-docs .lui-docs-msheet-card::-webkit-scrollbar-thumb {
+  /* 3px transparent border + padding-box clip = a ~4px rounded thumb floating
+     in a 10px track. */
+  background: color-mix(in srgb, var(--text) 18%, transparent);
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+.lui-docs .sidebar::-webkit-scrollbar-thumb:hover,
+.lui-docs .lui-docs-msheet-card::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--text) 34%, transparent);
+  background-clip: padding-box;
+}
 
 /* Group stack — tight rows so collapsed titles read as one clean list.
    position: relative anchors the cursor-following hover pill. */
