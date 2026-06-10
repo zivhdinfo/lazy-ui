@@ -14,6 +14,7 @@ import { LiquidReveal } from "@/components/lazy-ui/liquid-reveal";
 import { OrbitMesh } from "@/components/lazy-ui/orbit-mesh";
 import { WaveCipher } from "@/components/lazy-ui/wave-cipher";
 import { ShinyText } from "@/components/lazy-ui/text-animate/shiny-text";
+import { componentHref } from "@/registry/categories";
 import {
   getPublishedBlocks,
   getPublishedComponentsOnly,
@@ -258,7 +259,7 @@ function ComponentsSection({ components }: { components: ComponentItem[] }) {
             </p>
           </div>
           <div className="lp-sec-head-aside">
-            <Link className="lp-btn lp-btn--ghost lp-btn--sm" href="/docs">
+            <Link className="lp-btn lp-btn--ghost lp-btn--sm" href="/get-started">
               Read docs
             </Link>
             <Link className="lp-btn lp-btn--primary lp-btn--sm" href="/components">
@@ -286,7 +287,7 @@ function ComponentsSection({ components }: { components: ComponentItem[] }) {
           </div>
           <div className="lp-cloud-chips">
             {components.map((c) => (
-              <Link key={c.slug} href={`/components/${c.slug}`} className="lp-chip">
+              <Link key={c.slug} href={componentHref(c)} className="lp-chip">
                 <span className="lp-dot" />
                 {c.title}
               </Link>
@@ -398,7 +399,7 @@ function Bento({ components }: { components: ComponentItem[] }) {
             <div className="lp-cell-head">
               <div className="lp-cell-name">{item.title}</div>
               <Link
-                href={`/components/${slug}`}
+                href={componentHref(item)}
                 className="lp-cell-open"
                 aria-label={`Open ${item.title}`}
               >
@@ -437,7 +438,7 @@ function BlocksSection({ blocks }: { blocks: ComponentItem[] }) {
             </p>
           </div>
           <div className="lp-sec-head-aside">
-            <Link className="lp-btn lp-btn--ghost lp-btn--sm" href="/docs/installation">
+            <Link className="lp-btn lp-btn--ghost lp-btn--sm" href="/get-started/installation">
               How to install
             </Link>
             <Link className="lp-btn lp-btn--primary lp-btn--sm" href="/blocks">
@@ -503,9 +504,9 @@ function LPFooter() {
           <FooterCol
             title="Docs"
             items={[
-              { label: "Introduction", href: "/docs" },
-              { label: "Installation", href: "/docs/installation" },
-              { label: "Changelog", href: "/docs/changelog" },
+              { label: "Introduction", href: "/get-started" },
+              { label: "Installation", href: "/get-started/installation" },
+              { label: "Changelog", href: "/get-started/changelog" },
             ]}
           />
         </div>

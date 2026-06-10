@@ -24,16 +24,16 @@ const FOOTER_COLS: { title: string; links: { label: string; href: string }[] }[]
   {
     title: "Library",
     links: [
-      { label: "Components", href: "/components" },
+      { label: "Components", href: "/get-started" },
       { label: "Blocks", href: "/blocks" },
     ],
   },
   {
     title: "Docs",
     links: [
-      { label: "Introduction", href: "/docs" },
-      { label: "Installation", href: "/docs/installation" },
-      { label: "Changelog", href: "/docs/changelog" },
+      { label: "Introduction", href: "/get-started" },
+      { label: "Installation", href: "/get-started/installation" },
+      { label: "Changelog", href: "/get-started/changelog" },
     ],
   },
 ];
@@ -90,7 +90,7 @@ export function HomeFooter() {
                   {/* stopPropagation on pointerdown keeps SmoothCursor from
                       capturing the pointer (which would swallow the click). */}
                   <div className="cta-row" onPointerDown={(e) => e.stopPropagation()}>
-                    <Link href="/components" className="btn btn-solid">
+                    <Link href="/get-started" className="btn btn-solid">
                       Browse components
                       <span className="cta-arrow" aria-hidden="true">
                         →

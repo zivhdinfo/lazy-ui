@@ -2,51 +2,43 @@
 
 import Link from "next/link";
 
-import { getPublishedComponents } from "@/registry/components";
+import { componentHref } from "@/registry/categories";
+import { getPublishedComponentsOnly } from "@/registry/components";
 
 import { Icons } from "./icons";
 import { rippleClick } from "./ripple";
-import { attachSpotlight, useScrollReveal } from "./use-scroll-reveal";
+import { useScrollReveal } from "./use-scroll-reveal";
 
-export function IntroPage(_: { sources: Record<string, string> }) {
-  const total = getPublishedComponents().length;
+export function IntroPage() {
+  // Component-only — blocks live under /blocks and are counted separately.
+  const components = getPublishedComponentsOnly();
+  const total = components.length;
+  // No standalone overview page anymore — open the first component's detail
+  // page so the CTA still lands on something real (the sidebar lists the rest).
+  const firstComponentHref = componentHref(components[0]);
   useScrollReveal();
-  const bindSpot = (n: HTMLDivElement | null) => attachSpotlight(n);
 
   return (
     <main className="main">
-      <div className="crumb reveal">
-        <span>Docs</span>
-        <span className="sep">›</span>
-        <span>Get Started</span>
-        <span className="sep">›</span>
-        <span className="cur">Introduction</span>
-      </div>
-
       <h1 className="page-title reveal">
         Build <em>lazily.</em>
       </h1>
       <p className="page-sub reveal d-1">
-        Lazy-ui is an open-source collection of{" "}
+        You own every file. All{" "}
         <strong style={{ color: "var(--fg-0)", fontWeight: 600 }}>
-          {total} React components
+          {total} React and Tailwind components
         </strong>{" "}
-        built to add visual personality to your projects — WebGL backgrounds,
-        text and motion effects, device mocks, and a few focused interactive
-        primitives.
-      </p>
-      <p className="page-sub reveal d-2" style={{ marginTop: 12 }}>
-        It is not a generic UI kit. You won&rsquo;t find another button or input
-        family here. Lazy-ui exists to help your pages stand out without
-        rebuilding the visual heavy lifting from scratch.
+        — WebGL backgrounds, text and motion effects, device mocks, and a few
+        interactive primitives — install as shadcn registry files that land in
+        your repo, fully editable. Not an import. Source you keep.
       </p>
 
-      <div className="action-row reveal d-3">
-        <Link className="lazy-btn primary" href="/docs/installation" onClick={rippleClick}>
+      <div className="action-row reveal d-2">
+        <Link className="lazy-btn" href="/get-started/installation" onClick={rippleClick}>
           {Icons.arrowRight}
           Install a component
         </Link>
-        <Link className="lazy-btn" href="/components" onClick={rippleClick}>
+        <Link className="lazy-btn" href={firstComponentHref} onClick={rippleClick}>
           {Icons.chevrons}
           Browse {total} components
         </Link>
@@ -56,60 +48,66 @@ export function IntroPage(_: { sources: Record<string, string> }) {
       <section className="block reveal">
         <h2 className="block-title">Mission</h2>
         <p className="block-sub">
-          Ship visually striking React components that you can own, customize,
-          and adopt one at a time.
+          You own the source from the first install. Striking components you
+          drop in one at a time, tune through props, and rewrite whenever the
+          design needs it.
         </p>
 
-        <div className="bento">
-          <div className="tile span-3 reveal d-1" ref={bindSpot}>
-            <div className="tile-eyebrow">
-              <span className="dot" />
-              Free for everyone
+        <div className="doc-section-list">
+          <article className="doc-section reveal d-1">
+            <div>
+              <span className="doc-section-index">01</span>
+              <h3>You own the code.</h3>
             </div>
-            <h3 className="tile-h">You own the code.</h3>
-            <p className="tile-p">
-              Source files land in your repo under{" "}
-              <code className="inline-code">components/lazy-ui</code>. Modify,
-              rename, or extend without waiting on a package release.
-            </p>
-          </div>
+            <div className="doc-section-body">
+              <p>
+                Source lands in your repo under{" "}
+                <code className="inline-code">components/lazy-ui</code>. Edit it,
+                rename it, extend it — no package release to wait on, no version
+                to bump.
+              </p>
+            </div>
+          </article>
 
-          <div className="tile span-3 reveal d-2" ref={bindSpot}>
-            <div className="tile-eyebrow">
-              <span className="dot" />
-              Prop-first
+          <article className="doc-section reveal d-2">
+            <div>
+              <span className="doc-section-index">02</span>
+              <h3>Tune through props.</h3>
             </div>
-            <h3 className="tile-h">Tune through props.</h3>
-            <p className="tile-p">
-              Every component exposes the knobs that matter — palette, speed,
-              intensity, easing — so most adjustments never need a code dive.
-            </p>
-          </div>
+            <div className="doc-section-body">
+              <p>
+                Palette, speed, intensity, easing — the knobs that matter are
+                props. Most adjustments never need a code dive.
+              </p>
+            </div>
+          </article>
 
-          <div className="tile span-3 reveal d-3" ref={bindSpot}>
-            <div className="tile-eyebrow">
-              <span className="dot" />
-              Fully modular
+          <article className="doc-section reveal d-3">
+            <div>
+              <span className="doc-section-index">03</span>
+              <h3>No bundle, no lock-in.</h3>
             </div>
-            <h3 className="tile-h">No bundle, no lock-in.</h3>
-            <p className="tile-p">
-              Lazy-ui isn&rsquo;t on npm. Pull only the components you need via
-              the shadcn CLI — no transitive deps, no unused code shipped.
-            </p>
-          </div>
+            <div className="doc-section-body">
+              <p>
+                Not on npm. Pull only what you need via shadcn registry URLs —
+                no transitive deps, no unused code in your bundle.
+              </p>
+            </div>
+          </article>
 
-          <div className="tile span-3 reveal d-4" ref={bindSpot}>
-            <div className="tile-eyebrow">
-              <span className="dot" />
-              Bring your own design
+          <article className="doc-section reveal d-4">
+            <div>
+              <span className="doc-section-index">04</span>
+              <h3>Themable by default.</h3>
             </div>
-            <h3 className="tile-h">Themable by default.</h3>
-            <p className="tile-p">
-              The default surface is dark, but every component is built on
-              Tailwind and exposed props — swap colors, easing, or type to
-              match the design system you already have.
-            </p>
-          </div>
+            <div className="doc-section-body">
+              <p>
+                Dark by default, but it&rsquo;s all Tailwind and props
+                underneath. Swap colors, easing, or type to match the design
+                system you already run.
+              </p>
+            </div>
+          </article>
         </div>
       </section>
 
@@ -117,50 +115,54 @@ export function IntroPage(_: { sources: Record<string, string> }) {
       <section className="block reveal">
         <h2 className="block-title">Performance</h2>
         <p className="block-sub">
-          Most Lazy-ui pieces are GPU-accelerated WebGL or motion effects.
-          A few things to keep in mind when you wire them in.
+          You own the source, so you control the cost. These are
+          GPU-accelerated WebGL and motion effects — a few things to keep in
+          mind when you wire them in.
         </p>
 
-        <div className="bento">
-          <div className="tile span-2 reveal d-1" ref={bindSpot}>
-            <div className="tile-eyebrow">
-              <span className="dot" />
-              Less is more
+        <div className="doc-section-list">
+          <article className="doc-section reveal d-1">
+            <div>
+              <span className="doc-section-index">01</span>
+              <h3>One or two per page.</h3>
             </div>
-            <h3 className="tile-h">One or two per page.</h3>
-            <p className="tile-p">
-              Stacking multiple WebGL surfaces on a single screen will compete
-              for the GPU and dilute the visual focus. Pick the hero piece;
-              keep the rest static.
-            </p>
-          </div>
+            <div className="doc-section-body">
+              <p>
+                Stack several WebGL surfaces on one screen and they fight for
+                the GPU and split the focus. Pick the hero piece. Keep the rest
+                static.
+              </p>
+            </div>
+          </article>
 
-          <div className="tile span-2 reveal d-2" ref={bindSpot}>
-            <div className="tile-eyebrow">
-              <span className="dot" />
-              Mobile
+          <article className="doc-section reveal d-2">
+            <div>
+              <span className="doc-section-index">02</span>
+              <h3>Downgrade gracefully.</h3>
             </div>
-            <h3 className="tile-h">Downgrade gracefully.</h3>
-            <p className="tile-p">
-              On smaller viewports or older devices, swap heavy effects for a
-              static fallback. Image posters and CSS gradients carry most of
-              the visual weight at a fraction of the cost.
-            </p>
-          </div>
+            <div className="doc-section-body">
+              <p>
+                On smaller or older devices, swap heavy effects for a static
+                fallback. A poster image or CSS gradient carries most of the
+                look at a fraction of the cost.
+              </p>
+            </div>
+          </article>
 
-          <div className="tile span-2 reveal d-3" ref={bindSpot}>
-            <div className="tile-eyebrow">
-              <span className="dot" />
-              Reduced motion
+          <article className="doc-section reveal d-3">
+            <div>
+              <span className="doc-section-index">03</span>
+              <h3>Respect the preference.</h3>
             </div>
-            <h3 className="tile-h">Respect the preference.</h3>
-            <p className="tile-p">
-              Components honor{" "}
-              <code className="inline-code">prefers-reduced-motion</code> and
-              short-circuit decorative loops. Verify on a real device before
-              shipping.
-            </p>
-          </div>
+            <div className="doc-section-body">
+              <p>
+                Every component honors{" "}
+                <code className="inline-code">prefers-reduced-motion</code> and
+                short-circuits decorative loops. Test on a real device before
+                you ship.
+              </p>
+            </div>
+          </article>
         </div>
       </section>
     </main>

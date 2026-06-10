@@ -10,7 +10,7 @@ import { DOCS_TOPICS } from "./docs-content";
 import { Icons } from "./icons";
 import { rippleClick } from "./ripple";
 import { HighlightTsx } from "./syntax-highlight";
-import { attachSpotlight, useScrollReveal } from "./use-scroll-reveal";
+import { useScrollReveal } from "./use-scroll-reveal";
 
 function neighborTopics(slug: string) {
   const index = DOCS_TOPICS.findIndex((topic) => topic.slug === slug);
@@ -25,59 +25,43 @@ function neighborTopics(slug: string) {
 
 export function DocsTopicPage({ topic }: { topic: DocsTopic }) {
   useScrollReveal();
-  const bindSpot = (node: HTMLDivElement | null) => attachSpotlight(node);
   const { prev, next } = neighborTopics(topic.slug);
 
   return (
     <main className="main">
-      <div className="crumb reveal">
-        <Link href="/">Home</Link>
-        <span className="sep">›</span>
-        <Link href="/docs">Docs</Link>
-        <span className="sep">›</span>
-        <span className="cur">{topic.title}</span>
-      </div>
+      <h1 className="page-title reveal">{topic.title}</h1>
+      <p className="page-sub reveal d-1">{topic.lead}</p>
 
-      <div className="docs-hero reveal">
-        <div className="tile-eyebrow">
-          <span className="dot" />
-          {topic.badge}
-        </div>
-        <h1 className="page-title docs-title">{topic.title}</h1>
-        <p className="page-sub">{topic.lead}</p>
-        <div className="docs-action-row">
-          <Link
-            className="lazy-btn primary"
-            href="/components"
-            onClick={rippleClick}
-          >
-            {Icons.arrowRight}
-            Browse components
-          </Link>
-          <Link className="lazy-btn" href="/docs" onClick={rippleClick}>
-            {Icons.book}
-            Back to intro
-          </Link>
-        </div>
+      <div className="action-row reveal d-2">
+        <Link className="lazy-btn" href="/get-started" onClick={rippleClick}>
+          {Icons.arrowRight}
+          Browse components
+        </Link>
+        <Link className="lazy-btn" href="/get-started" onClick={rippleClick}>
+          {Icons.book}
+          Back to intro
+        </Link>
       </div>
 
       <section className="block reveal d-1">
         <h2 className="block-title">The short version</h2>
         <p className="block-sub">{topic.description}</p>
-        <div className="doc-card-grid">
+        <div className="doc-section-list">
           {topic.highlights.map((item, index) => (
-            <div
+            <article
               key={item.title}
-              className={`doc-card reveal d-${(index % 3) + 1}`}
-              ref={bindSpot}
+              className={`doc-section reveal d-${index + 1}`}
             >
-              <div className="tile-eyebrow">
-                <span className="dot" />
-                {item.eyebrow}
+              <div>
+                <span className="doc-section-index">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <h3>{item.title}</h3>
               </div>
-              <h3>{item.title}</h3>
-              <p>{item.body}</p>
-            </div>
+              <div className="doc-section-body">
+                <p>{item.body}</p>
+              </div>
+            </article>
           ))}
         </div>
       </section>
@@ -130,23 +114,23 @@ export function DocsTopicPage({ topic }: { topic: DocsTopic }) {
 
       <nav className="doc-link-row reveal d-4" aria-label="Docs pagination">
         {prev ? (
-          <Link href={`/docs/${prev.slug}`} className="doc-link-card">
+          <Link href={`/get-started/${prev.slug}`} className="doc-link-card">
             <span>Previous</span>
             <strong>{prev.title}</strong>
           </Link>
         ) : (
-          <Link href="/docs" className="doc-link-card">
+          <Link href="/get-started" className="doc-link-card">
             <span>Previous</span>
             <strong>Introduction</strong>
           </Link>
         )}
         {next ? (
-          <Link href={`/docs/${next.slug}`} className="doc-link-card next">
+          <Link href={`/get-started/${next.slug}`} className="doc-link-card next">
             <span>Next</span>
             <strong>{next.title}</strong>
           </Link>
         ) : (
-          <Link href="/components" className="doc-link-card next">
+          <Link href="/get-started" className="doc-link-card next">
             <span>Next</span>
             <strong>Components</strong>
           </Link>

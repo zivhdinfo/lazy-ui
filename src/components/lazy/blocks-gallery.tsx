@@ -174,7 +174,7 @@ export function BlocksGallery({ items }: { items: ComponentItem[] }) {
           </span>
         </a>
         <Link
-          href="/components"
+          href="/get-started"
           style={{
             display: "inline-flex",
             alignItems: "center",

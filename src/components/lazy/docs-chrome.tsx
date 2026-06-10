@@ -22,9 +22,11 @@ const GH_OWNER = "zivhdinfo";
 const GH_REPO = "lazy-ui";
 
 const NAV_LINKS: { label: string; href: string; match: string }[] = [
-  { label: "Components", href: "/components", match: "/components" },
+  // No standalone overview page anymore — "Components" opens the docs intro
+  // (sidebar lists them) but still lights up on /components/<...> detail routes.
+  { label: "Components", href: "/get-started", match: "/components" },
   { label: "Blocks", href: "/blocks", match: "/blocks" },
-  { label: "Docs", href: "/docs", match: "/docs" },
+  { label: "Docs", href: "/get-started", match: "/get-started" },
 ];
 
 function ThemeIcon() {
@@ -237,7 +239,7 @@ export function DocsChrome({ children }: { children: ReactNode }) {
                 const active = currentPath.startsWith(item.match);
                 return (
                   <Link
-                    key={item.href}
+                    key={item.label}
                     href={item.href}
                     className={active ? "active" : undefined}
                     aria-current={active ? "page" : undefined}

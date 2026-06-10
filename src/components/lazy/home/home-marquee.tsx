@@ -6,6 +6,7 @@ import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { useEffect, useMemo, useRef } from "react";
 
+import { componentHref } from "@/registry/categories";
 import { getPublishedComponentsOnly } from "@/registry/components";
 import type { ComponentItem } from "@/registry/types";
 
@@ -38,7 +39,7 @@ function splitRows<T>(items: T[], rows: number): T[][] {
 
 function Chip({ item }: { item: ComponentItem }) {
   return (
-    <Link href={`/components/${item.slug}`} className="mq-chip mono">
+    <Link href={componentHref(item)} className="mq-chip mono">
       {item.title}
     </Link>
   );

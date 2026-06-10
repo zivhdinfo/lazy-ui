@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { DocsTopicPage } from "@/components/lazy/docs-topic-page";
+import { ChangelogPage } from "@/components/lazy/changelog-page";
 import { DOCS_TOPICS, getDocsTopic } from "@/components/lazy/docs-content";
-import { DocsShell } from "@/components/lazy/docs-shell";
+import { DocsTopicPage } from "@/components/lazy/docs-topic-page";
 
-type DocsTopicRouteProps = {
+type GetStartedTopicRouteProps = {
   params: Promise<{
     slug: string;
   }>;
@@ -19,14 +19,12 @@ export function generateStaticParams() {
 
 export async function generateMetadata({
   params,
-}: DocsTopicRouteProps): Promise<Metadata> {
+}: GetStartedTopicRouteProps): Promise<Metadata> {
   const { slug } = await params;
   const topic = getDocsTopic(slug);
 
   if (!topic) {
-    return {
-      title: "Docs not found | Lazy-ui",
-    };
+    return { title: "Docs not found | Lazy-ui" };
   }
 
   return {
@@ -35,7 +33,9 @@ export async function generateMetadata({
   };
 }
 
-export default async function DocsTopicRoute({ params }: DocsTopicRouteProps) {
+export default async function GetStartedTopicRoute({
+  params,
+}: GetStartedTopicRouteProps) {
   const { slug } = await params;
   const topic = getDocsTopic(slug);
 
@@ -43,9 +43,11 @@ export default async function DocsTopicRoute({ params }: DocsTopicRouteProps) {
     notFound();
   }
 
-  return (
-    <DocsShell>
-      <DocsTopicPage topic={topic} />
-    </DocsShell>
-  );
+  // Chrome (sidebar + header) lives in get-started/layout.tsx. The changelog
+  // gets a dedicated dated layout; every other topic uses the generic template.
+  if (slug === "changelog") {
+    return <ChangelogPage topic={topic} />;
+  }
+
+  return <DocsTopicPage topic={topic} />;
 }

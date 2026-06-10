@@ -671,6 +671,14 @@ html.lenis body { height: auto; }
   padding: 40px 48px 120px;
   min-width: 0;
 }
+/* Fill the grid column even when the page content is narrow. Without this,
+   `.main` shrink-to-fits to its content, so a short page (e.g. the changelog)
+   reads as indented/centred instead of matching the wider docs pages. The grid
+   track is already the full column width; we just stop the item collapsing
+   inside it. Component detail keeps its own width handling. */
+.shell .main:not(.component-detail-main) {
+  width: 100%;
+}
 
 .crumb {
   display: flex;
@@ -2728,6 +2736,100 @@ pre .v { color: #67e8f9; }
   color: var(--fg-4);
 }
 .showcase-tab.is-active .showcase-tab-count { color: var(--fg-2); }
+
+/* ── Gallery toolbar: search + result count ──────────────── */
+.showcase-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0 14px;
+}
+.showcase-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 42px;
+  padding: 0 12px 0 14px;
+  border-radius: 10px;
+  border: 1px solid var(--line-2);
+  background: var(--bg-1);
+  color: var(--fg-3);
+  transition: border-color 0.2s var(--ease-out);
+}
+.showcase-search:focus-within { border-color: var(--line-3); }
+.showcase-search > svg { flex: 0 0 auto; }
+.showcase-search input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  outline: none;
+  color: var(--fg-0);
+  font-family: var(--font-outfit), system-ui, sans-serif;
+  font-size: 14px;
+}
+.showcase-search input::placeholder { color: var(--fg-4); }
+.showcase-search input::-webkit-search-cancel-button { display: none; }
+.showcase-search-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--fg-3);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.showcase-search-clear:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--fg-1);
+}
+.showcase-result-count {
+  flex: 0 0 auto;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 12px;
+  color: var(--fg-3);
+  white-space: nowrap;
+}
+
+/* Filter chips scroll horizontally on phones instead of stacking tall. */
+@media (max-width: 640px) {
+  .showcase-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .showcase-tabs::-webkit-scrollbar { display: none; }
+  .showcase-tab { flex: 0 0 auto; }
+  .showcase-result-count { display: none; }
+}
+
+/* Empty search / filter state. */
+.showcase-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 64px 20px;
+  text-align: center;
+  color: var(--fg-3);
+}
+.showcase-empty strong {
+  color: var(--fg-1);
+  font-size: 15px;
+  font-weight: 600;
+}
+.showcase-empty span {
+  font-size: 13px;
+  max-width: 360px;
+}
 
 .showcase-section {
   display: block;

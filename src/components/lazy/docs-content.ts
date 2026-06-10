@@ -28,28 +28,28 @@ export const DOCS_TOPICS: DocsTopic[] = [
     group: "Get Started",
     badge: "Get Started",
     description:
-      "Pull Lazy-ui components into your project through the shadcn CLI. One URL per component, no npm package.",
+      "You own the source. Pull components in through the shadcn CLI — one registry URL each, no npm package, no version to track.",
     lead:
-      "Lazy-ui is delivered as a shadcn-style registry. You point the shadcn CLI at a component URL, and the source — implementation, index export, and any helper files — lands directly in your repo.",
+      "You own every file you install. Point the shadcn CLI at a component's registry URL and the source — implementation, exports, and any helpers — lands straight in your repo, fully editable.",
     highlights: [
       {
         eyebrow: "Registry-only",
         title: "Not on npm.",
         body:
-          "There is no @lazy-ui package to install. Each component is a self-contained registry item at /r/[name].json. The CLI fetches, the source is yours.",
+          "No package to install. Each component is a self-contained registry item at /r/[name].json. The CLI fetches it; the source is yours to keep.",
       },
       {
         eyebrow: "Own the source",
         title: "Files in your repo.",
         body:
-          "Generated code lands under components/lazy-ui. Rename it, restyle it, fork the interaction — nothing is hidden behind a bundle.",
+          "Generated code lands under components/lazy-ui. Rename it, restyle it, fork the interaction — nothing hides behind a bundle.",
       },
     ],
     sections: [
       {
         title: "Requirements",
         body:
-          "Lazy-ui targets an existing shadcn-compatible React app. If shadcn/ui is wired up in your project, you already have everything you need.",
+          "These drop into an existing shadcn-compatible React app. If shadcn/ui is already wired up, you have everything you need.",
         bullets: [
           "A React app with Tailwind CSS configured (Next.js, Vite, or similar).",
           "shadcn/ui initialized — the cn() helper and components path alias.",
@@ -59,17 +59,17 @@ export const DOCS_TOPICS: DocsTopic[] = [
       {
         title: "Add a component",
         body:
-          "Open the component page, copy its registry URL, and pass it to the shadcn CLI. Internal Lazy-ui dependencies (e.g. a shared util another component needs) are fetched automatically.",
+          "Open a component page, copy its registry URL, pass it to the shadcn CLI. Internal dependencies — a shared util another component needs — are fetched for you.",
         bullets: [
-          "Browse every component at /components — each page links to its slug.",
-          "WebGL backgrounds and motion primitives declare their npm deps in the registry item; the CLI surfaces them on install.",
-          "Commit the generated files. Lazy-ui is copy-and-paste by design.",
+          "Browse every component from the sidebar — each page links to its slug.",
+          "WebGL backgrounds and motion primitives declare their npm deps in the registry item — the CLI installs them with the component.",
+          "Commit the generated files. This is copy-and-paste by design.",
         ],
       },
       {
         title: "Update or replace",
         body:
-          "Components don't auto-update — that's the trade-off for owning the source. Re-run the CLI with the same URL to overwrite, or merge changes by hand.",
+          "Nothing auto-updates — that's the trade-off for owning the source. Re-run the CLI with the same URL to overwrite, or merge changes by hand.",
         bullets: [
           "Re-running shadcn add will prompt before overwriting an existing file.",
           "Diff against the registry source on GitHub to see what changed.",
@@ -99,54 +99,68 @@ export const DOCS_TOPICS: DocsTopic[] = [
     title: "Changelog",
     group: "Get Started",
     badge: "Updates",
-    description:
-      "Recent Lazy-ui component, docs, and registry updates in one place.",
+    description: "Component, docs, and registry updates — newest first.",
     lead:
-      "Track what changed before pulling a component again. Lazy-ui components are copied into your project, so the changelog helps you decide when to re-run the registry command or merge updates by hand.",
-    highlights: [
+      "You own the source, so nothing updates behind your back. Here's what changed; re-run the registry command when you want the new code.",
+    // Rendered by ChangelogPage (changelog-page.tsx) from CHANGELOG_RELEASES,
+    // not the generic topic layout — these stay empty on purpose.
+    highlights: [],
+    sections: [],
+  },
+];
+
+export type ChangelogChange = {
+  tag: "Added" | "Changed" | "Fixed" | "Removed";
+  text: string;
+};
+
+export type ChangelogRelease = {
+  version: string;
+  date: string;
+  summary: string;
+  changes: ChangelogChange[];
+};
+
+// Newest first — the changelog page renders them in this order.
+export const CHANGELOG_RELEASES: ChangelogRelease[] = [
+  {
+    version: "1.2.0",
+    date: "Jun 10, 2026",
+    summary: "Reworked the component detail page.",
+    changes: [
       {
-        eyebrow: "Current",
-        title: "Registry-first updates.",
-        body:
-          "New components and docs changes ship through the registry pages, so each update stays inspectable before you copy it into your app.",
+        tag: "Changed",
+        text: "Rebuilt the component detail page with a live preview, prop controls, and one-line install.",
       },
       {
-        eyebrow: "Ownership",
-        title: "No silent upgrades.",
-        body:
-          "Lazy-ui does not auto-update installed files. Review changes, then pull the component again only when you want the new source.",
+        tag: "Changed",
+        text: "Tuned the detail layout to stay readable down to mobile widths.",
       },
     ],
-    sections: [
+  },
+  {
+    version: "1.1.0",
+    date: "Jun 9, 2026",
+    summary: "Refreshed the landing page.",
+    changes: [
       {
-        title: "Latest",
-        body:
-          "The latest pass focuses on the docs shell, responsive navigation, and the component browsing experience.",
-        bullets: [
-          "Refined the docs sidebar into registry-driven groups.",
-          "Added a responsive mobile navigation drawer for docs and components.",
-          "Updated the top navigation with search, changelog, install, and GitHub star actions.",
-        ],
+        tag: "Changed",
+        text: "Redesigned the landing page with a new hero, live component previews, and scroll reveals.",
+      },
+    ],
+  },
+  {
+    version: "1.0.0",
+    date: "May 24, 2026",
+    summary: "First public release.",
+    changes: [
+      {
+        tag: "Added",
+        text: "Initial release — React and Tailwind components installable through the shadcn registry.",
       },
       {
-        title: "Component updates",
-        body:
-          "Backgrounds, text animations, and motion primitives remain grouped by category so updates are easier to scan.",
-        bullets: [
-          "New and recently added components are marked in the sidebar and mobile menu.",
-          "Registry metadata drives component counts and navigation groups.",
-          "Install commands still target individual registry URLs, not a package bundle.",
-        ],
-      },
-      {
-        title: "How to consume changes",
-        body:
-          "Because generated files live in your repo, treat updates like normal source changes.",
-        bullets: [
-          "Open the component page and review the current source.",
-          "Run the same shadcn add command to fetch the newest registry item.",
-          "Compare the generated diff before keeping or merging local customizations.",
-        ],
+        tag: "Added",
+        text: "WebGL backgrounds, text and motion effects, device mocks, and interactive primitives.",
       },
     ],
   },

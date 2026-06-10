@@ -19,6 +19,7 @@ import {
   Layers,
   MessageSquare,
   MousePointerClick,
+  Rocket,
   Smartphone,
   Sparkles,
   TextCursorInput,
@@ -27,6 +28,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+import { componentHref } from "@/registry/categories";
 import { getPublishedComponentsOnly } from "@/registry/components";
 import type { ComponentItem } from "@/registry/types";
 
@@ -67,10 +69,9 @@ const DOC_SECTION: SidebarSection = {
   title: "Get Started",
   eyebrow: "Docs",
   items: [
-    { label: "Introduction", href: "/docs" },
-    { label: "Installation", href: "/docs/installation" },
-    { label: "Changelog", href: "/docs/changelog" },
-    { label: "All Components", href: "/components" },
+    { label: "Introduction", href: "/get-started" },
+    { label: "Installation", href: "/get-started/installation" },
+    { label: "Changelog", href: "/get-started/changelog" },
   ],
 };
 
@@ -78,6 +79,7 @@ const DOC_SECTION: SidebarSection = {
 // Falls back to a neutral glyph so a brand-new category never renders
 // icon-less.
 const CATEGORY_ICON: Record<string, LucideIcon> = {
+  "Get Started": Rocket,
   Background: Image,
   "Text Animate": Type,
   Animate: Zap,
@@ -92,8 +94,7 @@ const CATEGORY_ICON: Record<string, LucideIcon> = {
 
 export function isSidebarItemActive(pathname: string | null, href: string): boolean {
   if (!pathname) return false;
-  if (href === "/docs") return pathname === "/docs";
-  if (href === "/components") return pathname === "/components";
+  if (href === "/get-started") return pathname === "/get-started";
   return pathname === href;
 }
 
@@ -119,7 +120,7 @@ function sortByCategory(items: ComponentItem[]): SidebarSection[] {
       eyebrow: `${list.length} item${list.length === 1 ? "" : "s"}`,
       items: list.map((item) => ({
         label: item.title,
-        href: `/components/${item.slug}`,
+        href: componentHref(item),
         tag: NEW_SLUGS.has(item.slug) ? "New" : undefined,
       })),
     };
@@ -248,10 +249,9 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
   // on the panel ids they wire up with aria-controls.
   const uid = useId();
 
-  // Only the component categories live in the sidebar now — the "Get Started"
-  // doc links were lifted out (they stay reachable from the header). The
-  // exported getSidebarSections() still returns them for global search.
-  const categorySections = useMemo(() => getSidebarSections().slice(1), []);
+  // The "Get Started" doc group sits at the top, followed by every component
+  // category. getSidebarSections() returns them in that order.
+  const categorySections = useMemo(() => getSidebarSections(), []);
 
   const activeSectionId = useMemo(
     () =>

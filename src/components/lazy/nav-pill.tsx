@@ -41,7 +41,7 @@ export function NavPill() {
     [sections],
   );
   const [query, setQuery] = useState("");
-  const installActive = pathname === "/docs/installation";
+  const installActive = pathname === "/get-started/installation";
   const [menuPathname, setMenuPathname] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const menuOpen = menuPathname === currentPath;
@@ -127,7 +127,7 @@ export function NavPill() {
           <div className="nav-right">
             {NEW_SLUGS.size > 0 && (
               <Link
-                href="/components?tab=new"
+                href="/get-started"
                 className="nav-new-link"
                 aria-label={`What's new — ${NEW_SLUGS.size} update${NEW_SLUGS.size === 1 ? "" : "s"}`}
               >
@@ -156,7 +156,7 @@ export function NavPill() {
               aria-label="Open Lazy-ui on GitHub"
             />
             <Link
-              href="/docs/installation"
+              href="/get-started/installation"
               className={`nav-install-link${installActive ? " active" : ""}`}
             >
               <Terminal size={14} />
@@ -243,7 +243,7 @@ export function NavPill() {
             <div className="nav-mobile-quick" aria-label="Primary links">
               {NAV_ITEMS.map((item, i) => (
                 <Link
-                  key={item.href}
+                  key={item.label}
                   href={item.href}
                   className={`nav-mobile-quick-link${i === active ? " active" : ""}`}
                   onClick={() => setMenuPathname(null)}

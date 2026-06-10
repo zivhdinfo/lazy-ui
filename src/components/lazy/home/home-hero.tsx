@@ -623,9 +623,9 @@ export function HomeHero() {
               </span>
             </Link>
             <nav className="nav-links">
-              <Link href="/components">Components</Link>
+              <Link href="/get-started">Components</Link>
               <Link href="/blocks">Blocks</Link>
-              <Link href="/docs">Docs</Link>
+              <Link href="/get-started">Docs</Link>
             </nav>
             <div className="nav-right">
               <BorderGlow
@@ -726,7 +726,7 @@ export function HomeHero() {
                         className="lp-new-pill-glow"
                       >
                         <Link
-                          href="/components?tab=new"
+                          href="/get-started"
                           className="lp-new-pill"
                           aria-label={`${newComponents.length} new component${
                             newComponents.length === 1 ? "" : "s"
@@ -774,10 +774,10 @@ export function HomeHero() {
                 variants={heroItem}
                 transition={heroItemTransition}
               >
-                <Link href="/components" className="btn btn-solid">
+                <Link href="/get-started" className="btn btn-solid">
                   Browse components
                 </Link>
-                <Link href="/docs" className="btn btn-ghost">
+                <Link href="/get-started" className="btn btn-ghost">
                   Read the docs
                 </Link>
                 <span className="hint hidden sm:inline">npx shadcn add</span>
