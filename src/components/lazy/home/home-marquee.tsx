@@ -70,10 +70,12 @@ export function HomeMarquee() {
   // track — different transform components, so GSAP composes them without
   // overwriting.
   //
-  // Mobile skips the accordion entirely: pinning + per-frame flex-grow writes
-  // force a layout pass on three full-catalogue tracks every scroll frame, which
-  // janks hard on phones. There the three rows rest at static thirds via the
-  // max-width CSS block and only the (compositor-cheap) marquee loops run.
+  // Mobile keeps the row-by-row scroll reveal but swaps the mechanism: pinning
+  // + per-frame flex-grow writes force a layout pass on three full-catalogue
+  // tracks every scroll frame, which janks hard on phones. There the rows rest
+  // at static thirds via the max-width CSS block and rows 2/3 fade-and-rise in,
+  // scrubbed to the section's travel through the viewport — opacity/transform
+  // only, so the reveal stays on the compositor.
   const rowsRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (reduced) return;
@@ -111,7 +113,30 @@ export function HomeMarquee() {
             loops.forEach((t) => (self.isActive ? t.play() : t.pause())),
         });
 
-        if (!desktop) return;
+        if (!desktop) {
+          // Same reveal beat as the desktop accordion — rows surface one after
+          // another as the section scrolls up — but unpinned and compositor-only
+          // (no flex-grow layout writes, no pin jitter under native touch
+          // scroll). No track scaling here: mobile rows are chip-height with
+          // overflow hidden, so any scale > 1 would clip the chips.
+          const rowEls = gsap.utils.toArray<HTMLElement>(".mq-row", root);
+          if (rowEls.length >= 3) {
+            const [, r2, r3] = rowEls;
+            gsap.set([r2, r3], { autoAlpha: 0, y: 18 });
+            const tl = gsap.timeline({
+              defaults: { ease: "none" },
+              scrollTrigger: {
+                trigger: root,
+                start: "top 90%",
+                end: "top 40%",
+                scrub: 1,
+              },
+            });
+            tl.to(r2, { autoAlpha: 1, y: 0, duration: 1 })
+              .to(r3, { autoAlpha: 1, y: 0, duration: 1 }, ">");
+          }
+          return;
+        }
 
         // Hover-pause is desktop-only: on touch, the pointerenter from a tap
         // would freeze the loops with no pointerleave to resume them.
