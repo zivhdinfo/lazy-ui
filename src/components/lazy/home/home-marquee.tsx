@@ -57,16 +57,23 @@ export function HomeMarquee() {
       };
   const headItemTransition = { duration: reduced ? 0.2 : 0.8, ease: REVEAL_EASE };
 
-  // GSAP, all in one gsap.context (reverts on unmount; reduced motion skips it):
-  // (1) one infinite xPercent loop per row (alternating direction), paused while
-  // the pointer is over the rows; (2) a pinned, scrubbed accordion timeline. Rows
-  // share a fixed-height block via flex-grow — row 1 starts at grow 1 (the whole
-  // block), rows 2/3 at grow 0 (collapsed). Scrolling grows row 2 then row 3 in,
-  // so the heights redistribute 100% → 50/50 → thirds. Each row's `.mq-track` is
-  // scaled to match its band height (3 → 1.5 → 1), so the chips fill the tall
-  // band when few rows show and settle to their resting size at thirds. The loop
-  // writes xPercent and the reveal writes scale on the same track — different
-  // transform components, so GSAP composes them without overwriting.
+  // GSAP, in one gsap.matchMedia (reverts on unmount; reduced motion skips it).
+  // Both breakpoints get (1): one infinite xPercent loop per row (alternating
+  // direction), playing only while the section is on screen. Desktop (≥851px,
+  // matching the CSS breakpoint) adds (2): a pinned, scrubbed accordion timeline.
+  // Rows share a fixed-height block via flex-grow — row 1 starts at grow 1 (the
+  // whole block), rows 2/3 at grow 0 (collapsed). Scrolling grows row 2 then row
+  // 3 in, so the heights redistribute 100% → 50/50 → thirds. Each row's
+  // `.mq-track` is scaled to match its band height (3 → 1.5 → 1), so the chips
+  // fill the tall band when few rows show and settle to their resting size at
+  // thirds. The loop writes xPercent and the reveal writes scale on the same
+  // track — different transform components, so GSAP composes them without
+  // overwriting.
+  //
+  // Mobile skips the accordion entirely: pinning + per-frame flex-grow writes
+  // force a layout pass on three full-catalogue tracks every scroll frame, which
+  // janks hard on phones. There the three rows rest at static thirds via the
+  // max-width CSS block and only the (compositor-cheap) marquee loops run.
   const rowsRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (reduced) return;
@@ -74,65 +81,94 @@ export function HomeMarquee() {
     if (!root) return;
     const section = root.closest<HTMLElement>(".marquee");
 
-    const ctx = gsap.context(() => {
-      const tracks = gsap.utils.toArray<HTMLElement>(".mq-track", root);
-      const loops = tracks.map((track, i) => {
-        const rtl = i % 2 === 1;
-        const duration = 48 + i * 6;
-        if (rtl) gsap.set(track, { xPercent: -50 });
-        return gsap.to(track, {
-          xPercent: rtl ? 0 : -50,
-          duration,
-          ease: "none",
-          repeat: -1,
+    const mm = gsap.matchMedia(root);
+    mm.add(
+      { desktop: "(min-width: 851px)", mobile: "(max-width: 850px)" },
+      (gsapCtx) => {
+        const desktop = Boolean(gsapCtx.conditions?.desktop);
+        const tracks = gsap.utils.toArray<HTMLElement>(".mq-track", root);
+        const loops = tracks.map((track, i) => {
+          const rtl = i % 2 === 1;
+          const duration = 48 + i * 6;
+          if (rtl) gsap.set(track, { xPercent: -50 });
+          return gsap.to(track, {
+            xPercent: rtl ? 0 : -50,
+            duration,
+            ease: "none",
+            repeat: -1,
+            paused: true,
+          });
         });
-      });
-      const pause = () => loops.forEach((t) => t.pause());
-      const resume = () => loops.forEach((t) => t.resume());
-      root.addEventListener("pointerenter", pause);
-      root.addEventListener("pointerleave", resume);
 
-      const rowEls = gsap.utils.toArray<HTMLElement>(".mq-row", root);
-      if (section && rowEls.length >= 3) {
-        const [r1, r2, r3] = rowEls;
-        const [t1, t2, t3] = tracks;
-
-        gsap.set(r1, { flexGrow: 1, autoAlpha: 1 });
-        gsap.set([r2, r3], { flexGrow: 0, autoAlpha: 0 });
-        gsap.set([t1, t2, t3], { transformOrigin: "center center" });
-        gsap.set(t1, { scale: 3 });
-        gsap.set(t2, { scale: 1.5 });
-        gsap.set(t3, { scale: 1 });
-
-        const tl = gsap.timeline({
-          defaults: { ease: "none" },
-          scrollTrigger: {
-            // Pin a touch below the top so the fixed header (≈80px) never
-            // covers the pinned heading.
-            trigger: section,
-            start: "top top+=100",
-            // Longer pin range = a taller pin-spacer = more scroll room below,
-            // so the 3rd row finishes revealing well before scroll runs out.
-            end: "+=240%",
-            scrub: 1,
-            pin: true,
-            anticipatePin: 1,
-            pinType: "transform",
-            invalidateOnRefresh: true,
-          },
+        // Run the loops only while the section is actually on screen, so the
+        // marquee never costs main-thread time while the user scrolls the rest
+        // of the page.
+        ScrollTrigger.create({
+          trigger: section ?? root,
+          start: "top bottom",
+          end: "bottom top",
+          onToggle: (self) =>
+            loops.forEach((t) => (self.isActive ? t.play() : t.pause())),
         });
-        // Stage A: 100% → 50/50
-        tl.to(r2, { flexGrow: 1, autoAlpha: 1, duration: 1 }, 0)
-          .to(t1, { scale: 1.5, duration: 1 }, 0);
-        // Stage B: 50/50 → thirds
-        tl.to(r3, { flexGrow: 1, autoAlpha: 1, duration: 1 }, ">")
-          .to([t1, t2], { scale: 1, duration: 1 }, "<")
-          .to(t3, { scale: 1, duration: 1 }, "<");
-        // Trailing hold so the reveal finishes with scroll room to spare,
-        // never cut off at the very bottom.
-        tl.to({}, { duration: 0.5 });
-      }
-    }, root);
+
+        if (!desktop) return;
+
+        // Hover-pause is desktop-only: on touch, the pointerenter from a tap
+        // would freeze the loops with no pointerleave to resume them.
+        const pause = () => loops.forEach((t) => t.pause());
+        const resume = () => loops.forEach((t) => t.resume());
+        root.addEventListener("pointerenter", pause);
+        root.addEventListener("pointerleave", resume);
+
+        const rowEls = gsap.utils.toArray<HTMLElement>(".mq-row", root);
+        if (section && rowEls.length >= 3) {
+          const [r1, r2, r3] = rowEls;
+          const [t1, t2, t3] = tracks;
+
+          gsap.set(r1, { flexGrow: 1, autoAlpha: 1 });
+          gsap.set([r2, r3], { flexGrow: 0, autoAlpha: 0 });
+          gsap.set([t1, t2, t3], { transformOrigin: "center center" });
+          gsap.set(t1, { scale: 3 });
+          gsap.set(t2, { scale: 1.5 });
+          gsap.set(t3, { scale: 1 });
+
+          const tl = gsap.timeline({
+            defaults: { ease: "none" },
+            scrollTrigger: {
+              // Pin a touch below the top so the fixed header (≈80px) never
+              // covers the pinned heading.
+              trigger: section,
+              start: "top top+=100",
+              // Longer pin range = a taller pin-spacer = more scroll room below,
+              // so the 3rd row finishes revealing well before scroll runs out.
+              end: "+=240%",
+              scrub: 1,
+              // Default pinType ("fixed") — Lenis scrolls the native scroller,
+              // and transform-pinning under native scroll repositions a frame
+              // behind the compositor, which reads as per-frame jitter.
+              pin: true,
+              anticipatePin: 1,
+              invalidateOnRefresh: true,
+            },
+          });
+          // Stage A: 100% → 50/50
+          tl.to(r2, { flexGrow: 1, autoAlpha: 1, duration: 1 }, 0)
+            .to(t1, { scale: 1.5, duration: 1 }, 0);
+          // Stage B: 50/50 → thirds
+          tl.to(r3, { flexGrow: 1, autoAlpha: 1, duration: 1 }, ">")
+            .to([t1, t2], { scale: 1, duration: 1 }, "<")
+            .to(t3, { scale: 1, duration: 1 }, "<");
+          // Trailing hold so the reveal finishes with scroll room to spare,
+          // never cut off at the very bottom.
+          tl.to({}, { duration: 0.5 });
+        }
+
+        return () => {
+          root.removeEventListener("pointerenter", pause);
+          root.removeEventListener("pointerleave", resume);
+        };
+      },
+    );
 
     // Pin distance + flex heights are measured from layout. The home fonts
     // (Outfit/JetBrains) change chip/block height after they load, so recompute
@@ -142,7 +178,7 @@ export function HomeMarquee() {
       document.fonts.ready.then(() => ScrollTrigger.refresh());
     }
 
-    return () => ctx.revert();
+    return () => mm.revert();
   }, [reduced]);
 
   return (

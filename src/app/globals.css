@@ -6565,8 +6565,14 @@ pre .v { color: #67e8f9; }
 }
 .lui-home .mq-chip:hover { color: var(--text); border-color: var(--text-3); }
 
+/* Mobile skips the pinned accordion (see home-marquee.tsx) — pin + per-frame
+   flex-grow writes reflow three full-catalogue tracks on every scroll frame,
+   which janks on phones. Rest at static thirds; only the marquee loops run. */
 @media (max-width: 850px) {
   .lui-home .marquee { padding-bottom: 80px; }
+  .lui-home .mq-rows { height: auto; }
+  .lui-home .mq-row { flex-grow: 1; will-change: auto; }
+  .lui-home .mq-track { transform: none; }
 }
 /* Reduced motion: the GSAP effect is skipped, so restore a static resting
    layout — all three rows visible at equal thirds, no scale. */
