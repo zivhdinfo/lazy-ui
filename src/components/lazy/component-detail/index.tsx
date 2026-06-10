@@ -362,7 +362,7 @@ export function ComponentDetail({
   );
 
   return (
-    <main className="main component-detail-main">
+    <main className="main component-detail-main container">
       <div className="component-hero reveal">
         <h1 className="page-title component-title">{component.title}</h1>
         <p className="page-sub component-description">{component.description}</p>
@@ -370,8 +370,8 @@ export function ComponentDetail({
 
       {/* Preview / Code */}
       <section className="component-preview-block block reveal d-2">
-        {/* Toolbar */}
-        <div className="mb-3 flex items-center justify-between gap-3">
+        {/* Toolbar — wraps onto a second row on narrow viewports */}
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <div className="flex min-w-0 items-center gap-1.5">
             <ToolbarButton
               active={mode === "preview"}
@@ -387,9 +387,16 @@ export function ComponentDetail({
               <CodeIcon />
               <span>Code</span>
             </ToolbarButton>
-            <span aria-hidden className="mx-1 h-4 w-px bg-[var(--border)]" />
-            <span className="flex min-w-0 items-center gap-1.5 font-mono text-[12px] text-[var(--text-2)]">
-              <span className="max-w-[280px] truncate">{component.slug}</span>
+            {/* Slug + install-copy is redundant with the title/install section
+                on phones — hide it there to keep the tab row compact. */}
+            <span
+              aria-hidden
+              className="mx-1 hidden h-4 w-px bg-[var(--border)] sm:block"
+            />
+            <span className="hidden min-w-0 items-center gap-1.5 font-mono text-[12px] text-[var(--text-2)] sm:flex">
+              <span className="max-w-[160px] truncate md:max-w-[280px]">
+                {component.slug}
+              </span>
               <CopyButton
                 content={cmd}
                 text={false}
@@ -511,7 +518,7 @@ export function ComponentDetail({
             <div
               ref={previewFrameRef}
               data-preview-frame
-              className="absolute inset-y-0 left-0 z-10 flex items-center justify-center overflow-hidden rounded-3xl bg-[var(--preview-bg)]"
+              className="absolute inset-y-0 left-0 z-10 flex max-w-full items-center justify-center overflow-hidden rounded-3xl bg-[var(--preview-bg)]"
               style={{
                 width: width === null ? "100%" : `${width}px`,
                 transition: dragging ? "none" : "width 0.3s ease-in-out",
@@ -539,7 +546,10 @@ export function ComponentDetail({
                 dragging || hoverHandle ? "text-[var(--text)]" : "text-[var(--text-3)]"
               }`}
               style={{
-                left: width === null ? "100%" : `${width}px`,
+                // `min(…, 100%)` keeps the handle pinned to the frame's right
+                // edge when a preset wider than the stage is picked on a narrow
+                // screen (the frame is capped by `max-w-full`).
+                left: width === null ? "100%" : `min(${width}px, 100%)`,
                 transition: dragging ? "none" : "left 0.3s ease-in-out",
               }}
             >
@@ -616,10 +626,18 @@ export function ComponentDetail({
             <tbody>
               {content.api.map((row) => (
                 <tr key={row.name}>
-                  <td className="name">{row.name}</td>
-                  <td className="type">{row.type}</td>
-                  <td className="default">{row.default ?? "—"}</td>
-                  <td className="desc">{row.description}</td>
+                  <td className="name" data-label="Prop">
+                    {row.name}
+                  </td>
+                  <td className="type" data-label="Type">
+                    {row.type}
+                  </td>
+                  <td className="default" data-label="Default">
+                    {row.default ?? "—"}
+                  </td>
+                  <td className="desc" data-label="Description">
+                    {row.description}
+                  </td>
                 </tr>
               ))}
             </tbody>
