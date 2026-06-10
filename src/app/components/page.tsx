@@ -1,16 +1,15 @@
 import { Suspense } from "react";
 
 import { ComponentsGrid } from "@/components/lazy/components-grid";
-import { DocsShell } from "@/components/lazy/docs-shell";
 import { getPublishedComponentsOnly } from "@/registry/components";
 
+// Chrome (sidebar + header) lives in components/layout.tsx so it persists
+// across navigation; the page renders only its own content.
 export default function ComponentsPage() {
   const components = getPublishedComponentsOnly();
   return (
-    <DocsShell>
-      <Suspense fallback={null}>
-        <ComponentsGrid items={components} />
-      </Suspense>
-    </DocsShell>
+    <Suspense fallback={null}>
+      <ComponentsGrid items={components} />
+    </Suspense>
   );
 }

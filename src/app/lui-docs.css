@@ -371,79 +371,96 @@ html[data-theme="dark"] .lui-docs .icon-btn .moon { display: block; }
   font-size: 13px;
 }
 
-/* ── Mobile drawer (sidebar sections) ────────────────────────────── */
-.lui-docs-drawer-layer { position: fixed; inset: 0; z-index: 110; }
-.lui-docs-drawer-backdrop {
+/* ── Mobile nav sheet (the desktop sidebar in a floating card) ──────── */
+.lui-docs-msheet-layer { position: fixed; inset: 0; z-index: 120; }
+@media (min-width: 968px) {
+  /* Opened only by the hamburger, which is hidden ≥968px — belt-and-braces. */
+  .lui-docs-msheet-layer { display: none; }
+}
+.lui-docs-msheet-backdrop {
   position: absolute;
   inset: 0;
-  background: color-mix(in srgb, var(--text) 22%, transparent);
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
+  border: 0;
+  cursor: pointer;
+  background: color-mix(in srgb, var(--text) 14%, transparent);
+  backdrop-filter: blur(8px) saturate(120%);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
+  opacity: 0;
+  transition: opacity 0.24s var(--ease-out);
 }
-.lui-docs-drawer-panel {
+.lui-docs-msheet-card {
   position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: min(320px, 86vw);
+  top: calc(var(--shell-top) + 8px);
+  left: 12px;
+  width: min(340px, calc(100vw - 24px));
+  max-height: calc(100vh - var(--shell-top) - 24px);
+  max-height: calc(100dvh - var(--shell-top) - 24px);
+  border-radius: 18px;
+  border: 1px solid var(--border);
   background: var(--surface);
-  border-right: 1px solid var(--border);
   box-shadow: var(--shadow);
-  display: flex;
-  flex-direction: column;
-  padding: 18px 14px 28px;
+  /* The card itself scrolls; the whole sidebar (header + list) lives in one
+     scroll region so the full list is always reachable. Padding lives on the
+     header + list, not the card, so the sticky header can sit flush at top: 0. */
   overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-gutter: stable;
+  transform-origin: top left;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.97);
+  transition: opacity 0.24s var(--ease-out), transform 0.24s var(--ease-out);
 }
-.lui-docs-drawer-head {
+.lui-docs-msheet-layer[data-open="true"] .lui-docs-msheet-backdrop { opacity: 1; }
+.lui-docs-msheet-layer[data-open="true"] .lui-docs-msheet-card {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+/* Pinned to the top of the scrolling card so the close button stays in reach. */
+.lui-docs-msheet-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
-  padding-bottom: 14px;
+  padding: 12px 12px 10px 14px;
+  background: var(--surface);
   border-bottom: 1px solid var(--border);
+  border-radius: 18px 18px 0 0;
 }
-.lui-docs-drawer-head .brand { font-size: 14px; }
-.lui-docs-drawer-head button {
+.lui-docs-msheet-head .brand { font-size: 14px; }
+.lui-docs-msheet-head button {
   display: grid;
   place-items: center;
   width: 30px;
   height: 30px;
-  border-radius: 7px;
+  border-radius: 8px;
   border: 1px solid var(--border);
-  color: var(--text-2);
-}
-.lui-docs-drawer-section { margin-bottom: 16px; }
-.lui-docs-drawer-section-title {
-  display: block;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-3);
-  margin: 0 0 6px 8px;
-}
-.lui-docs-drawer-link {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 10px;
-  border-radius: 7px;
-  font-size: 13.5px;
+  background: var(--bg);
   color: var(--text-2);
   transition: background 0.14s, color 0.14s;
 }
-.lui-docs-drawer-link:hover { background: var(--panel); color: var(--text); }
-.lui-docs-drawer-link.active { background: var(--panel); color: var(--text); font-weight: 500; }
-.lui-docs-drawer-link .new-tag {
-  font-family: var(--font-jetbrains), monospace;
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  padding: 2px 6px;
-  border-radius: 5px;
-  background: var(--ink);
-  color: var(--ink-text);
+.lui-docs-msheet-head button:hover { background: var(--panel); color: var(--text); }
+
+/* Reuse the real sidebar inside the card — drop its own sticky scroll frame and
+   let it flow in the card's scroll region. Higher specificity than the
+   .lui-docs .sb-sidebar rules below so it wins. */
+.lui-docs .lui-docs-msheet-card .sidebar {
+  display: block;
+  position: static;
+  top: auto;
+  height: auto;
+  max-height: none;
+  overflow: visible;
+  padding: 6px 12px 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lui-docs-msheet-backdrop,
+  .lui-docs-msheet-card { transition: opacity 0.18s var(--ease-out); }
+  .lui-docs-msheet-card,
+  .lui-docs-msheet-layer[data-open="true"] .lui-docs-msheet-card { transform: none; }
 }
 
 /* ── Layout ──────────────────────────────────────────────────────── */
@@ -468,56 +485,181 @@ html[data-theme="dark"] .lui-docs .icon-btn .moon { display: block; }
   .lui-docs .shell { padding-left: 20px; padding-right: 20px; }
 }
 
-/* ── Sidebar refinements (override white-on-dark assumptions + accent) ── */
-.lui-docs .sidebar { scrollbar-color: var(--border) transparent; }
+/* ── Sidebar (shadcn-style: collapsible groups, flat sub-lists) ─────── */
+.lui-docs .sidebar {
+  scrollbar-color: var(--border) transparent;
+  /* Always reserve the scrollbar gutter so expanding/collapsing a category
+     (which toggles overflow) never shifts the rail horizontally. */
+  scrollbar-gutter: stable;
+}
 .lui-docs .sidebar::-webkit-scrollbar-thumb { background: var(--border); }
-.lui-docs .sb-sidebar-head { border-bottom-color: var(--border); }
-.lui-docs .sb-sidebar-kicker {
-  font-family: var(--font-jetbrains), monospace;
-  color: var(--text-3);
+.lui-docs .sb-sidebar { padding-top: 24px; }
+
+/* Group stack — tight rows so collapsed titles read as one clean list.
+   position: relative anchors the cursor-following hover pill. */
+.lui-docs .sb-menu {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
-.lui-docs .sb-sidebar-count {
-  font-family: var(--font-jetbrains), monospace;
-  color: var(--text-3);
-  border-color: var(--border);
-  background: var(--panel);
+.lui-docs .sb-group { min-width: 0; }
+
+/* Two pills sit behind the items (z-index 0). The active pill marks the current
+   route and slides to the new link on navigation; the hover pill follows the
+   cursor. Both are positioned + sized imperatively — CSS only eases them. */
+.lui-docs .sb-active-pill,
+.lui-docs .sb-hover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform, width, height;
 }
-.lui-docs .sb-section-title { color: var(--text-3); }
-.lui-docs .sb-section.active .sb-section-title { color: var(--text); }
-.lui-docs .sb-section-meta {
-  font-family: var(--font-jetbrains), monospace;
-  color: color-mix(in srgb, var(--text-3) 80%, transparent);
+.lui-docs .sb-active-pill {
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--text) 9%, transparent);
+  transition: transform 0.32s var(--ease-out), width 0.32s var(--ease-out),
+    height 0.32s var(--ease-out), opacity 0.2s var(--ease-out);
 }
-.lui-docs .sb-list { border-left-color: var(--border); }
-.lui-docs .sb-section.active .sb-list { border-left-color: var(--text-3); }
-.lui-docs .sb-item { color: var(--text-3); }
-.lui-docs .sb-item:hover { color: var(--text); }
-.lui-docs .sb-item.active { color: var(--text); }
-.lui-docs .sb-link:hover { background: color-mix(in srgb, var(--text) 4%, transparent); }
-.lui-docs .sb-link:focus-visible { outline-color: var(--text); }
-/* Active pill — quiet panel fill with an ink rail, no glow. */
-.lui-docs .sb-active-bg {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-left: 0;
+.lui-docs .sb-hover {
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+  transition: transform 0.22s var(--ease-out), width 0.22s var(--ease-out),
+    height 0.22s var(--ease-out), opacity 0.2s var(--ease-out);
 }
-.lui-docs .sb-motion-indicator {
-  background: var(--ink);
-  box-shadow: none;
+@media (prefers-reduced-motion: reduce) {
+  .lui-docs .sb-active-pill,
+  .lui-docs .sb-hover { transition: opacity 0.2s var(--ease-out); }
 }
-/* "New" tag — ink fill, matching the home's badge. */
-.lui-docs .sb-item .new-tag {
-  font-family: var(--font-jetbrains), monospace;
-  background: var(--ink);
-  color: var(--ink-text);
+
+/* Bold category title doubling as the collapse trigger (icon + label +
+   chevron). */
+.lui-docs .sb-group-title {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  min-width: 0;
+  min-height: 32px;
+  padding: 5px 8px;
   border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  text-align: left;
+  cursor: pointer;
+}
+.lui-docs .sb-group-title:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+.lui-docs .sb-group-icon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  color: var(--text-2);
+}
+.lui-docs .sb-group-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lui-docs .sb-chevron {
+  flex-shrink: 0;
+  width: 15px;
+  height: 15px;
+  color: var(--text-3);
+  transition: transform 0.2s var(--ease-out);
+}
+.lui-docs .sb-group-title[aria-expanded="true"] .sb-chevron {
+  transform: rotate(90deg);
+}
+
+/* Collapse animates the exact height — the component measures the panel and
+   drives `height` inline (0 ↔ content ↔ auto). Smooth with no dead travel,
+   and never clips, in the desktop rail or the mobile card. */
+.lui-docs .sb-sub-wrap {
+  overflow: hidden;
+  height: 0;
+  transition: height 0.28s var(--ease-out);
+}
+
+/* Flat sub-list — no rail, slight inset (shadcn ml-0 border-l-0 px-1.5). */
+.lui-docs .sb-sub {
+  list-style: none;
+  margin: 2px 0 2px;
+  padding: 0 0 0 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.lui-docs .sb-sub-item { min-width: 0; }
+.lui-docs .sb-sub-link {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 6px 8px;
+  border-radius: 7px;
+  color: var(--text-3);
+  font-size: 13px;
+  text-decoration: none;
+  transition: color 0.16s var(--ease-out);
+}
+.lui-docs .sb-sub-link:hover {
+  color: var(--text);
+}
+.lui-docs .sb-sub-link:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+/* No background here — the sliding .sb-active-pill draws the active fill. */
+.lui-docs .sb-sub-link.active {
+  color: var(--text);
+  font-weight: 500;
+}
+.lui-docs .sb-sub-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* "New" tag — ink fill, matching the home's badge. */
+.lui-docs .sb-sub-link .new-tag {
+  flex-shrink: 0;
+  margin-left: auto;
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.04em;
-}
-.lui-docs .sb-item:hover .new-tag,
-.lui-docs .sb-item.active .new-tag {
+  line-height: 1.5;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--ink);
   color: var(--ink-text);
-  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lui-docs .sb-sub-wrap,
+  .lui-docs .sb-chevron { transition: none; }
 }
 
 /* ── Display typography: drop the serif, use Outfit tight tracking ── */
@@ -738,8 +880,9 @@ html[data-theme="dark"] .lui-docs .icon-btn .moon { display: block; }
   .lui-docs .home-header { top: 0; left: 0; transform: none; max-width: none; padding: 0; }
   .lui-docs .nav-shell { border-radius: 0 0 22px 22px; box-shadow: var(--shadow); }
 }
-/* Sidebar collapses to the drawer at the same breakpoint the global rule
-   hides .sidebar, so the component list stays reachable. */
+/* The hamburger appears at the same breakpoint the global rule hides
+   .sidebar; it opens the mobile nav sheet so the component list stays
+   reachable. */
 @media (max-width: 967px) {
   .lui-docs .docs-menu-btn { display: grid; }
 }

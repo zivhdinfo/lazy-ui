@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { ComponentDetail } from "@/components/lazy/component-detail";
-import { DocsShell } from "@/components/lazy/docs-shell";
 import {
   getComponentBySlug,
   getPublishedComponentsOnly,
@@ -51,9 +50,6 @@ export default async function ComponentDetailPage({
 
   const source = getComponentSource(component.target);
 
-  return (
-    <DocsShell>
-      <ComponentDetail component={component} source={source} />
-    </DocsShell>
-  );
+  // Chrome lives in components/layout.tsx; render only the detail content.
+  return <ComponentDetail component={component} source={source} />;
 }

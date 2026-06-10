@@ -8,11 +8,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { GithubStarsButton } from "@/components/lazy-ui/github-stars-button";
 
 import { BrandMark } from "./brand-mark";
-import {
-  NEW_SLUGS,
-  getSidebarSections,
-  isSidebarItemActive,
-} from "./sidebar";
+import { Sidebar, getSidebarSections } from "./sidebar";
 
 // Shared light/dark chrome for the docs/component/blocks surface. Mirrors the
 // home (.lui-home): a fixed matte frame with concave rounded corners + a carved
@@ -82,6 +78,43 @@ function CornerSvg({ className }: { className: string }) {
   );
 }
 
+// Keep an overlay mounted across its enter/exit so a pure-CSS transition can
+// play both ways. `mounted` gates rendering; `show` (flipped a frame after
+// mount, and cleared `durationMs` before unmount) drives the [data-open]
+// styles. Avoids motion/AnimatePresence — and the Turbopack insertBefore
+// caveat noted in CLAUDE.md — for this small sheet.
+function useMountTransition(isOpen: boolean, durationMs: number) {
+  const [mounted, setMounted] = useState(isOpen);
+  const [show, setShow] = useState(isOpen);
+
+  // Mount synchronously the moment we open (render-phase set, applied before
+  // paint) so the enter frame has a node to transition from.
+  if (isOpen && !mounted) setMounted(true);
+
+  useEffect(() => {
+    if (isOpen) {
+      // Next frame → flip to shown so the transition runs from closed → open.
+      let raf2 = 0;
+      const raf1 = requestAnimationFrame(() => {
+        raf2 = requestAnimationFrame(() => setShow(true));
+      });
+      return () => {
+        cancelAnimationFrame(raf1);
+        cancelAnimationFrame(raf2);
+      };
+    }
+    // Closing: play the exit transition, then unmount once it has finished.
+    const raf = requestAnimationFrame(() => setShow(false));
+    const timer = window.setTimeout(() => setMounted(false), durationMs);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(timer);
+    };
+  }, [isOpen, durationMs]);
+
+  return { mounted, show };
+}
+
 export function DocsChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const currentPath = pathname ?? "";
@@ -89,6 +122,10 @@ export function DocsChrome({ children }: { children: ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [query, setQuery] = useState("");
+
+  // Mobile nav sheet: the desktop sidebar, wrapped in a card with an
+  // animated enter/exit and a blurred backdrop over the page content.
+  const sheet = useMountTransition(drawerOpen, 240);
 
   const sections = useMemo(() => getSidebarSections(), []);
   const searchItems = useMemo(
@@ -301,16 +338,22 @@ export function DocsChrome({ children }: { children: ReactNode }) {
         </div>
       )}
 
-      {drawerOpen && (
-        <div className="lui-docs-drawer-layer">
+      {sheet.mounted && (
+        <div
+          className="lui-docs-msheet-layer"
+          data-open={sheet.show}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation"
+        >
           <button
             type="button"
-            className="lui-docs-drawer-backdrop"
+            className="lui-docs-msheet-backdrop"
             aria-label="Close navigation"
             onClick={() => setDrawerOpen(false)}
           />
-          <div className="lui-docs-drawer-panel">
-            <div className="lui-docs-drawer-head">
+          <div className="lui-docs-msheet-card">
+            <div className="lui-docs-msheet-head">
               <Link className="brand" href="/" onClick={() => setDrawerOpen(false)}>
                 <span className="mark">
                   <BrandMark size={22} />
@@ -323,27 +366,7 @@ export function DocsChrome({ children }: { children: ReactNode }) {
                 <X size={16} aria-hidden />
               </button>
             </div>
-            {sections.map((section) => (
-              <div key={section.id} className="lui-docs-drawer-section">
-                <span className="lui-docs-drawer-section-title">{section.title}</span>
-                {section.items.map((item) => {
-                  const active = isSidebarItemActive(pathname, item.href);
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={`lui-docs-drawer-link${active ? " active" : ""}`}
-                      onClick={() => setDrawerOpen(false)}
-                    >
-                      <span>{item.label}</span>
-                      {item.tag && NEW_SLUGS.size > 0 && (
-                        <span className="new-tag">{item.tag}</span>
-                      )}
-                    </Link>
-                  );
-                })}
-              </div>
-            ))}
+            <Sidebar onNavigate={() => setDrawerOpen(false)} />
           </div>
         </div>
       )}
