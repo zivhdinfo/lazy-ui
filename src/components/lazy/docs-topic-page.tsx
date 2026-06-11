@@ -91,7 +91,7 @@ export function DocsTopicPage({ topic }: { topic: DocsTopic }) {
       </section>
 
       {topic.code && topic.code.length > 0 && (
-        <section className="block reveal d-3">
+        <section className="block reveal d-3 code-themed">
           <h2 className="block-title">Copyable bits</h2>
           <p className="block-sub">
             Commands and snippets match the registry paths used by this project.

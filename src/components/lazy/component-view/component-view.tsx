@@ -79,11 +79,7 @@ export function ComponentView({
           key={t}
           type="button"
           onClick={() => setPm(t)}
-          className={`rounded px-2 py-0.5 text-[11px] transition-colors ${
-            pm === t
-              ? "bg-neutral-800 text-white"
-              : "text-neutral-500 hover:text-neutral-300"
-          }`}
+          className={`pm-tab ${pm === t ? "is-active" : ""}`}
         >
           {t}
         </button>
@@ -105,7 +101,7 @@ export function ComponentView({
       title={`${component.slug}.tsx`}
       meta={
         <span className="inline-flex items-center gap-2">
-          <span className="text-[11px] text-neutral-500">
+          <span className="text-[11px] text-[var(--text-3,#737373)]">
             {source.split("\n").length} lines
           </span>
           <CopyButton
@@ -199,7 +195,7 @@ export function ComponentView({
             </div>
           </div>
         ) : (
-          <div className="preview-shell-code overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+          <div className="preview-shell-code code-themed overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)]">
             {sourceBlock}
           </div>
         )}
@@ -207,7 +203,7 @@ export function ComponentView({
 
       {/* Customize */}
       {controls && (
-        <section className="component-customize-block block reveal d-3">
+        <section className="component-customize-block block reveal d-3 code-themed">
           <h2 className="block-title">Customize</h2>
           <p className="block-sub">Edit props; preview updates instantly.</p>
           <CustomizePanel
@@ -275,7 +271,7 @@ export function ComponentView({
       )}
 
       {/* Installation */}
-      <section className="block reveal d-4">
+      <section className="block reveal d-4 code-themed">
         <h2 className="block-title">Installation</h2>
         <p className="block-sub">
           Choose CLI for the one-line shadcn install, or copy the file manually.
@@ -315,8 +311,9 @@ export function ComponentView({
                       <CodePreview
                         code={installDepsCmd}
                         title={
-                          <span className="font-mono text-neutral-400">
-                            <span className="text-neutral-600">$</span> terminal
+                          <span className="text-[var(--text-2,#a3a3a3)]">
+                            <span className="text-[var(--text-3,#525252)]">$</span>{" "}
+                            terminal
                           </span>
                         }
                         meta={
@@ -375,7 +372,7 @@ export function ComponentView({
 
       {/* Usage */}
       {usageCode && (
-        <section className="block reveal d-4">
+        <section className="block reveal d-4 code-themed">
           <h2 className="block-title">Usage</h2>
           <p className="block-sub">Import the component and drop it into a render.</p>
           <CodePreview
@@ -383,7 +380,7 @@ export function ComponentView({
             title="demo.tsx"
             meta={
               <span className="inline-flex items-center gap-2">
-                <span className="text-[11px] text-neutral-500">
+                <span className="text-[11px] text-[var(--text-3,#737373)]">
                   {usageCode.split("\n").length} lines
                 </span>
                 <CopyButton

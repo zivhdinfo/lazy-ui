@@ -7,11 +7,12 @@
    a manual toggle in the SAME localStorage key as the home
    ("lazyui-theme"), so navigating home → components keeps the choice.
 
-   Design note: code blocks and the live component-preview stages stay
-   dark in BOTH themes by intent — code reads best dark, and the bulk of
-   the registry previews are authored against dark backgrounds. Only the
-   page chrome (frame, header, sidebar, titles, tabs, cards, tables,
-   install steps, buttons) follows light/dark.
+   Design note: the live component-preview stages and the preview Code
+   tab stay dark in BOTH themes by intent — the bulk of the registry
+   previews are authored against dark backgrounds. The page chrome
+   (frame, header, sidebar, titles, tabs, cards, tables, install steps,
+   buttons) AND the Installation / Usage code blocks (.code-themed
+   sections, see below) follow light/dark.
 
    Most existing docs rules reference legacy tokens (--fg-*, --bg-*,
    --line-*, --silver-*). Rather than override every rule, we remap those
@@ -883,6 +884,124 @@ html[data-theme="dark"] .lui-docs .icon-btn .moon { display: block; }
   border: 1px solid var(--border);
 }
 .lui-docs .manual-files li { color: var(--text-2); }
+
+/* ── Theme-aware code blocks (.code-themed) ──────────────────────────
+   Exception to the "code stays dark" rule above: Installation / Usage,
+   the preview Code tab, the customize Usage-code block, and the docs
+   "Copyable bits" are page content — they follow the theme and restate
+   the docs' minimal chrome: flat --surface card, 1px --border, --panel
+   header band, JetBrains mono, --shadow-sm lift. The registry
+   CodePreview / AnimatedTabs components keep their dark defaults;
+   everything here is a structural override scoped to sections that
+   carry .code-themed. These blocks always render a title/meta header,
+   which the > div:first-child selector relies on. */
+.lui-docs .code-themed [data-code-preview] {
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-jetbrains), ui-monospace, monospace;
+}
+/* Header band — filename / pm picker left, meta right. */
+.lui-docs .code-themed [data-code-preview] > div:first-child {
+  background: var(--panel);
+  border-bottom-color: var(--border);
+  color: var(--text-3);
+}
+.lui-docs .code-themed [data-code-preview] pre {
+  color: var(--text);
+}
+/* "Show all N lines" footer toggle. */
+.lui-docs .code-themed [data-code-preview] > button {
+  background: var(--panel);
+  border-top-color: var(--border);
+  color: var(--text-2);
+}
+.lui-docs .code-themed [data-code-preview] > button:hover {
+  background: var(--panel-2);
+  color: var(--text);
+}
+.lui-docs .code-themed [data-copy-button] {
+  color: var(--text-3);
+}
+.lui-docs .code-themed [data-copy-button]:hover {
+  background: color-mix(in srgb, var(--text) 7%, transparent);
+  color: var(--text);
+}
+
+/* Inside the preview Code shell the outer card already draws the border
+   and radius — keep the inner block flush and flat. */
+.lui-docs .preview-shell-code.code-themed [data-code-preview] {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* CLI / Manual tab card. */
+.lui-docs .code-themed [data-animated-tabs] {
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+.lui-docs .code-themed [data-animated-tabs] [role="tablist"] {
+  background: var(--panel);
+  border-bottom-color: var(--border);
+}
+/* Sliding indicator — a raised surface pill, same recipe as the active
+   showcase tab. */
+.lui-docs .code-themed [data-animated-tabs] [role="tablist"] > span {
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+.lui-docs .code-themed [data-animated-tabs] [role="tab"] {
+  font-family: var(--font-outfit), "Outfit Fallback", system-ui, sans-serif;
+  color: var(--text-3);
+}
+.lui-docs .code-themed [data-animated-tabs] [role="tab"]:hover,
+.lui-docs .code-themed [data-animated-tabs] [role="tab"][aria-selected="true"] {
+  color: var(--text);
+}
+.lui-docs .code-themed [data-copy-button]:focus-visible,
+.lui-docs .code-themed [data-animated-tabs] [role="tab"]:focus-visible {
+  outline-color: var(--text);
+}
+
+/* Package-manager picker — quiet mono chips; the active one raises to a
+   surface pill, mirroring the tabs indicator. */
+.lui-docs .pm-tab {
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-family: var(--font-jetbrains), ui-monospace, monospace;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: color 0.16s var(--ease-out), background 0.16s var(--ease-out);
+}
+.lui-docs .pm-tab:hover {
+  color: var(--text);
+}
+.lui-docs .pm-tab.is-active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--border), var(--shadow-sm);
+}
+.lui-docs .pm-tab:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+/* Syntax palette — the global pre .k/.s/.t/.v set is tuned for dark;
+   light needs darker tokens (DESIGN.md light syntax colors). */
+.lui-docs .code-themed pre .k { color: #7c3aed; }
+.lui-docs .code-themed pre .s { color: #b45309; }
+.lui-docs .code-themed pre .t { color: #be185d; }
+.lui-docs .code-themed pre .v { color: #0e7490; }
+.lui-docs .code-themed pre .c { color: var(--text-3); }
+html[data-theme="dark"] .lui-docs .code-themed pre .k { color: #c4b5fd; }
+html[data-theme="dark"] .lui-docs .code-themed pre .s { color: #fcd34d; }
+html[data-theme="dark"] .lui-docs .code-themed pre .t { color: #f0abfc; }
+html[data-theme="dark"] .lui-docs .code-themed pre .v { color: #67e8f9; }
 
 /* ── Credits cards ───────────────────────────────────────────────── */
 .lui-docs .credits-card {
