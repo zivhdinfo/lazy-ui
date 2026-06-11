@@ -76,7 +76,7 @@ export function CodePreview({
         <button
           type="button"
           onClick={() => setExpanded((v) => !v)}
-          className="block w-full border-t border-white/[0.06] bg-white/[0.015] py-2 text-center text-[11px] font-medium text-neutral-300 transition-colors hover:bg-white/[0.04] hover:text-white"
+          className="mx-auto my-3 block w-fit rounded-[9px] border border-white/[0.16] bg-white/[0.03] px-4 py-1.5 text-center text-[11px] font-medium text-neutral-300 shadow-[0_0_0_1px_rgba(255,255,255,0.07)] transition-colors hover:border-white/[0.24] hover:bg-white/[0.06] hover:text-white"
         >
           {expanded ? "Show less" : `Show all ${lineCount} lines`}
         </button>

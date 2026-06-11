@@ -92,7 +92,7 @@ function formatPropValue(value: number | string | boolean): string {
 }
 
 /** Build the JSX usage snippet from controls + current values. */
-function buildUsageCode(
+export function buildUsageCode(
   componentName: string,
   importPath: string | undefined,
   controls: CustomizeControl[],

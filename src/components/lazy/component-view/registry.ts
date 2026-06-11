@@ -1,6 +1,7 @@
 import type { ComponentView } from "./types";
 
 import { view as matrixGrid } from "./configs/animate/matrix-grid";
+import { view as waveCipher } from "./configs/background/wave-cipher";
 import { view as copyButton } from "./configs/buttons/copy-button";
 import { view as flipButton } from "./configs/buttons/flip-button";
 import { view as shinyText } from "./configs/text-animate/shiny-text";
@@ -13,6 +14,7 @@ const VIEWS: Record<string, ComponentView> = {
   "flip-button": flipButton,
   "matrix-grid": matrixGrid,
   "shiny-text": shinyText,
+  "wave-cipher": waveCipher,
 };
 
 export function viewFor(slug: string): ComponentView | undefined {

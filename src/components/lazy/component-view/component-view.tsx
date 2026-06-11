@@ -1,31 +1,47 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useMemo, useState, type ComponentType, type ReactNode } from "react";
+import {
+  useMemo,
+  useState,
+  type ComponentType,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
+import { ChevronDownIcon, TerminalIcon } from "lucide-react";
 
-import { AnimatedTabs } from "@/components/lazy-ui/animated-tabs";
+import { AnimateTooltip } from "@/components/lazy-ui/animate-tooltip";
 import { CodePreview } from "@/components/lazy-ui/code-preview";
 import { CopyButton } from "@/components/lazy-ui/copy-button";
 import { GridBackground } from "@/components/lazy-ui/grid-background";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import type { ComponentItem } from "@/registry/components";
 
 import { contentFor } from "../component-content";
-import { CustomizePanel, initialValues, type CustomizeValues } from "../customize";
+import { buildUsageCode, initialValues, type CustomizeValues } from "../customize";
 import { HighlightTsx } from "../syntax-highlight";
 import { useScrollReveal } from "../use-scroll-reveal";
-import { CodeIcon, EyeIcon, RefreshIcon } from "../component-detail/icons";
+import { DesktopIcon, MobileIcon, TabletIcon } from "../component-detail/icons";
 import {
   importPathFor,
   installCmd,
   PM_TABS,
   type PmTab,
 } from "../component-detail/install";
-import { ToolbarButton } from "../component-detail/toolbar";
+import { DEVICE_WIDTHS, type Device } from "../component-detail/stage";
+import { DeviceButton } from "../component-detail/toolbar";
 
+import { CustomizeSection } from "./customize-section";
 import { viewFor } from "./registry";
 import type { ComponentView as ComponentViewConfig, ViewFrame } from "./types";
 
-type Mode = "preview" | "code";
+type Tab = "preview" | "props" | "install" | "credits";
+type InstallMode = "cli" | "manual";
 
 const DEFAULT_STAGE_MIN_HEIGHT = 500;
 
@@ -42,19 +58,21 @@ export function ComponentView({
   // mapProps/format) that can't cross the RSC boundary as props.
   const view = viewFor(component.slug);
 
-  const [mode, setMode] = useState<Mode>("preview");
+  const [tab, setTab] = useState<Tab>("preview");
+  const [installMode, setInstallMode] = useState<InstallMode>("cli");
   const [pm, setPm] = useState<PmTab>("npm");
+  const [device, setDevice] = useState<Device>("desktop");
 
   // Docs content: a config may override per-field; otherwise fall back to the
   // shared component-content.ts entry so unmigrated components still render
-  // Props / Usage / the right component name.
+  // Props / Install / the right component name.
   const content = contentFor(component.slug);
   const componentName =
     view?.componentName ?? content?.componentName ?? view?.export;
   const api = view?.api ?? content?.api ?? [];
-  const usageCode = view?.usageCode ?? content?.usageCode;
   const credits = view?.credits ?? content?.credits;
   const importPath = view?.importPath ?? importPathFor(component);
+  const staticUsageCode = view?.usageCode ?? content?.usageCode;
 
   const controls = view?.controls;
   const footer = view?.footer;
@@ -71,337 +89,275 @@ export function ComponentView({
 
   const stageMinHeight = view?.stageMinHeight ?? DEFAULT_STAGE_MIN_HEIGHT;
   const cmd = installCmd(pm, component.slug);
+  const deviceWidth = DEVICE_WIDTHS[device];
 
-  const pmPicker = (
-    <span className="flex gap-0.5">
-      {PM_TABS.map((t) => (
-        <button
-          key={t}
-          type="button"
-          onClick={() => setPm(t)}
-          className={`pm-tab ${pm === t ? "is-active" : ""}`}
-        >
-          {t}
-        </button>
-      ))}
-    </span>
-  );
+  // Usage reflects the current control values when there are controls;
+  // otherwise it falls back to the static docs snippet.
+  const usageCode =
+    componentName && controls
+      ? buildUsageCode(componentName, importPath, controls, values)
+      : (staticUsageCode ?? "");
 
   const hasDeps = !!component.dependencies?.length;
   const hasExtras = !!component.extraFiles?.length;
   const installDepsCmd = hasDeps
     ? `${pm} ${pm === "npm" ? "install" : "add"} ${component.dependencies!.join(" ")}`
     : "";
-  const copyStep = hasDeps ? 2 : 1;
-  const extrasStep = hasDeps ? 3 : 2;
 
-  const sourceBlock = (
-    <CodePreview
-      code={source}
-      title={`${component.slug}.tsx`}
-      meta={
-        <span className="inline-flex items-center gap-2">
-          <span className="text-[11px] text-[var(--text-3,#737373)]">
-            {source.split("\n").length} lines
-          </span>
-          <CopyButton
-            content={source}
-            text
-            textAs="tooltip"
-            label="Copy source"
-            iconAnimate="draw"
-          />
-        </span>
-      }
-    >
-      <HighlightTsx source={source} />
-    </CodePreview>
-  );
+  const tabs: Array<{ value: Tab; label: string }> = [
+    { value: "preview", label: "Preview" },
+    ...(api.length > 0 ? [{ value: "props" as const, label: "Props" }] : []),
+    { value: "install" as const, label: "Install" },
+    ...(credits && credits.length > 0
+      ? [{ value: "credits" as const, label: "Credits" }]
+      : []),
+  ];
 
   return (
-    <main className="main component-detail-main container">
-      <div className="component-hero reveal">
+    <main className="main component-detail-main cv-main container">
+      <div className="cv-hero reveal">
         <h1 className="page-title component-title">{component.title}</h1>
         <p className="page-sub component-description">{component.description}</p>
       </div>
 
-      {/* Preview / Code */}
-      <section className="component-preview-block block reveal d-2">
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <div className="flex min-w-0 items-center gap-1.5">
-            <ToolbarButton
-              active={mode === "preview"}
-              onClick={() => setMode("preview")}
-            >
-              <EyeIcon />
-              <span>Preview</span>
-            </ToolbarButton>
-            <ToolbarButton active={mode === "code"} onClick={() => setMode("code")}>
-              <CodeIcon />
-              <span>Code</span>
-            </ToolbarButton>
-            <span
-              aria-hidden
-              className="mx-1 hidden h-4 w-px bg-[var(--border)] sm:block"
-            />
-            <span className="hidden min-w-0 items-center gap-1.5 font-mono text-[12px] text-[var(--text-2)] sm:flex">
-              <span className="max-w-[160px] truncate md:max-w-[280px]">
-                {component.slug}
-              </span>
-              <CopyButton
-                content={cmd}
-                text={false}
-                textAs="tooltip"
-                label={`Copy ${pm} install command`}
-                iconAnimate="draw"
-                className="text-[var(--text-3)] hover:text-[var(--text)]"
-              />
-            </span>
-          </div>
-          {mode === "preview" && controls && (
-            <button
-              type="button"
-              onClick={reset}
-              aria-label="Reset preview"
-              title="Reset preview"
-              className="inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--text-2)] transition-colors hover:bg-[var(--panel)] hover:text-[var(--text)]"
-            >
-              <RefreshIcon />
-            </button>
-          )}
-        </div>
-
-        {mode === "preview" ? (
-          <div
-            className="relative w-full overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--surface)]"
-            style={{ minHeight: stageMinHeight }}
+      <div
+        className="cv-tabs reveal d-1"
+        role="tablist"
+        aria-label="Component sections"
+      >
+        {tabs.map((t) => (
+          <button
+            key={t.value}
+            type="button"
+            role="tab"
+            aria-selected={tab === t.value}
+            onClick={() => setTab(t.value)}
+            className={`cv-tab ${tab === t.value ? "is-active" : ""}`}
           >
-            <GridBackground
-              variant="dots"
-              size={20}
-              dotSize={3}
-              color="var(--preview-grid)"
-              className="rounded-3xl"
-            />
-            <div
-              className="relative z-10 flex w-full items-center justify-center overflow-hidden rounded-3xl"
-              style={{ minHeight: stageMinHeight }}
-            >
-              {view ? (
-                <LiveRender view={view} values={values} />
-              ) : (
-                <PreviewPlaceholder />
-              )}
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* One always-mounted section so tab switches don't re-enter the
+          scroll-reveal pipeline (freshly mounted .reveal nodes would never
+          get observed). */}
+      <section className="block reveal d-2">
+        {tab === "preview" && (
+          <>
+            <div className="cv-toolbar">
+              <div className="cv-cmdbar">
+                <TerminalIcon className="size-3.5 shrink-0 text-[var(--text-3)]" />
+                <CmdCopy cmd={cmd} />
+                <PmDropdown pm={pm} onSelect={setPm} variant="bar" />
+              </div>
+              <div className="hidden items-center gap-1 sm:flex">
+                <DeviceButton
+                  active={device === "desktop"}
+                  onClick={() => setDevice("desktop")}
+                  label="Desktop width"
+                >
+                  <DesktopIcon />
+                </DeviceButton>
+                <DeviceButton
+                  active={device === "tablet"}
+                  onClick={() => setDevice("tablet")}
+                  label="Tablet width"
+                >
+                  <TabletIcon />
+                </DeviceButton>
+                <DeviceButton
+                  active={device === "mobile"}
+                  onClick={() => setDevice("mobile")}
+                  label="Mobile width"
+                >
+                  <MobileIcon />
+                </DeviceButton>
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="preview-shell-code code-themed overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)]">
-            {sourceBlock}
-          </div>
-        )}
-      </section>
 
-      {/* Customize */}
-      {controls && (
-        <section className="component-customize-block block reveal d-3 code-themed">
-          <h2 className="block-title">Customize</h2>
-          <p className="block-sub">Edit props; preview updates instantly.</p>
-          <CustomizePanel
-            controls={controls}
-            values={values}
-            onChange={setValue}
-            componentName={componentName}
-            importPath={importPath}
-          />
-          {footer && <div className="mt-2.5">{footer.render(values, setValue)}</div>}
-        </section>
-      )}
-
-      {/* Props */}
-      {api.length > 0 && (
-        <section className="block reveal d-3">
-          <h2 className="block-title">Props</h2>
-          <p className="block-sub">
-            Props accepted by{" "}
-            <code
-              style={{
-                fontFamily: "var(--font-geist-mono), monospace",
-                color: "var(--fg-1)",
-              }}
+            <div
+              className="cv-stage"
+              style={{ "--cv-stage-h": `${stageMinHeight}px` } as CSSProperties}
             >
-              {componentName}
-            </code>
-            .
-          </p>
-          <table className="api-table">
-            <colgroup>
-              <col className="api-col-name" />
-              <col className="api-col-type" />
-              <col className="api-col-default" />
-              <col className="api-col-desc" />
-            </colgroup>
-            <thead>
-              <tr>
-                <th>Prop</th>
-                <th>Type</th>
-                <th>Default</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              {api.map((row) => (
-                <tr key={row.name}>
-                  <td className="name" data-label="Prop">
-                    {row.name}
-                  </td>
-                  <td className="type" data-label="Type">
-                    {row.type}
-                  </td>
-                  <td className="default" data-label="Default">
-                    {row.default ?? "—"}
-                  </td>
-                  <td className="desc" data-label="Description">
-                    {row.description}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </section>
-      )}
-
-      {/* Installation */}
-      <section className="block reveal d-4 code-themed">
-        <h2 className="block-title">Installation</h2>
-        <p className="block-sub">
-          Choose CLI for the one-line shadcn install, or copy the file manually.
-        </p>
-
-        <AnimatedTabs
-          tabs={[
-            {
-              value: "cli",
-              label: "CLI",
-              content: (
-                <CodePreview
-                  code={cmd}
-                  title={pmPicker}
-                  meta={
-                    <CopyButton content={cmd} text label="Copy" iconAnimate="draw" />
+              <GridBackground
+                variant="dots"
+                size={20}
+                dotSize={3}
+                color="var(--preview-grid)"
+              />
+              <div className="cv-stage-inner">
+                <div
+                  className="cv-device"
+                  style={
+                    {
+                      "--device-w": deviceWidth ? `${deviceWidth}px` : "100%",
+                    } as CSSProperties
                   }
                 >
-                  <HighlightTsx source={cmd} />
-                </CodePreview>
-              ),
-            },
-            {
-              value: "manual",
-              label: "Manual",
-              content: (
-                <div className="manual-panel">
-                  {hasDeps && (
-                    <div className="manual-step">
-                      <div className="manual-step-head">
-                        <span className="manual-step-label">
-                          <span className="manual-step-num">1</span>
-                          Install dependencies
-                        </span>
-                        {pmPicker}
-                      </div>
-                      <CodePreview
-                        code={installDepsCmd}
-                        title={
-                          <span className="text-[var(--text-2,#a3a3a3)]">
-                            <span className="text-[var(--text-3,#525252)]">$</span>{" "}
-                            terminal
-                          </span>
-                        }
-                        meta={
-                          <CopyButton
-                            content={installDepsCmd}
-                            text
-                            label="Copy"
-                            iconAnimate="draw"
-                          />
-                        }
-                      >
-                        <HighlightTsx source={installDepsCmd} />
-                      </CodePreview>
-                    </div>
-                  )}
-                  <div className="manual-step">
-                    <div className="manual-step-head">
-                      <span className="manual-step-label">
-                        <span className="manual-step-num">{copyStep}</span>
-                        Copy the source
-                      </span>
-                    </div>
-                    <p className="manual-hint">
-                      Drop the file into your project at <code>{component.target}</code>{" "}
-                      (or wherever your components live), then import it like any
-                      local component.
-                    </p>
-                    {sourceBlock}
-                  </div>
-                  {hasExtras && (
-                    <div className="manual-step">
-                      <div className="manual-step-head">
-                        <span className="manual-step-label">
-                          <span className="manual-step-num">{extrasStep}</span>
-                          Add helper files
-                        </span>
-                      </div>
-                      <p className="manual-hint">
-                        Grab these from the repo at the same paths:
-                      </p>
-                      <ul className="manual-files">
-                        {component.extraFiles!.map((f) => (
-                          <li key={f.target}>
-                            <code>{f.target}</code>
-                          </li>
-                        ))}
-                      </ul>
+                  {view ? (
+                    <LiveRender view={view} values={values} />
+                  ) : (
+                    <div className="flex w-full items-center justify-center">
+                      <PreviewPlaceholder />
                     </div>
                   )}
                 </div>
-              ),
-            },
-          ]}
-        />
-      </section>
+              </div>
+            </div>
 
-      {/* Usage */}
-      {usageCode && (
-        <section className="block reveal d-4 code-themed">
-          <h2 className="block-title">Usage</h2>
-          <p className="block-sub">Import the component and drop it into a render.</p>
-          <CodePreview
-            code={usageCode}
-            title="demo.tsx"
-            meta={
-              <span className="inline-flex items-center gap-2">
-                <span className="text-[11px] text-[var(--text-3,#737373)]">
-                  {usageCode.split("\n").length} lines
-                </span>
-                <CopyButton
-                  content={usageCode}
-                  text
-                  textAs="tooltip"
-                  label="Copy usage"
-                  iconAnimate="draw"
-                />
-              </span>
-            }
-          >
-            <HighlightTsx source={usageCode} />
-          </CodePreview>
-        </section>
-      )}
+            {(controls || footer) && (
+              <CustomizeSection
+                controls={controls ?? []}
+                values={values}
+                onChange={setValue}
+                onReset={reset}
+                footer={footer}
+              />
+            )}
 
-      {/* Credits */}
-      {credits && credits.length > 0 && (
-        <section className="block reveal d-6">
-          <h2 className="block-title">Credits</h2>
+            {usageCode && (
+              <div className="cv-usage-live">
+                <h2 className="block-title cv-usage-title">Usage</h2>
+                <CodeBlock code={usageCode} copyLabel="Copy usage">
+                  <HighlightTsx source={usageCode} />
+                </CodeBlock>
+              </div>
+            )}
+          </>
+        )}
+
+        {tab === "props" && (
+          <>
+            <p className="block-sub">
+              Props accepted by{" "}
+              <code
+                style={{
+                  fontFamily: "var(--font-geist-mono), monospace",
+                  color: "var(--fg-1)",
+                }}
+              >
+                {componentName}
+              </code>
+              .
+            </p>
+            <table className="api-table">
+              <colgroup>
+                <col className="api-col-name" />
+                <col className="api-col-type" />
+                <col className="api-col-default" />
+                <col className="api-col-desc" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>Prop</th>
+                  <th>Type</th>
+                  <th>Default</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                {api.map((row) => (
+                  <tr key={row.name}>
+                    <td className="name" data-label="Prop">
+                      {row.name}
+                    </td>
+                    <td className="type" data-label="Type">
+                      {row.type}
+                    </td>
+                    <td className="default" data-label="Default">
+                      {row.default ?? "—"}
+                    </td>
+                    <td className="desc" data-label="Description">
+                      {row.description}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
+        )}
+
+        {tab === "install" && (
+          <div>
+            <div className="cv-install-head">
+              <div
+                className="cv-seg cv-install-switch"
+                role="tablist"
+                aria-label="Install method"
+              >
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={installMode === "cli"}
+                  onClick={() => setInstallMode("cli")}
+                  className={`cv-seg-chip ${installMode === "cli" ? "is-active" : ""}`}
+                >
+                  CLI
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={installMode === "manual"}
+                  onClick={() => setInstallMode("manual")}
+                  className={`cv-seg-chip ${installMode === "manual" ? "is-active" : ""}`}
+                >
+                  Manual
+                </button>
+              </div>
+              <PmDropdown pm={pm} onSelect={setPm} />
+            </div>
+
+            {installMode === "cli" ? (
+              <div className="cv-steps">
+                <div className="cv-step">
+                  <h3 className="cv-step-title">Run the following command</h3>
+                  <CodeBlock code={cmd} copyLabel="Copy install command">
+                    <HighlightTsx source={cmd} />
+                  </CodeBlock>
+                </div>
+              </div>
+            ) : (
+              <div className="cv-steps">
+                {hasDeps && (
+                  <div className="cv-step">
+                    <h3 className="cv-step-title">Install dependencies</h3>
+                    <CodeBlock code={installDepsCmd} copyLabel="Copy command">
+                      <HighlightTsx source={installDepsCmd} />
+                    </CodeBlock>
+                  </div>
+                )}
+                <div className="cv-step">
+                  <h3 className="cv-step-title">Copy the source code</h3>
+                  <CodeBlock
+                    code={source}
+                    chip={component.target}
+                    copyLabel="Copy source"
+                  >
+                    <HighlightTsx source={source} />
+                  </CodeBlock>
+                </div>
+                {hasExtras && (
+                  <div className="cv-step">
+                    <h3 className="cv-step-title">Add helper files</h3>
+                    <p className="manual-hint">
+                      Grab these from the repo at the same paths:
+                    </p>
+                    <ul className="manual-files">
+                      {component.extraFiles!.map((f) => (
+                        <li key={f.target}>
+                          <code>{f.target}</code>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {tab === "credits" && credits && credits.length > 0 && (
           <div className="credits-grid">
             {credits.map((credit) => (
               <a
@@ -416,9 +372,112 @@ export function ComponentView({
               </a>
             ))}
           </div>
-        </section>
-      )}
+        )}
+      </section>
     </main>
+  );
+}
+
+/**
+ * Package-manager picker — shadcn dropdown over the shared `pm` state.
+ * The menu content portals OUTSIDE the .lui-docs scope, so `.cv-menu`
+ * re-declares its own theme vars (don't add the `lui-docs` class here —
+ * it carries page-level layout styles).
+ */
+function PmDropdown({
+  pm,
+  onSelect,
+  variant = "chip",
+}: {
+  pm: PmTab;
+  onSelect: (pm: PmTab) => void;
+  /** "bar" = borderless, separator-left — for use inside the command bar. */
+  variant?: "chip" | "bar";
+}) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        className={
+          variant === "bar" ? "cv-pm-trigger cv-pm-trigger-bar" : "cv-pm-trigger"
+        }
+        aria-label="Package manager"
+      >
+        {pm}
+        <ChevronDownIcon className="size-3.5 opacity-70" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="cv-menu">
+        {PM_TABS.map((t) => (
+          <DropdownMenuItem
+            key={t}
+            onSelect={() => onSelect(t)}
+            className={`cv-menu-item ${t === pm ? "is-active" : ""}`}
+          >
+            {t}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+/**
+ * CodeBlock — the component-view code presentation: a file-path chip above a
+ * headerless CodePreview with the copy button floating inside the block.
+ * The Show all / Show less toggle is restyled into a floating pill via the
+ * `.cv-main [data-code-preview]` rules in lui-docs.css.
+ */
+function CodeBlock({
+  code,
+  chip,
+  copyLabel,
+  children,
+}: {
+  code: string;
+  chip?: ReactNode;
+  copyLabel: string;
+  children?: ReactNode;
+}) {
+  return (
+    <div className="cv-code code-themed">
+      {chip && <code className="cv-file-chip">{chip}</code>}
+      <div className="cv-code-frame">
+        <CodePreview code={code}>{children}</CodePreview>
+        <span className="cv-code-copy">
+          <CopyButton
+            content={code}
+            text={false}
+            textAs="tooltip"
+            label={copyLabel}
+            iconAnimate="draw"
+            className="text-[var(--text-3)] hover:text-[var(--text)]"
+          />
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/** The install command itself is the copy target — click the text, get a
+ * tooltip confirming the copy. */
+function CmdCopy({ cmd }: { cmd: string }) {
+  const [copied, setCopied] = useState(false);
+  const handleClick = async () => {
+    if (copied) return;
+    if (typeof navigator === "undefined" || !navigator.clipboard) return;
+    try {
+      await navigator.clipboard.writeText(cmd);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // ignore — most likely a permission/secure-context denial
+    }
+  };
+  return (
+    <AnimateTooltip content={copied ? "Copied" : "Copy"}>
+      <button type="button" onClick={handleClick} className="cv-cmd-text">
+        {cmd}
+      </button>
+    </AnimateTooltip>
   );
 }
 
@@ -458,10 +517,12 @@ function FrameWrap({
   frame: ViewFrame;
   children: ReactNode;
 }) {
+  // The stage inner provides equal padding on all four sides; frames stretch
+  // to fill the remaining box so the margins stay even.
   if (frame === "fill") {
     return (
-      <div className="flex w-full items-center justify-center p-4">
-        <div className="relative h-[460px] w-full overflow-hidden rounded-2xl bg-black">
+      <div className="flex w-full">
+        <div className="cv-frame-fill relative w-full overflow-hidden rounded-xl bg-black">
           {children}
         </div>
       </div>
@@ -469,14 +530,16 @@ function FrameWrap({
   }
   if (frame === "card") {
     return (
-      <div className="flex w-full items-center justify-center p-6">
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-8">
+      <div className="flex w-full items-center justify-center">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 sm:p-8">
           {children}
         </div>
       </div>
     );
   }
-  return <div className="flex w-full items-center justify-center p-6">{children}</div>;
+  return (
+    <div className="flex w-full items-center justify-center">{children}</div>
+  );
 }
 
 function PreviewSkeleton() {

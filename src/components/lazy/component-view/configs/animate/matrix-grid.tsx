@@ -56,8 +56,8 @@ export const view: ComponentView = {
           };
 
     return (
-      <div className="flex min-h-[520px] w-full items-center justify-center p-4">
-        <div className="relative h-[480px] w-full overflow-hidden rounded-2xl border border-white/5 bg-[radial-gradient(circle_at_50%_30%,#161616_0%,#050505_70%)]">
+      <div className="flex w-full">
+        <div className="relative min-h-[260px] w-full overflow-hidden rounded-xl border border-white/5 bg-[radial-gradient(circle_at_50%_30%,#161616_0%,#050505_70%)]">
           <MatrixGrid
             colors={colors}
             dotSize={(v.dotSize ?? 3) as number}
@@ -80,12 +80,12 @@ export const view: ComponentView = {
             }}
           />
 
-          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-8 text-center">
+          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-4 text-center sm:px-8">
             <span className="text-[10px] font-medium tracking-[0.22em] text-white/70 uppercase">
               Matrix grid
             </span>
             <h3
-              className="mt-3 text-6xl leading-none font-normal tracking-tight text-white"
+              className="mt-3 text-4xl leading-none font-normal tracking-tight text-white sm:text-6xl"
               style={{
                 fontFamily:
                   "var(--font-instrument-serif), 'Instrument Serif', serif",

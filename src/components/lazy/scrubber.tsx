@@ -19,6 +19,9 @@ type ScrubberProps = {
   disabled?: boolean;
   /** Format function for the displayed value. */
   format?: (value: number) => string;
+  /** "card" wraps in the bordered chip (Customize panel); "bare" renders only
+   * the label + track for hosts that draw their own row chrome. */
+  variant?: "card" | "bare";
 };
 
 /**
@@ -36,6 +39,7 @@ export function Scrubber({
   onChange,
   disabled = false,
   format,
+  variant = "card",
 }: ScrubberProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -106,7 +110,9 @@ export function Scrubber({
   return (
     <div
       className={[
-        "flex h-full min-h-12 flex-col justify-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5",
+        variant === "card"
+          ? "flex h-full min-h-12 flex-col justify-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5"
+          : "flex flex-col justify-center gap-2",
         disabled ? "opacity-50" : "",
       ]
         .filter(Boolean)
