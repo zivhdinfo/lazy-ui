@@ -11,7 +11,7 @@ export const view: ComponentView = {
   staticProps: {
     content: "npm install lazy-ui",
     label: "Copy",
-    className: "text-sm text-neutral-100",
+    className: "text-sm text-[var(--text)]",
   },
   mapProps: (v) => ({
     text: v.text,

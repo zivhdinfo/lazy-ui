@@ -18,7 +18,7 @@ export const view: ComponentView = {
   stageMinHeight: 560,
   render: (v) => (
     <div className="flex w-full">
-      <div className="relative min-h-[260px] w-full overflow-hidden rounded-xl bg-black">
+      <div className="relative min-h-[260px] w-full overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--preview-bg)]">
         <WaveCipher
           columns={(v.columns ?? 3) as number}
           invertColumns={(v.invertColumns ?? true) as boolean}
@@ -32,13 +32,13 @@ export const view: ComponentView = {
           opacity={(v.opacity ?? 1) as number}
         />
         <div className="pointer-events-none relative z-10 flex h-full w-full flex-col items-center justify-center gap-4 px-4 text-center sm:px-8">
-          <span className="rounded-full border border-white/15 bg-black/40 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.22em] text-neutral-300 backdrop-blur-sm">
+          <span className="rounded-full border border-[var(--border)] bg-[var(--surface)]/60 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--text-2)] backdrop-blur-sm">
             Background
           </span>
-          <h3 className="text-3xl font-light text-white sm:text-4xl">
+          <h3 className="text-3xl font-light text-[var(--text)] sm:text-4xl">
             Build lazily.
           </h3>
-          <p className="max-w-md text-sm text-neutral-300">
+          <p className="max-w-md text-sm text-[var(--text-2)]">
             Drop Wave Cipher behind any hero, dashboard, or auth screen.
           </p>
         </div>

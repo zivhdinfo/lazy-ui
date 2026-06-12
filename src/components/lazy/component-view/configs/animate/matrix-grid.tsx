@@ -57,7 +57,7 @@ export const view: ComponentView = {
 
     return (
       <div className="flex w-full">
-        <div className="relative min-h-[260px] w-full overflow-hidden rounded-xl border border-white/5 bg-[radial-gradient(circle_at_50%_30%,#161616_0%,#050505_70%)]">
+        <div className="relative min-h-[260px] w-full overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--preview-bg)]">
           <MatrixGrid
             colors={colors}
             dotSize={(v.dotSize ?? 3) as number}
@@ -81,20 +81,19 @@ export const view: ComponentView = {
           />
 
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-4 text-center sm:px-8">
-            <span className="text-[10px] font-medium tracking-[0.22em] text-white/70 uppercase">
+            <span className="text-[10px] font-medium tracking-[0.22em] text-[var(--text-3)] uppercase">
               Matrix grid
             </span>
             <h3
-              className="mt-3 text-4xl leading-none font-normal tracking-tight text-white sm:text-6xl"
+              className="mt-3 text-4xl leading-none font-normal tracking-tight text-[var(--text)] sm:text-6xl"
               style={{
                 fontFamily:
                   "var(--font-instrument-serif), 'Instrument Serif', serif",
-                textShadow: "0 2px 24px rgba(0,0,0,0.65)",
               }}
             >
               Build <span className="italic">lazily.</span>
             </h3>
-            <p className="mt-4 max-w-sm text-xs font-light text-white/60">
+            <p className="mt-4 max-w-sm text-xs font-light text-[var(--text-3)]">
               {trigger === "hover"
                 ? "Hover the panel to sweep dots in."
                 : trigger === "click"
