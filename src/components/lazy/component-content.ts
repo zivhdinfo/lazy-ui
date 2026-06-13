@@ -332,8 +332,8 @@ export function Demo() {
 export function Demo() {
   return (
     <div className="flex flex-wrap gap-3">
-      <FlipButton reveal="Ship it" palette="sky">Deploy</FlipButton>
-      <FlipButton from="bottom" front="Open docs" reveal="Read now" palette="graphite" />
+      <FlipButton reveal="Ship it" palette="light">Deploy</FlipButton>
+      <FlipButton from="bottom" front="Open docs" reveal="Read now" palette="dark" />
     </div>
   );
 }`,
@@ -364,10 +364,10 @@ export function Demo() {
       },
       {
         name: "palette",
-        type: '"sky" | "silver" | "graphite" | "mint" | "violet"',
-        default: '"sky"',
+        type: '"light" | "dark"',
+        default: '"light"',
         description:
-          "Preset gradient surface. `sky` follows the soft blue glass style; the others keep the same inset/outset treatment with different restrained colorways.",
+          "Monochrome surface tuned to the ink design system. `light` is the white secondary-button face with ink text; `dark` is the ink-grad primary fill with white text.",
       },
       {
         name: "tapScale",

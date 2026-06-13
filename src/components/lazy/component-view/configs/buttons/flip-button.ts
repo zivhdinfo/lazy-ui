@@ -57,13 +57,10 @@ export const view: ComponentView = {
       "palette",
       "Palette",
       [
-        { value: "sky", label: "Sky" },
-        { value: "silver", label: "Silver" },
-        { value: "graphite", label: "Graphite" },
-        { value: "mint", label: "Mint" },
-        { value: "violet", label: "Violet" },
+        { value: "light", label: "Light" },
+        { value: "dark", label: "Dark" },
       ],
-      "silver",
+      "light",
     ),
     slider("tapScale", "Tap scale", {
       min: 0.9,
