@@ -1,19 +1,11 @@
 "use client";
 
-import dynamic from "next/dynamic";
-import {
-  useMemo,
-  useState,
-  type ComponentType,
-  type CSSProperties,
-  type ReactNode,
-} from "react";
+import { useState, type ReactNode } from "react";
 import { ChevronDownIcon, TerminalIcon } from "lucide-react";
 
 import { AnimateTooltip } from "@/components/lazy-ui/animate-tooltip";
 import { CodePreview } from "@/components/lazy-ui/code-preview";
 import { CopyButton } from "@/components/lazy-ui/copy-button";
-import { GridBackground } from "@/components/lazy-ui/grid-background";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,19 +18,16 @@ import { contentFor } from "../component-content";
 import { buildUsageCode, initialValues, type CustomizeValues } from "../customize";
 import { HighlightTsx } from "../syntax-highlight";
 import { useScrollReveal } from "../use-scroll-reveal";
-import { DesktopIcon, MobileIcon, TabletIcon } from "../component-detail/icons";
 import {
   importPathFor,
   installCmd,
   PM_TABS,
   type PmTab,
 } from "../component-detail/install";
-import { DEVICE_WIDTHS, type Device } from "../component-detail/stage";
-import { DeviceButton } from "../component-detail/toolbar";
 
 import { CustomizeSection } from "./customize-section";
+import { PreviewStage } from "./preview-stage";
 import { viewFor } from "./registry";
-import type { ComponentView as ComponentViewConfig, ViewFrame } from "./types";
 
 type Tab = "preview" | "props" | "install" | "credits";
 type InstallMode = "cli" | "manual";
@@ -61,7 +50,6 @@ export function ComponentView({
   const [tab, setTab] = useState<Tab>("preview");
   const [installMode, setInstallMode] = useState<InstallMode>("cli");
   const [pm, setPm] = useState<PmTab>("npm");
-  const [device, setDevice] = useState<Device>("desktop");
 
   // Docs content: a config may override per-field; otherwise fall back to the
   // shared component-content.ts entry so unmigrated components still render
@@ -89,7 +77,6 @@ export function ComponentView({
 
   const stageMinHeight = view?.stageMinHeight ?? DEFAULT_STAGE_MIN_HEIGHT;
   const cmd = installCmd(pm, component.slug);
-  const deviceWidth = DEVICE_WIDTHS[device];
 
   // Usage reflects the current control values when there are controls;
   // otherwise it falls back to the static docs snippet.
@@ -145,66 +132,21 @@ export function ComponentView({
       <section className="block reveal d-2">
         {tab === "preview" && (
           <>
-            <div className="cv-toolbar">
-              <div className="cv-cmdbar">
-                <TerminalIcon className="size-3.5 shrink-0 text-[var(--text-3)]" />
-                <CmdCopy cmd={cmd} />
-                <PmDropdown pm={pm} onSelect={setPm} variant="bar" />
-              </div>
-              <div className="hidden items-center gap-1 sm:flex">
-                <DeviceButton
-                  active={device === "desktop"}
-                  onClick={() => setDevice("desktop")}
-                  label="Desktop width"
-                >
-                  <DesktopIcon />
-                </DeviceButton>
-                <DeviceButton
-                  active={device === "tablet"}
-                  onClick={() => setDevice("tablet")}
-                  label="Tablet width"
-                >
-                  <TabletIcon />
-                </DeviceButton>
-                <DeviceButton
-                  active={device === "mobile"}
-                  onClick={() => setDevice("mobile")}
-                  label="Mobile width"
-                >
-                  <MobileIcon />
-                </DeviceButton>
-              </div>
-            </div>
-
-            <div
-              className="cv-stage"
-              style={{ "--cv-stage-h": `${stageMinHeight}px` } as CSSProperties}
-            >
-              <GridBackground
-                variant="dots"
-                size={20}
-                dotSize={3}
-                color="var(--preview-grid)"
-              />
-              <div className="cv-stage-inner">
-                <div
-                  className="cv-device"
-                  style={
-                    {
-                      "--device-w": deviceWidth ? `${deviceWidth}px` : "100%",
-                    } as CSSProperties
-                  }
-                >
-                  {view ? (
-                    <LiveRender view={view} values={values} />
-                  ) : (
-                    <div className="flex w-full items-center justify-center">
-                      <PreviewPlaceholder />
-                    </div>
-                  )}
+            <PreviewStage
+              view={view}
+              values={values}
+              stageMinHeight={stageMinHeight}
+              slug={component.slug}
+              responsive={view?.responsive}
+              isBlock={component.kind === "block"}
+              toolbarLeft={
+                <div className="cv-cmdbar">
+                  <TerminalIcon className="size-3.5 shrink-0 text-[var(--text-3)]" />
+                  <CmdCopy cmd={cmd} />
+                  <PmDropdown pm={pm} onSelect={setPm} variant="bar" />
                 </div>
-              </div>
-            </div>
+              }
+            />
 
             {(controls || footer) && (
               <CustomizeSection
@@ -481,84 +423,3 @@ function CmdCopy({ cmd }: { cmd: string }) {
   );
 }
 
-/** Renders the live component — escape-hatch `render` or declarative mount. */
-function LiveRender({
-  view,
-  values,
-}: {
-  view: ComponentViewConfig;
-  values: CustomizeValues;
-}) {
-  const Dynamic = useMemo<ComponentType<Record<string, unknown>> | null>(() => {
-    if (view.render) return null;
-    return dynamic(
-      () =>
-        view.load().then(
-          (m) => m[view.export] as ComponentType<Record<string, unknown>>,
-        ),
-      { ssr: false, loading: () => <PreviewSkeleton /> },
-    ) as ComponentType<Record<string, unknown>>;
-  }, [view]);
-
-  if (view.render) return <>{view.render(values)}</>;
-  if (!Dynamic) return <PreviewPlaceholder />;
-  const props = { ...(view.staticProps ?? {}), ...(view.mapProps?.(values) ?? {}) };
-  return (
-    <FrameWrap frame={view.frame ?? "center"}>
-      <Dynamic {...props} />
-    </FrameWrap>
-  );
-}
-
-function FrameWrap({
-  frame,
-  children,
-}: {
-  frame: ViewFrame;
-  children: ReactNode;
-}) {
-  // The stage inner provides equal padding on all four sides; frames stretch
-  // to fill the remaining box so the margins stay even.
-  if (frame === "fill") {
-    return (
-      <div className="flex w-full">
-        <div className="cv-frame-fill relative w-full overflow-hidden rounded-xl bg-black">
-          {children}
-        </div>
-      </div>
-    );
-  }
-  if (frame === "card") {
-    return (
-      <div className="flex w-full items-center justify-center">
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 sm:p-8">
-          {children}
-        </div>
-      </div>
-    );
-  }
-  return (
-    <div className="flex w-full items-center justify-center">{children}</div>
-  );
-}
-
-function PreviewSkeleton() {
-  return (
-    <div className="flex h-24 w-24 items-center justify-center">
-      <span className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[var(--text-2)]" />
-    </div>
-  );
-}
-
-function PreviewPlaceholder() {
-  return (
-    <div className="flex max-w-sm flex-col items-center gap-2 px-8 text-center">
-      <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-3)]">
-        Live preview
-      </span>
-      <p className="text-sm text-[var(--text-2)]">
-        Coming soon. The Code, Installation, and Usage below are ready to use.
-      </p>
-    </div>
-  );
-}

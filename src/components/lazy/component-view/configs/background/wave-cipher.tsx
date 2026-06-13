@@ -17,8 +17,8 @@ export const view: ComponentView = {
   export: "WaveCipher",
   stageMinHeight: 560,
   render: (v) => (
-    <div className="flex w-full">
-      <div className="relative min-h-[260px] w-full overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--preview-bg)]">
+    <div className="flex h-full w-full">
+      <div className="relative h-full w-full overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--preview-bg)]">
         <WaveCipher
           columns={(v.columns ?? 3) as number}
           invertColumns={(v.invertColumns ?? true) as boolean}
@@ -31,7 +31,7 @@ export const view: ComponentView = {
           glyphChurn={(v.glyphChurn ?? 0.6) as number}
           opacity={(v.opacity ?? 1) as number}
         />
-        <div className="pointer-events-none relative z-10 flex h-full w-full flex-col items-center justify-center gap-4 px-4 text-center sm:px-8">
+        <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 px-4 text-center sm:px-8">
           <span className="rounded-full border border-[var(--border)] bg-[var(--surface)]/60 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--text-2)] backdrop-blur-sm">
             Background
           </span>

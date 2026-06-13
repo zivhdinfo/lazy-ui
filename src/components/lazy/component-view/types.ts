@@ -27,7 +27,7 @@ export type CustomFooter = {
 };
 
 /** How the declarative (`mapProps`) preview is framed on the stage. */
-export type ViewFrame = "center" | "fill" | "card";
+export type ViewFrame = "center" | "fill" | "card" | "block";
 
 /**
  * The single declarative description of a component's detail page. One file per
@@ -56,6 +56,9 @@ export type ComponentView = {
   /** Customize panel. Omit for a component with nothing to tweak. */
   controls?: CustomizeControl[];
   footer?: CustomFooter;
+
+  /** Show device-width presets + drag-to-resize. Defaults to blocks only. */
+  responsive?: boolean;
 
   // ── Declarative path (no JSX) — covers buttons / forms / switches ──
   /** Map current control values to component props. */

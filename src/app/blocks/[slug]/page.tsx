@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { BlocksShell } from "@/components/lazy/blocks-shell";
-import { ComponentDetail } from "@/components/lazy/component-detail";
+import { ComponentView } from "@/components/lazy/component-view/component-view";
 import {
   getBlockBySlug,
   getPublishedBlocks,
@@ -51,7 +51,7 @@ export default async function BlockDetailPage({ params }: BlockDetailPageProps) 
 
   return (
     <BlocksShell>
-      <ComponentDetail component={block} source={source} />
+      <ComponentView component={block} source={source} />
     </BlocksShell>
   );
 }

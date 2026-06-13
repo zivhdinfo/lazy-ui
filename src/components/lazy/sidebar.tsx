@@ -72,6 +72,7 @@ const DOC_SECTION: SidebarSection = {
     { label: "Introduction", href: "/get-started" },
     { label: "Installation", href: "/get-started/installation" },
     { label: "Changelog", href: "/get-started/changelog" },
+    { label: "All components", href: "/get-started/all-component" },
   ],
 };
 

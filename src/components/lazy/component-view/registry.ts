@@ -12,6 +12,11 @@ import { view as pixelCursor } from "./configs/animate/pixel-cursor";
 import { view as revealAnimate } from "./configs/animate/reveal-animate";
 import { view as stackList } from "./configs/animate/stack-list";
 import { view as auroraMesh } from "./configs/background/aurora-mesh";
+import { view as pricing1 } from "./configs/blocks/pricing-1";
+import { view as pricing2 } from "./configs/blocks/pricing-2";
+import { view as pricing3 } from "./configs/blocks/pricing-3";
+import { view as pricing4 } from "./configs/blocks/pricing-4";
+import { view as pricing5 } from "./configs/blocks/pricing-5";
 import { view as chromaFlow } from "./configs/background/chroma-flow";
 import { view as gridBackground } from "./configs/background/grid-background";
 import { view as horizonCipher } from "./configs/background/horizon-cipher";
@@ -78,6 +83,11 @@ const VIEWS: Record<string, ComponentView> = {
   "orbit-mesh": orbitMesh,
   "particle-halo": particleHalo,
   "pixel-cursor": pixelCursor,
+  "pricing-1": pricing1,
+  "pricing-2": pricing2,
+  "pricing-3": pricing3,
+  "pricing-4": pricing4,
+  "pricing-5": pricing5,
   "prism-drift": prismDrift,
   progress: progress,
   "reveal-animate": revealAnimate,
