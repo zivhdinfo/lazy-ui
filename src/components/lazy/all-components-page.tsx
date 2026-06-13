@@ -17,6 +17,7 @@ import { getPublishedComponentsOnly, type ComponentItem } from "@/registry/compo
 import { initialValues, type CustomizeValues } from "./customize";
 import { viewFor } from "./component-view/registry";
 import type { ComponentView } from "./component-view/types";
+import { previewVideoFor } from "./preview-videos";
 import { NEW_SLUGS } from "./sidebar";
 import { useScrollReveal } from "./use-scroll-reveal";
 
@@ -123,6 +124,7 @@ export function AllComponentsPage() {
 function ComponentCard({ item }: { item: ComponentItem }) {
   const view = viewFor(item.slug)!;
   const bare = isBarePreview(item);
+  const videoSrc = previewVideoFor(item.slug);
   const values = useMemo<CustomizeValues>(
     () => ({
       ...(view.controls ? initialValues(view.controls) : {}),
@@ -159,10 +161,12 @@ function ComponentCard({ item }: { item: ComponentItem }) {
   return (
     <article ref={cardRef} className="all-components-card">
       <div className="all-components-card-preview">
-        {mounted ? (
-          <CardPreview view={view} values={values} bare={bare} />
-        ) : (
+        {!mounted ? (
           <CardSkeleton />
+        ) : videoSrc ? (
+          <CardVideo src={videoSrc} />
+        ) : (
+          <CardPreview view={view} values={values} bare={bare} />
         )}
       </div>
 
@@ -226,6 +230,30 @@ function CardPreview({
   return (
     <div className="all-components-card-center">
       <Dynamic {...props} />
+    </div>
+  );
+}
+
+/**
+ * Plays a pre-recorded clip for the heaviest backgrounds — no live WebGL
+ * context, so a grid of surfaces stays smooth. Decorative only: autoplays
+ * muted on loop with no controls and is hidden from assistive tech.
+ */
+function CardVideo({ src }: { src: string }) {
+  return (
+    <div className="all-components-card-fill">
+      <video
+        className="all-components-card-video"
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="metadata"
+        aria-hidden="true"
+        tabIndex={-1}
+      >
+        <source src={src} type="video/webm" />
+      </video>
     </div>
   );
 }
