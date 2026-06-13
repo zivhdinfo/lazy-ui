@@ -1815,6 +1815,11 @@ html[data-theme="dark"] .cv-menu {
   object-fit: cover;
   display: block;
 }
+/* Portrait / odd-ratio clips (e.g. spectral-card) show the whole frame at its
+   true ratio, centered, rather than cropping a landscape slice. */
+.lui-docs .all-components-card-video.is-contain {
+  object-fit: contain;
+}
 
 /* Frosted floating name pill, anchored to the lower part of the preview. */
 .lui-docs .all-components-card-pill {

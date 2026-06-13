@@ -60,6 +60,10 @@ export type ComponentView = {
   /** Show device-width presets + drag-to-resize. Defaults to blocks only. */
   responsive?: boolean;
 
+  /** Force the record button on for a canvas-less preview (records via screen
+   * capture). Canvas previews always offer record without this. */
+  record?: boolean;
+
   // ── Declarative path (no JSX) — covers buttons / forms / switches ──
   /** Map current control values to component props. */
   mapProps?: (values: CustomizeValues) => Record<string, unknown>;

@@ -96,6 +96,7 @@ export const view: ComponentView = {
   load: () => import("@/components/lazy-ui/border-glow"),
   export: "BorderGlow",
   stageMinHeight: 680,
+  record: true,
   render: (v) => <BorderGlowDemo values={v} />,
   controls: [
     select(

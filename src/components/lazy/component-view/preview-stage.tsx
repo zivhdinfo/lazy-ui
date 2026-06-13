@@ -72,6 +72,7 @@ export function PreviewStage({
   const [progress, setProgress] = useState(0);
 
   const showDevices = responsive ?? (isBlock || hasCanvas || hasImage);
+  const showRecord = canRecord && (hasCanvas || view?.record === true);
 
   const stageRef = useRef<HTMLDivElement | null>(null);
   const frameRef = useRef<HTMLDivElement | null>(null);
@@ -234,14 +235,16 @@ export function PreviewStage({
 
   const startRecording = useCallback(async () => {
     if (isRecording) return;
-    const canvas = frameRef.current?.querySelector("canvas");
-    if (!canvas || !canRecord) return;
+    const frame = frameRef.current;
+    if (!frame || !canRecord) return;
+    const canvas = frame.querySelector("canvas");
     const controller = new AbortController();
     abortRef.current = controller;
     setProgress(0);
     setIsRecording(true);
     try {
       await exportPreviewVideo({
+        frame,
         canvas,
         slug,
         durationMs: VIDEO_DURATION_MS,
@@ -302,7 +305,7 @@ export function PreviewStage({
           >
             <RefreshIcon />
           </button>
-          {((canRecord && hasCanvas) || isRecording) && (
+          {(showRecord || isRecording) && (
             <button
               type="button"
               onClick={isRecording ? cancelRecording : startRecording}

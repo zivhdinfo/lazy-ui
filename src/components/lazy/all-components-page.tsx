@@ -17,7 +17,7 @@ import { getPublishedComponentsOnly, type ComponentItem } from "@/registry/compo
 import { initialValues, type CustomizeValues } from "./customize";
 import { viewFor } from "./component-view/registry";
 import type { ComponentView } from "./component-view/types";
-import { previewVideoFor } from "./preview-videos";
+import { previewVideoFitFor, previewVideoFor } from "./preview-videos";
 import { NEW_SLUGS } from "./sidebar";
 import { useScrollReveal } from "./use-scroll-reveal";
 
@@ -164,7 +164,7 @@ function ComponentCard({ item }: { item: ComponentItem }) {
         {!mounted ? (
           <CardSkeleton />
         ) : videoSrc ? (
-          <CardVideo src={videoSrc} />
+          <CardVideo src={videoSrc} fit={previewVideoFitFor(item.slug)} />
         ) : (
           <CardPreview view={view} values={values} bare={bare} />
         )}
@@ -239,11 +239,11 @@ function CardPreview({
  * context, so a grid of surfaces stays smooth. Decorative only: autoplays
  * muted on loop with no controls and is hidden from assistive tech.
  */
-function CardVideo({ src }: { src: string }) {
+function CardVideo({ src, fit }: { src: string; fit: "cover" | "contain" }) {
   return (
     <div className="all-components-card-fill">
       <video
-        className="all-components-card-video"
+        className={`all-components-card-video${fit === "contain" ? " is-contain" : ""}`}
         autoPlay
         loop
         muted

@@ -1,13 +1,21 @@
 const DEFAULT_DURATION_MS = 5_000;
 const DEFAULT_FPS = 60;
 const VIDEO_BITS_PER_SECOND = 12_000_000;
+const MAX_OUTPUT_PIXELS = 1920 * 1080;
 
 type CanvasWithCapture = HTMLCanvasElement & {
   captureStream?: (frameRate?: number) => MediaStream;
 };
 
+type BrowserDisplayMediaOptions = DisplayMediaStreamOptions & {
+  preferCurrentTab?: boolean;
+  selfBrowserSurface?: "include" | "exclude";
+  surfaceSwitching?: "include" | "exclude";
+};
+
 export type PreviewVideoExportOptions = {
-  canvas: HTMLCanvasElement;
+  frame: HTMLElement;
+  canvas?: HTMLCanvasElement | null;
   slug: string;
   durationMs?: number;
   fps?: number;
@@ -15,17 +23,43 @@ export type PreviewVideoExportOptions = {
   onProgress?: (progress: number) => void;
 };
 
-export function isPreviewVideoExportSupported() {
+function canCaptureCanvas() {
   return (
-    typeof window !== "undefined" &&
-    typeof MediaRecorder !== "undefined" &&
     typeof HTMLCanvasElement !== "undefined" &&
     typeof (HTMLCanvasElement.prototype as CanvasWithCapture).captureStream ===
       "function"
   );
 }
 
-export async function exportPreviewVideo({
+function canCaptureScreen() {
+  return (
+    typeof navigator !== "undefined" &&
+    typeof navigator.mediaDevices?.getDisplayMedia === "function"
+  );
+}
+
+export function isPreviewVideoExportSupported() {
+  return (
+    typeof window !== "undefined" &&
+    typeof MediaRecorder !== "undefined" &&
+    (canCaptureCanvas() || canCaptureScreen())
+  );
+}
+
+export async function exportPreviewVideo(options: PreviewVideoExportOptions) {
+  if (!isPreviewVideoExportSupported()) {
+    throw new Error("Video export is not supported in this browser.");
+  }
+  const directCanvas =
+    options.canvas &&
+    typeof (options.canvas as CanvasWithCapture).captureStream === "function";
+  if (directCanvas) {
+    return exportFromCanvas(options);
+  }
+  return exportFromScreen(options);
+}
+
+async function exportFromCanvas({
   canvas,
   slug,
   durationMs = DEFAULT_DURATION_MS,
@@ -33,49 +67,23 @@ export async function exportPreviewVideo({
   signal,
   onProgress,
 }: PreviewVideoExportOptions) {
-  if (!isPreviewVideoExportSupported()) {
-    throw new Error("Video export is not supported in this browser.");
-  }
   throwIfAborted(signal);
+  const stream = (canvas as CanvasWithCapture).captureStream!.call(canvas, fps);
+  const recorder = createRecorder(stream);
 
-  const capture = (canvas as CanvasWithCapture).captureStream;
-  if (typeof capture !== "function") {
-    throw new Error("This preview cannot be recorded.");
-  }
-  const stream = capture.call(canvas, fps);
-
-  const mimeType = preferredMimeType();
-  const recorder = new MediaRecorder(stream, {
-    mimeType: mimeType || undefined,
-    videoBitsPerSecond: VIDEO_BITS_PER_SECOND,
-  });
-
-  const chunks: Blob[] = [];
   let rafId: number | null = null;
   let timeoutId: number | null = null;
   let stoppedByAbort = false;
 
   const abortRecording = () => {
     stoppedByAbort = true;
-    if (recorder.state === "recording") recorder.stop();
+    if (recorder.instance.state === "recording") recorder.instance.stop();
   };
-
-  const stopped = new Promise<Blob>((resolve, reject) => {
-    recorder.addEventListener("dataavailable", (event) => {
-      if (event.data.size > 0) chunks.push(event.data);
-    });
-    recorder.addEventListener("error", () => {
-      reject(new Error("Video recording failed."));
-    });
-    recorder.addEventListener("stop", () => {
-      resolve(new Blob(chunks, { type: mimeType || "video/webm" }));
-    });
-  });
 
   try {
     signal?.addEventListener("abort", abortRecording, { once: true });
 
-    recorder.start(100);
+    recorder.instance.start(100);
     const startedAt = performance.now();
     onProgress?.(0);
 
@@ -83,20 +91,18 @@ export async function exportPreviewVideo({
       const elapsed = now - startedAt;
       onProgress?.(Math.min((elapsed / durationMs) * 100, 100));
       if (elapsed >= durationMs) {
-        if (recorder.state === "recording") recorder.stop();
+        if (recorder.instance.state === "recording") recorder.instance.stop();
         return;
       }
       rafId = requestAnimationFrame(render);
     };
-
     rafId = requestAnimationFrame(render);
     timeoutId = window.setTimeout(() => {
-      if (recorder.state === "recording") recorder.stop();
+      if (recorder.instance.state === "recording") recorder.instance.stop();
     }, durationMs + 250);
 
-    const blob = await stopped;
+    const blob = await recorder.stopped;
     throwIfAborted(signal);
-
     if (!stoppedByAbort && blob.size > 0) {
       onProgress?.(100);
       downloadBlob(blob, `${safeFilePart(slug)}-preview-${Date.now()}.webm`);
@@ -109,6 +115,136 @@ export async function exportPreviewVideo({
   }
 }
 
+async function exportFromScreen({
+  frame,
+  slug,
+  durationMs = DEFAULT_DURATION_MS,
+  fps = DEFAULT_FPS,
+  signal,
+  onProgress,
+}: PreviewVideoExportOptions) {
+  throwIfAborted(signal);
+
+  const displayOptions: BrowserDisplayMediaOptions = {
+    audio: false,
+    video: { displaySurface: "browser", frameRate: fps },
+    preferCurrentTab: true,
+    selfBrowserSurface: "include",
+    surfaceSwitching: "exclude",
+  };
+  const displayStream =
+    await navigator.mediaDevices.getDisplayMedia(displayOptions);
+
+  let canvasStream: MediaStream | null = null;
+  let recorder: ReturnType<typeof createRecorder> | null = null;
+  let rafId: number | null = null;
+  let timeoutId: number | null = null;
+  let stoppedByAbort = false;
+
+  const video = document.createElement("video");
+  video.muted = true;
+  video.playsInline = true;
+  video.srcObject = displayStream;
+
+  const abortRecording = () => {
+    stoppedByAbort = true;
+    if (recorder && recorder.instance.state === "recording") {
+      recorder.instance.stop();
+    }
+  };
+
+  try {
+    signal?.addEventListener("abort", abortRecording, { once: true });
+    await startVideo(video, signal);
+
+    const rect = frame.getBoundingClientRect();
+    if (rect.width < 1 || rect.height < 1) {
+      throw new Error("Preview frame is not visible.");
+    }
+
+    const { width, height } = outputSizeFor(rect);
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d", { alpha: false });
+    if (!ctx) throw new Error("Could not create video export canvas.");
+
+    const drawFrame = () => {
+      const source = sourceRectFor(frame, video);
+      ctx.drawImage(
+        video,
+        source.x,
+        source.y,
+        source.width,
+        source.height,
+        0,
+        0,
+        canvas.width,
+        canvas.height,
+      );
+    };
+    drawFrame();
+
+    canvasStream = (canvas as CanvasWithCapture).captureStream!.call(canvas, fps);
+    recorder = createRecorder(canvasStream);
+
+    recorder.instance.start(100);
+    const startedAt = performance.now();
+    onProgress?.(0);
+
+    const render = (now: number) => {
+      drawFrame();
+      const elapsed = now - startedAt;
+      onProgress?.(Math.min((elapsed / durationMs) * 100, 100));
+      if (elapsed >= durationMs) {
+        if (recorder!.instance.state === "recording") recorder!.instance.stop();
+        return;
+      }
+      rafId = requestAnimationFrame(render);
+    };
+    rafId = requestAnimationFrame(render);
+    timeoutId = window.setTimeout(() => {
+      if (recorder!.instance.state === "recording") recorder!.instance.stop();
+    }, durationMs + 250);
+
+    const blob = await recorder.stopped;
+    throwIfAborted(signal);
+    if (!stoppedByAbort && blob.size > 0) {
+      onProgress?.(100);
+      downloadBlob(blob, `${safeFilePart(slug)}-preview-${Date.now()}.webm`);
+    }
+  } finally {
+    signal?.removeEventListener("abort", abortRecording);
+    if (rafId !== null) cancelAnimationFrame(rafId);
+    if (timeoutId !== null) window.clearTimeout(timeoutId);
+    video.pause();
+    video.srcObject = null;
+    canvasStream?.getTracks().forEach((track) => track.stop());
+    displayStream.getTracks().forEach((track) => track.stop());
+  }
+}
+
+function createRecorder(stream: MediaStream) {
+  const mimeType = preferredMimeType();
+  const instance = new MediaRecorder(stream, {
+    mimeType: mimeType || undefined,
+    videoBitsPerSecond: VIDEO_BITS_PER_SECOND,
+  });
+  const chunks: Blob[] = [];
+  const stopped = new Promise<Blob>((resolve, reject) => {
+    instance.addEventListener("dataavailable", (event) => {
+      if (event.data.size > 0) chunks.push(event.data);
+    });
+    instance.addEventListener("error", () => {
+      reject(new Error("Video recording failed."));
+    });
+    instance.addEventListener("stop", () => {
+      resolve(new Blob(chunks, { type: mimeType || "video/webm" }));
+    });
+  });
+  return { instance, stopped };
+}
+
 function preferredMimeType() {
   const candidates = [
     "video/webm;codecs=vp9",
@@ -116,6 +252,63 @@ function preferredMimeType() {
     "video/webm",
   ];
   return candidates.find((type) => MediaRecorder.isTypeSupported(type)) ?? "";
+}
+
+async function startVideo(video: HTMLVideoElement, signal?: AbortSignal) {
+  await waitForMetadata(video, signal);
+  throwIfAborted(signal);
+  await video.play();
+  await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+  throwIfAborted(signal);
+}
+
+function waitForMetadata(video: HTMLVideoElement, signal?: AbortSignal) {
+  if (video.videoWidth > 0 && video.videoHeight > 0) return Promise.resolve();
+  return new Promise<void>((resolve, reject) => {
+    const cleanup = () => {
+      video.removeEventListener("loadedmetadata", onLoaded);
+      video.removeEventListener("error", onError);
+      signal?.removeEventListener("abort", onAbort);
+    };
+    const onLoaded = () => {
+      cleanup();
+      resolve();
+    };
+    const onError = () => {
+      cleanup();
+      reject(new Error("Could not start screen capture preview."));
+    };
+    const onAbort = () => {
+      cleanup();
+      reject(abortError());
+    };
+    video.addEventListener("loadedmetadata", onLoaded, { once: true });
+    video.addEventListener("error", onError, { once: true });
+    signal?.addEventListener("abort", onAbort, { once: true });
+  });
+}
+
+function outputSizeFor(rect: DOMRect) {
+  const targetScale = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+  const maxScale = Math.sqrt(MAX_OUTPUT_PIXELS / (rect.width * rect.height));
+  const scale = Math.min(targetScale, maxScale);
+  return {
+    width: Math.max(1, Math.round(rect.width * scale)),
+    height: Math.max(1, Math.round(rect.height * scale)),
+  };
+}
+
+function sourceRectFor(frame: HTMLElement, video: HTMLVideoElement) {
+  const rect = frame.getBoundingClientRect();
+  const viewportWidth = Math.max(window.innerWidth, 1);
+  const viewportHeight = Math.max(window.innerHeight, 1);
+  const scaleX = video.videoWidth / viewportWidth;
+  const scaleY = video.videoHeight / viewportHeight;
+  const x = clamp(rect.left * scaleX, 0, video.videoWidth - 1);
+  const y = clamp(rect.top * scaleY, 0, video.videoHeight - 1);
+  const width = clamp(rect.width * scaleX, 1, video.videoWidth - x);
+  const height = clamp(rect.height * scaleY, 1, video.videoHeight - y);
+  return { x, y, width, height };
 }
 
 function downloadBlob(blob: Blob, filename: string) {
@@ -133,8 +326,14 @@ function safeFilePart(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9-]+/g, "-") || "preview";
 }
 
+function clamp(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, value));
+}
+
 function throwIfAborted(signal?: AbortSignal) {
-  if (signal?.aborted) {
-    throw new DOMException("Video export was cancelled.", "AbortError");
-  }
+  if (signal?.aborted) throw abortError();
+}
+
+function abortError() {
+  return new DOMException("Video export was cancelled.", "AbortError");
 }

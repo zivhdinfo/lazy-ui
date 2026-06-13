@@ -56,8 +56,8 @@ export const view: ComponentView = {
           };
 
     return (
-      <div className="flex w-full">
-        <div className="relative min-h-[260px] w-full overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--preview-bg)]">
+      <div className="flex h-full w-full">
+        <div className="relative h-full w-full overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--preview-bg)]">
           <MatrixGrid
             colors={colors}
             dotSize={(v.dotSize ?? 3) as number}

@@ -6,6 +6,7 @@ export const view: ComponentView = {
   load: () => import("@/components/lazy-ui/image-zoom"),
   export: "ImageZoom",
   stageMinHeight: 500,
+  record: true,
   render: (v) => {
     const zoomScale = (v.zoomScale ?? 2.6) as number;
     const duration = (v.duration ?? 420) as number;
