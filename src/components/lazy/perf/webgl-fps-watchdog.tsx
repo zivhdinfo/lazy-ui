@@ -35,6 +35,14 @@ const STALL_MS = SAMPLE_MS * 3;
 type GlContext = WebGLRenderingContext | WebGL2RenderingContext;
 type GlEntry = { canvas: WeakRef<HTMLCanvasElement>; gl: WeakRef<GlContext> };
 
+// Microsoft Edge (Chromium "Edg/", Android "EdgA/", iOS "EdgiOS/", legacy
+// "Edge/"). The whole watchdog — getContext patch and FPS sampling — is opted
+// out on Edge by request.
+function isEdge(): boolean {
+  if (typeof navigator === "undefined") return false;
+  return /\bEdg(e|A|iOS)?\//.test(navigator.userAgent);
+}
+
 declare global {
   interface Window {
     __lazyuiGlRegistry?: GlEntry[];
@@ -107,6 +115,7 @@ function sweepOrphans(): number {
 export function WebglFpsWatchdog() {
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (isEdge()) return; // watchdog disabled on Microsoft Edge
     ensureRegistry();
 
     let raf = 0;
