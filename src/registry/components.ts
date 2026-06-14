@@ -329,16 +329,6 @@ export const components: ComponentItem[] = [
     dependencies: ["motion"],
   },
   {
-    slug: "particle-halo",
-    title: "Particle Halo",
-    description:
-      "A ring of colored particles that breathes in and out with elastic + back easings. The cursor angle around the center sweeps the breathe progress, so the wave follows your pointer.",
-    category: "Animate",
-    target: "components/lazy-ui/particle-halo/particle-halo.tsx",
-    status: "published",
-    dependencies: ["motion"],
-  },
-  {
     slug: "aurora-mesh",
     title: "Aurora Mesh",
     description:
@@ -369,32 +359,12 @@ export const components: ComponentItem[] = [
     dependencies: ["motion"],
   },
   {
-    slug: "shadow-mesh",
-    title: "Shadow Mesh",
-    description:
-      "A single dark plume drifting through a WebGL field — radial alpha mass warped by FBM noise, anchor follows the cursor, fully premultiplied so it composites over any background.",
-    category: "Background",
-    target: "components/lazy-ui/shadow-mesh/shadow-mesh.tsx",
-    status: "published",
-    dependencies: ["motion"],
-  },
-  {
     slug: "slime-background",
     title: "Slime Background",
     description:
       "A glossy marbled liquid surface — double-warped FBM height field, analytic normals, Blinn-Phong specular highlights, and a cursor-dimple that presses into the slime. Five color presets including toxic purple/green.",
     category: "Background",
     target: "components/lazy-ui/slime-background/slime-background.tsx",
-    status: "published",
-    dependencies: ["motion"],
-  },
-  {
-    slug: "neumorphism",
-    title: "Neumorphism",
-    description:
-      "A cascade of soft rounded plates with directional light + shadow — pure CSS box-shadow neumorphism, parallax tilt on cursor, and a slow drift to keep the surface alive. Five palettes covering pearl, bone, silver, graphite, and obsidian.",
-    category: "Background",
-    target: "components/lazy-ui/neumorphism/neumorphism.tsx",
     status: "published",
     dependencies: ["motion"],
   },

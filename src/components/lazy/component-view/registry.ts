@@ -7,7 +7,6 @@ import { view as counter } from "./configs/animate/counter";
 import { view as liquidReveal } from "./configs/animate/liquid-reveal";
 import { view as liquidTransition } from "./configs/animate/liquid-transition";
 import { view as matrixGrid } from "./configs/animate/matrix-grid";
-import { view as particleHalo } from "./configs/animate/particle-halo";
 import { view as pixelCursor } from "./configs/animate/pixel-cursor";
 import { view as revealAnimate } from "./configs/animate/reveal-animate";
 import { view as stackList } from "./configs/animate/stack-list";
@@ -21,13 +20,11 @@ import { view as chromaFlow } from "./configs/background/chroma-flow";
 import { view as gridBackground } from "./configs/background/grid-background";
 import { view as horizonCipher } from "./configs/background/horizon-cipher";
 import { view as liquidChrome } from "./configs/background/liquid-chrome";
-import { view as neumorphism } from "./configs/background/neumorphism";
 import { view as orbitBloom } from "./configs/background/orbit-bloom";
 import { view as orbitCipher } from "./configs/background/orbit-cipher";
 import { view as orbitMesh } from "./configs/background/orbit-mesh";
 import { view as prismDrift } from "./configs/background/prism-drift";
 import { view as rippleSurface } from "./configs/background/ripple-surface";
-import { view as shadowMesh } from "./configs/background/shadow-mesh";
 import { view as slimeBackground } from "./configs/background/slime-background";
 import { view as waveCipher } from "./configs/background/wave-cipher";
 import { view as copyButton } from "./configs/buttons/copy-button";
@@ -77,11 +74,9 @@ const VIEWS: Record<string, ComponentView> = {
   "liquid-reveal": liquidReveal,
   "liquid-transition": liquidTransition,
   "matrix-grid": matrixGrid,
-  neumorphism: neumorphism,
   "orbit-bloom": orbitBloom,
   "orbit-cipher": orbitCipher,
   "orbit-mesh": orbitMesh,
-  "particle-halo": particleHalo,
   "pixel-cursor": pixelCursor,
   "pricing-1": pricing1,
   "pricing-2": pricing2,
@@ -92,7 +87,6 @@ const VIEWS: Record<string, ComponentView> = {
   progress: progress,
   "reveal-animate": revealAnimate,
   "ripple-surface": rippleSurface,
-  "shadow-mesh": shadowMesh,
   "shiny-text": shinyText,
   "slime-background": slimeBackground,
   "smooth-cursor": smoothCursor,
