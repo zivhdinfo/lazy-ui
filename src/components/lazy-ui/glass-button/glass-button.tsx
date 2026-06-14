@@ -16,36 +16,43 @@ export interface GlassButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Button label or arbitrary inline content. */
   children?: ReactNode;
-  /** Turbulence base frequency at rest. Smaller = bigger refraction blobs. @default 0.014 */
-  frequency?: number;
-  /** Displacement amplitude in CSS pixels at rest. Higher = more shimmer along the button's edges. @default 10 */
-  distortion?: number;
-  /** Color-matrix tint applied after refraction. @default "cool" */
-  tint?: "cool" | "warm" | "none";
-  /** Size preset. @default "md" */
+  /** Size preset — controls padding and text size. @default "md" */
   size?: "sm" | "md" | "lg";
-  /** Disable the idle pulse + hover acceleration + click wave. Auto on for reduced-motion users. @default false */
+  /** Roll the label up to a fresh copy on hover. Disabled for reduced-motion. @default true */
+  roll?: boolean;
+  /** Faint cast on the frosted fill + sheen. @default "neutral" */
+  tint?: "neutral" | "cool" | "warm";
+  /** Refraction strength in CSS px — how hard the glass bends the background behind it. @default 14 */
+  distortion?: number;
+  /** Turbulence base frequency. Smaller = larger, more lens-like ripples. @default 0.009 */
+  frequency?: number;
+  /** Freeze the liquid drift so the refraction is static. Auto-on for reduced-motion. @default false */
   staticGlass?: boolean;
 }
 
-const SIZE_CLASS: Record<NonNullable<GlassButtonProps["size"]>, string> = {
-  sm: "h-9 px-4 text-xs",
-  md: "h-11 px-5 text-sm",
-  lg: "h-13 px-7 text-base",
+const SIZE: Record<
+  NonNullable<GlassButtonProps["size"]>,
+  { pad: string; line: string; text: string }
+> = {
+  sm: { pad: "px-5 py-2.5", line: "h-4", text: "text-xs" },
+  md: { pad: "px-7 py-3", line: "h-5", text: "text-sm" },
+  lg: { pad: "px-9 py-3.5", line: "h-6", text: "text-base" },
 };
 
-const TINT_MATRIX: Record<NonNullable<GlassButtonProps["tint"]>, string> = {
-  cool: "1 0 0 0 0.01  0 1 0 0 0.01  0 0 1 0 0.04  0 0 0 1 0",
-  warm: "1 0 0 0 0.04  0 1 0 0 0.01  0 0 1 0 0.00  0 0 0 1 0",
-  none: "1 0 0 0 0     0 1 0 0 0     0 0 1 0 0     0 0 0 1 0",
+// Low-opacity fills so the refracted background bleeds through the glass.
+const TINT: Record<NonNullable<GlassButtonProps["tint"]>, string> = {
+  neutral: "rgba(255, 255, 255, 0.16)",
+  cool: "rgba(222, 233, 255, 0.18)",
+  warm: "rgba(255, 240, 224, 0.18)",
 };
 
 export function GlassButton({
   children,
-  frequency = 0.014,
-  distortion = 10,
-  tint = "cool",
   size = "md",
+  roll = true,
+  tint = "neutral",
+  distortion = 14,
+  frequency = 0.009,
   staticGlass = false,
   className,
   style,
@@ -60,18 +67,18 @@ export function GlassButton({
   const reduced = useReducedMotion();
   const animated = !staticGlass && !reduced;
 
+  const s = SIZE[size];
   const [hover, setHover] = useState(false);
-  const [active, setActive] = useState(false);
 
-  // Imperative animation refs — we mutate SVG attributes each frame so the
-  // edges shimmer and the click wave fire without re-rendering React.
+  // Imperative refs — we mutate the filter each frame so the backdrop ripples
+  // without re-rendering React.
   const dispRef = useRef<SVGFEDisplacementMapElement | null>(null);
   const turbRef = useRef<SVGFETurbulenceElement | null>(null);
   const clickStartRef = useRef(-Infinity);
-  const stateRef = useRef({ hover, active, distortion, frequency });
+  const stateRef = useRef({ hover, distortion, frequency });
   useEffect(() => {
-    stateRef.current = { hover, active, distortion, frequency };
-  }, [hover, active, distortion, frequency]);
+    stateRef.current = { hover, distortion, frequency };
+  }, [hover, distortion, frequency]);
 
   useEffect(() => {
     if (!animated) {
@@ -89,39 +96,30 @@ export function GlassButton({
         return;
       }
       const t = (performance.now() - start) / 1000;
-      const s = stateRef.current;
+      const st = stateRef.current;
 
-      // Idle:   slow 2.5s pulse, small ±2 swing on the displacement.
-      // Hover:  fast 1.1s pulse, ±4 swing — edges visibly accelerate.
-      // The same multiplier drives the baseFrequency drift, so the noise
-      // pattern itself reshapes faster on hover too (not just the amount).
-      const speed = s.hover ? 1.8 : 0.6;
-      const amp = s.hover ? 4 : 2;
-      const base = s.hover ? s.distortion + 3 : s.distortion;
+      // Idle: slow drift, small swing. Hover: faster, wider — the background
+      // visibly churns under the glass.
+      const speed = st.hover ? 1.6 : 0.5;
+      const amp = st.hover ? 4 : 2;
+      const base = st.hover ? st.distortion + 4 : st.distortion;
       const pulse = Math.sin(t * speed * Math.PI) * amp;
 
-      // Frequency drift makes the noise blobs slide and reshape over time —
-      // without this the displacement strength changes but the edge
-      // pattern stays frozen.
+      // Frequency drift reshapes the ripple pattern over time, not just its
+      // amount — without it the blobs stay frozen.
       const freqDrift =
-        s.frequency + Math.sin(t * speed * Math.PI * 0.6) * (s.frequency * 0.35);
+        st.frequency + Math.sin(t * speed * Math.PI * 0.6) * (st.frequency * 0.3);
       turb.setAttribute("baseFrequency", freqDrift.toFixed(4));
 
-      // Click wave: a big easeOut spike that decays over 700ms — feels like
-      // the whole button briefly flares outward then re-settles.
+      // Click wave: a big easeOut spike that decays over 700ms — the glass
+      // flares then re-settles.
       const clickAge = (performance.now() - clickStartRef.current) / 1000;
       const wave =
         clickAge < 0 || clickAge > 0.7
           ? 0
-          : Math.pow(1 - clickAge / 0.7, 2) * 28;
+          : Math.pow(1 - clickAge / 0.7, 2) * 24;
 
-      // Active hold (pointer down without release yet): tone the
-      // displacement down so the button feels "pressed flat" — contrast
-      // against the surrounding states.
-      const settled = s.active ? Math.max(0, s.distortion - 3) : base + pulse;
-
-      const scale = settled + wave;
-      disp.setAttribute("scale", scale.toFixed(2));
+      disp.setAttribute("scale", (base + pulse + wave).toFixed(2));
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
@@ -134,21 +132,22 @@ export function GlassButton({
   };
   const handlePointerLeave = (e: ReactPointerEvent<HTMLButtonElement>) => {
     setHover(false);
-    setActive(false);
     onPointerLeave?.(e);
   };
   const handlePointerDown = (e: ReactPointerEvent<HTMLButtonElement>) => {
-    setActive(true);
     clickStartRef.current = performance.now();
     onPointerDown?.(e);
   };
   const handlePointerUp = (e: ReactPointerEvent<HTMLButtonElement>) => {
-    setActive(false);
     onPointerUp?.(e);
   };
 
-  const buttonStyle: CSSProperties = {
-    filter: `url(#${filterId})`,
+  // `url(#id)` on backdrop-filter displaces the BACKDROP (whatever is painted
+  // behind the button), so the glass refracts the page/background it sits over.
+  const glassStyle: CSSProperties = {
+    backgroundColor: TINT[tint],
+    backdropFilter: `blur(2px) url(#${filterId})`,
+    WebkitBackdropFilter: `blur(2px) url(#${filterId})`,
     ...style,
   };
 
@@ -162,10 +161,10 @@ export function GlassButton({
         <defs>
           <filter
             id={filterId}
-            x="-30%"
-            y="-30%"
-            width="160%"
-            height="160%"
+            x="-40%"
+            y="-40%"
+            width="180%"
+            height="180%"
             colorInterpolationFilters="sRGB"
           >
             <feTurbulence
@@ -173,35 +172,59 @@ export function GlassButton({
               type="fractalNoise"
               baseFrequency={frequency}
               numOctaves={2}
-              seed={3}
-              result="n"
+              seed={7}
+              result="noise"
             />
+            <feGaussianBlur in="noise" stdDeviation="1.2" result="blurred" />
             <feDisplacementMap
-              ref={dispRef}
               in="SourceGraphic"
-              in2="n"
+              in2="blurred"
               scale={distortion}
               xChannelSelector="R"
               yChannelSelector="G"
+              ref={dispRef}
             />
-            <feColorMatrix type="matrix" values={TINT_MATRIX[tint]} />
           </filter>
         </defs>
       </svg>
 
       <button
         type="button"
-        data-glass-state={active ? "active" : hover ? "hover" : "idle"}
-        className={`relative inline-flex items-center justify-center rounded-full border border-white/25 bg-[linear-gradient(180deg,rgba(255,255,255,0.26)_0%,rgba(255,255,255,0.08)_55%,rgba(255,255,255,0.03)_100%)] font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.55),inset_0_-1px_0_rgba(0,0,0,0.18),0_8px_24px_rgba(0,0,0,0.3)] backdrop-blur-md transition-[transform,box-shadow,border-color] duration-200 ease-out hover:scale-[1.05] hover:border-white/45 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.7),inset_0_-1px_0_rgba(0,0,0,0.15),0_14px_38px_rgba(255,255,255,0.14)] focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none active:scale-[0.95] active:shadow-[inset_0_2px_6px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.25),0_4px_12px_rgba(0,0,0,0.25)] ${SIZE_CLASS[size]} ${className ?? ""}`}
-        style={buttonStyle}
+        className={`group relative inline-flex overflow-hidden rounded-full border border-white/40 ${s.pad} outline-none shadow-[inset_0_1px_1px_rgba(255,255,255,0.7),inset_0_-2px_6px_rgba(0,0,0,0.12),0_10px_24px_rgba(0,0,0,0.18),0_2px_6px_rgba(0,0,0,0.12)] transition-[transform,box-shadow,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-px hover:border-white/55 hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.85),inset_0_-2px_8px_rgba(0,0,0,0.12),0_16px_34px_rgba(0,0,0,0.22)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:translate-y-0 active:scale-[0.97] ${className ?? ""}`}
+        style={glassStyle}
         onPointerEnter={handlePointerEnter}
         onPointerLeave={handlePointerLeave}
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         {...rest}
       >
-        <span className="tracking-tight drop-shadow-[0_1px_1px_rgba(0,0,0,0.4)]">
-          {children}
+        {/* Translucent sheen for the beveled rim — never occludes the refraction. */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 rounded-full bg-[linear-gradient(180deg,rgba(255,255,255,0.4)_0%,rgba(255,255,255,0)_45%,rgba(255,255,255,0.14)_100%)]"
+        />
+        <span
+          className={`relative z-10 block overflow-hidden ${s.line} ${s.text} font-semibold tracking-[-0.01em] text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.4)]`}
+        >
+          <span
+            className={`flex flex-col ${
+              roll
+                ? "motion-safe:transition-transform motion-safe:duration-[400ms] motion-safe:ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:group-hover:-translate-y-1/2"
+                : ""
+            }`}
+          >
+            <span
+              className={`flex ${s.line} items-center justify-center whitespace-nowrap`}
+            >
+              {children}
+            </span>
+            <span
+              aria-hidden
+              className={`flex ${s.line} items-center justify-center whitespace-nowrap`}
+            >
+              {children}
+            </span>
+          </span>
         </span>
       </button>
     </span>

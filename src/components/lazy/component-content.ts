@@ -1874,12 +1874,11 @@ export function Demo() {
 
 export function Demo() {
   return (
-    <div className="flex flex-wrap gap-3">
-      <GlassButton size="md" tint="cool">
-        Enter the void
-      </GlassButton>
-      <GlassButton size="md" tint="warm" distortion={10}>
-        Stronger refraction
+    // The glass refracts whatever sits behind it — place it over imagery.
+    <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-[url('/your-bg.jpg')] bg-cover p-8">
+      <GlassButton size="md">Hover me</GlassButton>
+      <GlassButton size="lg" tint="cool" distortion={18}>
+        Get started
       </GlassButton>
     </div>
   );
@@ -1889,41 +1888,49 @@ export function Demo() {
         name: "children",
         type: "ReactNode",
         default: "—",
-        description: "Button label or arbitrary inline content.",
+        description:
+          "Button label or arbitrary inline content. Rendered twice so the roll can swap one copy for the next.",
       },
       {
         name: "distortion",
         type: "number",
-        default: "10",
+        default: "14",
         description:
-          "Displacement amplitude in CSS pixels at rest — how far each edge pixel is shoved by the noise field. The idle pulse swings ±2 around this; hover swings ±4 around base+3; click pops a +28 wave that decays over ~700ms.",
+          "Refraction strength in CSS pixels — how hard the glass bends the background behind it. The idle drift swings ±2; hover swings ±4 around base+4; a click pops a +24 wave that decays over ~700ms.",
       },
       {
         name: "frequency",
         type: "number",
-        default: "0.014",
+        default: "0.009",
         description:
-          "Turbulence base frequency at rest. Smaller values produce bigger, more lens-like refraction blobs; larger values produce a finer-grained frosted-glass texture. The frequency drifts continuously in time so the noise blobs reshape — hover accelerates this drift, so the edges shimmer faster.",
+          "Turbulence base frequency. Smaller values give bigger, more lens-like ripples; larger values give a finer frosted texture. Drifts over time so the ripple pattern keeps reshaping.",
+      },
+      {
+        name: "tint",
+        type: '"neutral" | "cool" | "warm"',
+        default: '"neutral"',
+        description:
+          "Faint cast on the frosted fill and sheen. `cool` leans blue, `warm` leans amber, `neutral` stays clear.",
+      },
+      {
+        name: "size",
+        type: '"sm" | "md" | "lg"',
+        default: '"md"',
+        description: "Visual size preset — controls padding and text size.",
+      },
+      {
+        name: "roll",
+        type: "boolean",
+        default: "true",
+        description:
+          "Roll the label up to a fresh copy on hover. Auto-disabled when the user prefers reduced motion.",
       },
       {
         name: "staticGlass",
         type: "boolean",
         default: "false",
         description:
-          "Disable the idle pulse + hover boost + click pop so the refraction is frozen at the base distortion. Auto-enabled when the user prefers reduced motion.",
-      },
-      {
-        name: "tint",
-        type: '"cool" | "warm" | "none"',
-        default: '"cool"',
-        description:
-          "Final color-matrix nudge. `cool` adds a faint blue cast, `warm` a faint red cast, `none` leaves color untouched.",
-      },
-      {
-        name: "size",
-        type: '"sm" | "md" | "lg"',
-        default: '"md"',
-        description: "Visual size preset — controls height, padding, and text size.",
+          "Freeze the liquid drift so the refraction is static. Auto-enabled when the user prefers reduced motion.",
       },
       {
         name: "className",

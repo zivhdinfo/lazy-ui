@@ -205,7 +205,7 @@ export const components: ComponentItem[] = [
     slug: "glass-button",
     title: "Glass Button",
     description:
-      "A pill button with a built-in SVG glass filter — turbulence + displacement refraction baked in, with tint and distortion presets.",
+      "A liquid-glass pill that refracts the background behind it via animated SVG turbulence, with a beveled rim and a label that rolls up on hover.",
     category: "Buttons",
     target: "components/lazy-ui/glass-button/glass-button.tsx",
     status: "published",
