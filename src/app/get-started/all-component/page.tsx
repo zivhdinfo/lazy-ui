@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 import { AllComponentsPage } from "@/components/lazy/all-components-page";
 
@@ -9,6 +10,12 @@ export const metadata: Metadata = {
 };
 
 export default function AllComponentsRoute() {
-  // Chrome (sidebar + header) lives in get-started/layout.tsx.
-  return <AllComponentsPage />;
+  // Chrome (sidebar + header) lives in get-started/layout.tsx. The Suspense
+  // boundary is required because AllComponentsPage reads useSearchParams (the
+  // ?tab= deep link) — without it the route can't be statically prerendered.
+  return (
+    <Suspense>
+      <AllComponentsPage />
+    </Suspense>
+  );
 }

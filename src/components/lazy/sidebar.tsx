@@ -15,6 +15,7 @@ import {
   Box,
   ChevronRight,
   Compass,
+  Heart,
   Image,
   Layers,
   MessageSquare,
@@ -32,11 +33,17 @@ import { componentHref } from "@/registry/categories";
 import { getPublishedComponentsOnly } from "@/registry/components";
 import type { ComponentItem } from "@/registry/types";
 
+import { useFavorites } from "./use-favorites";
+
 export type SidebarItem = {
   label: string;
   href: string;
   tag?: string;
+  /** Present for component items — enables the favorite (heart) toggle. */
+  slug?: string;
 };
+
+const FAVORITES_SECTION_ID = "favorites";
 
 export type SidebarSection = {
   id: string;
@@ -81,6 +88,7 @@ const DOC_SECTION: SidebarSection = {
 // icon-less.
 const CATEGORY_ICON: Record<string, LucideIcon> = {
   "Get Started": Rocket,
+  Favorites: Heart,
   Background: Image,
   "Text Animate": Type,
   Animate: Zap,
@@ -123,6 +131,7 @@ function sortByCategory(items: ComponentItem[]): SidebarSection[] {
         label: item.title,
         href: componentHref(item),
         tag: NEW_SLUGS.has(item.slug) ? "New" : undefined,
+        slug: item.slug,
       })),
     };
   });
@@ -144,6 +153,8 @@ function SidebarGroup({
   onToggle,
   pathname,
   onNavigate,
+  isFavorite,
+  onToggleFavorite,
 }: {
   section: SidebarSection;
   open: boolean;
@@ -152,6 +163,8 @@ function SidebarGroup({
   onToggle: () => void;
   pathname: string | null;
   onNavigate?: () => void;
+  isFavorite: (slug: string) => boolean;
+  onToggleFavorite: (slug: string) => void;
 }) {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   // Captures the mount-time open state; only the (mount-only) ref callback reads
@@ -219,11 +232,12 @@ function SidebarGroup({
         <ul className="sb-sub">
           {section.items.map((item) => {
             const active = isSidebarItemActive(pathname, item.href);
+            const fav = item.slug ? isFavorite(item.slug) : false;
             return (
               <li key={item.href} className="sb-sub-item">
                 <Link
                   href={item.href}
-                  className={`sb-sub-link${active ? " active" : ""}`}
+                  className={`sb-sub-link${active ? " active" : ""}${item.slug ? " has-fav" : ""}`}
                   aria-current={active ? "page" : undefined}
                   tabIndex={open ? undefined : -1}
                   onClick={onNavigate}
@@ -231,6 +245,26 @@ function SidebarGroup({
                   <span className="sb-sub-label">{item.label}</span>
                   {item.tag && <span className="new-tag">{item.tag}</span>}
                 </Link>
+                {item.slug && (
+                  <button
+                    type="button"
+                    className={`sb-fav-btn${fav ? " is-fav" : ""}`}
+                    aria-pressed={fav}
+                    aria-label={
+                      fav
+                        ? `Remove ${item.label} from favorites`
+                        : `Add ${item.label} to favorites`
+                    }
+                    tabIndex={open ? undefined : -1}
+                    onClick={() => onToggleFavorite(item.slug!)}
+                  >
+                    <Heart
+                      className="sb-fav-icon"
+                      strokeWidth={2}
+                      aria-hidden
+                    />
+                  </button>
+                )}
               </li>
             );
           })}
@@ -250,22 +284,61 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
   // on the panel ids they wire up with aria-controls.
   const uid = useId();
 
-  // The "Get Started" doc group sits at the top, followed by every component
-  // category. getSidebarSections() returns them in that order.
-  const categorySections = useMemo(() => getSidebarSections(), []);
+  const { slugs: favoriteSlugs, isFavorite, toggle: toggleFavorite } =
+    useFavorites();
 
+  // Resolve favorited slugs back to their registry items, in favorites order
+  // (newest-first). Unknown slugs (e.g. a component since unpublished) drop out.
+  const componentBySlug = useMemo(() => {
+    const map = new Map<string, ComponentItem>();
+    for (const c of getPublishedComponentsOnly()) map.set(c.slug, c);
+    return map;
+  }, []);
+
+  const favoritesSection = useMemo<SidebarSection | null>(() => {
+    const items: SidebarItem[] = favoriteSlugs
+      .map((slug) => componentBySlug.get(slug))
+      .filter((c): c is ComponentItem => Boolean(c))
+      .map((c) => ({ label: c.title, href: componentHref(c), slug: c.slug }));
+    if (!items.length) return null;
+    return {
+      id: FAVORITES_SECTION_ID,
+      title: "Favorites",
+      eyebrow: `${items.length} saved`,
+      items,
+    };
+  }, [favoriteSlugs, componentBySlug]);
+
+  // "Get Started" sits at the top; Favorites slots in just beneath it (when any
+  // exist), then every component category. getSidebarSections() returns the
+  // doc + category groups in order.
+  const categorySections = useMemo(() => {
+    const base = getSidebarSections();
+    if (!favoritesSection) return base;
+    return [base[0], favoritesSection, ...base.slice(1)];
+  }, [favoritesSection]);
+
+  // Resolve to the real category that owns the route, never the Favorites
+  // mirror, so a deep link still expands the component's own category group.
   const activeSectionId = useMemo(
     () =>
-      categorySections.find((section) =>
-        section.items.some((item) => isSidebarItemActive(pathname, item.href)),
+      categorySections.find(
+        (section) =>
+          section.id !== FAVORITES_SECTION_ID &&
+          section.items.some((item) => isSidebarItemActive(pathname, item.href)),
       )?.id,
     [pathname, categorySections],
   );
 
   // Which category groups are expanded. Seed with the group that owns the
-  // current route so a deep link opens to the right place.
+  // current route so a deep link opens to the right place. Favorites is seeded
+  // open so the list is visible the moment it populates after hydration.
   const [openIds, setOpenIds] = useState<Set<string>>(
-    () => new Set(activeSectionId ? [activeSectionId] : []),
+    () =>
+      new Set([
+        FAVORITES_SECTION_ID,
+        ...(activeSectionId ? [activeSectionId] : []),
+      ]),
   );
 
   // Open the group that owns a freshly-active route (e.g. arriving via search
@@ -342,11 +415,18 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
     if (!pill || !nav) return;
 
     const place = (slide: boolean) => {
-      const active = nav.querySelector<HTMLElement>(".sb-sub-link.active");
-      // Hide when there's no active link, or its category is collapsed (a
-      // clipped link still reports a layout box, so check the panel height).
-      const wrap = active?.closest<HTMLElement>(".sb-sub-wrap");
-      if (!active || (wrap && wrap.clientHeight === 0)) {
+      // The current route can highlight twice — once in its category and once
+      // in the Favorites mirror. Land on the first active link in an open group
+      // (a collapsed panel reports clientHeight 0, so skip those).
+      let active: HTMLElement | null = null;
+      for (const el of nav.querySelectorAll<HTMLElement>(".sb-sub-link.active")) {
+        const wrap = el.closest<HTMLElement>(".sb-sub-wrap");
+        if (!wrap || wrap.clientHeight > 0) {
+          active = el;
+          break;
+        }
+      }
+      if (!active) {
         pill.style.opacity = "0";
         return;
       }
@@ -373,7 +453,9 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
     // the layout settles so the pill lands exactly.
     const settle = window.setTimeout(() => place(true), 300);
     return () => window.clearTimeout(settle);
-  }, [pathname, openIds]);
+    // favoriteSlugs: toggling a favorite adds/removes the Favorites group, which
+    // shifts every link below it — re-place the pill when that set changes.
+  }, [pathname, openIds, favoriteSlugs]);
 
   const moveHover = (event: ReactMouseEvent<HTMLElement>) => {
     const pill = hoverRef.current;
@@ -433,6 +515,8 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
             onToggle={() => toggle(section.id)}
             pathname={pathname}
             onNavigate={onNavigate}
+            isFavorite={isFavorite}
+            onToggleFavorite={toggleFavorite}
           />
         ))}
       </nav>

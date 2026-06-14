@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
 import {
   useEffect,
@@ -71,7 +72,28 @@ export function AllComponentsPage() {
     return buildTabs(all);
   }, []);
 
-  const [activeTab, setActiveTab] = useState("all");
+  // Deep link: `/get-started/all-component?tab=new` (the home "New" pill) lands
+  // on that tab. Unknown/absent values fall back to "All".
+  const searchParams = useSearchParams();
+  const requestedTab = searchParams.get("tab");
+  const resolveRequested = (value: string | null) =>
+    value && tabs.some((t) => t.id === value) ? value : null;
+
+  const [activeTab, setActiveTab] = useState(
+    () => resolveRequested(requestedTab) ?? "all",
+  );
+
+  // React to a new ?tab= arriving while the page stays mounted (the layout
+  // persists across /get-started navigation). Tracking the previous value in
+  // state — the react.dev "adjust state during render" pattern — applies it
+  // before paint without an effect.
+  const [seenTab, setSeenTab] = useState(requestedTab);
+  if (seenTab !== requestedTab) {
+    setSeenTab(requestedTab);
+    const resolved = resolveRequested(requestedTab);
+    if (resolved) setActiveTab(resolved);
+  }
+
   const active = tabs.find((t) => t.id === activeTab) ?? tabs[0];
 
   return (
@@ -112,7 +134,7 @@ export function AllComponentsPage() {
         })}
       </div>
 
-      <div className="all-components-grid reveal d-3">
+      <div key={active.id} className="all-components-grid">
         {active.items.map((item) => (
           <ComponentCard key={item.slug} item={item} />
         ))}

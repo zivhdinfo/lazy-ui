@@ -726,7 +726,7 @@ export function HomeHero() {
                         className="lp-new-pill-glow"
                       >
                         <Link
-                          href="/get-started"
+                          href="/get-started/all-component?tab=new"
                           className="lp-new-pill"
                           aria-label={`${newComponents.length} new component${
                             newComponents.length === 1 ? "" : "s"

@@ -644,7 +644,7 @@ html[data-theme="dark"] .lui-docs .icon-btn .moon { display: block; }
   flex-direction: column;
   gap: 1px;
 }
-.lui-docs .sb-sub-item { min-width: 0; }
+.lui-docs .sb-sub-item { position: relative; min-width: 0; }
 .lui-docs .sb-sub-link {
   position: relative;
   z-index: 1;
@@ -695,9 +695,62 @@ html[data-theme="dark"] .lui-docs .icon-btn .moon { display: block; }
   color: var(--ink-text);
 }
 
+/* Favorite (heart) toggle — floats over the right edge of a component link.
+   It sits OUTSIDE the link (a button can't nest in an anchor); the link
+   reserves right padding via .has-fav so the label never slides under it. */
+.lui-docs .sb-sub-link.has-fav { padding-right: 28px; }
+.lui-docs .sb-sub-link.has-fav .new-tag { margin-right: 18px; }
+.lui-docs .sb-fav-btn {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  right: 4px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-3);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.16s var(--ease-out), color 0.16s var(--ease-out),
+    background 0.16s var(--ease-out);
+}
+/* Reveal on row hover/focus; a favorited heart stays lit even at rest. */
+.lui-docs .sb-sub-item:hover .sb-fav-btn,
+.lui-docs .sb-fav-btn:focus-visible,
+.lui-docs .sb-fav-btn.is-fav { opacity: 1; }
+.lui-docs .sb-fav-btn:hover {
+  color: var(--text);
+  background: color-mix(in srgb, var(--text) 8%, transparent);
+}
+.lui-docs .sb-fav-btn:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 1px;
+}
+.lui-docs .sb-fav-btn.is-fav { color: var(--text); }
+.lui-docs .sb-fav-icon {
+  width: 14px;
+  height: 14px;
+}
+.lui-docs .sb-fav-btn.is-fav .sb-fav-icon { fill: currentColor; }
+
+/* Touch devices never fire :hover, so reveal the hearts at rest (dimmed) — the
+   only way to favorite from the mobile sheet. */
+@media (hover: none) {
+  .lui-docs .sb-fav-btn { opacity: 0.55; }
+  .lui-docs .sb-fav-btn.is-fav { opacity: 1; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .lui-docs .sb-sub-wrap,
   .lui-docs .sb-chevron { transition: none; }
+  .lui-docs .sb-fav-btn { transition: opacity 0.16s var(--ease-out); }
 }
 
 /* ── Display typography: drop the serif, use Outfit tight tracking ── */
@@ -1724,8 +1777,12 @@ html[data-theme="dark"] .cv-menu {
   align-items: center;
   gap: 7px;
   padding: 7px 14px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
+  border-radius: 10px;
+  /* Two adjacent border lines: a crisp ink edge (1px border) hugged by a gray
+     ring (1px box-shadow) — no gap. Both are theme tokens so the pair flips
+     correctly in dark mode. */
+  border: 1px solid var(--text);
+  box-shadow: 0 0 0 1px var(--text-3);
   background: var(--surface);
   color: var(--text-2);
   font-size: 13px;
@@ -1735,16 +1792,26 @@ html[data-theme="dark"] .cv-menu {
   transition:
     color 0.2s var(--ease-out),
     background 0.2s var(--ease-out),
-    border-color 0.2s var(--ease-out);
+    border-color 0.2s var(--ease-out),
+    box-shadow 0.2s var(--ease-out),
+    transform 0.2s var(--ease-out);
 }
 .lui-docs .all-components-tab:hover {
   color: var(--text);
-  border-color: var(--line-3, var(--border-2));
+  box-shadow: 0 0 0 1px var(--text-2);
+}
+.lui-docs .all-components-tab:active { transform: scale(0.97); }
+.lui-docs .all-components-tab:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 3px;
 }
 .lui-docs .all-components-tab.is-active {
   background: var(--ink);
   color: var(--ink-text);
-  border-color: transparent;
+  /* Ink edge merges into the ink fill; the gray ring stays so the two-line
+     frame still reads on the active chip. */
+  border-color: var(--ink);
+  box-shadow: 0 0 0 1px var(--text-3);
 }
 .lui-docs .all-components-tab-count {
   font-size: 11px;
@@ -1758,6 +1825,22 @@ html[data-theme="dark"] .cv-menu {
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 14px;
   margin-top: 18px;
+  /* Replays on every tab switch — the grid is keyed by the active tab id, so
+     React remounts it and this enter animation runs again. */
+  animation: acg-tab-in 0.45s var(--ease-out) both;
+}
+@keyframes acg-tab-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lui-docs .all-components-grid { animation: none; }
 }
 
 /* Full-bleed 16:9 card: the live preview fills it edge-to-edge and stays
