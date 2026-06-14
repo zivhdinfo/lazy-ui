@@ -28,8 +28,11 @@ export const components: ComponentItem[] = [
     category: "Buttons",
     target: "components/lazy-ui/copy-button/copy-button.tsx",
     status: "published",
-    // Pulls RevealAnimate from this registry automatically when installed.
-    internalDependencies: ["reveal-animate"],
+    // Both are imported statically at module top, so both must ship even when
+    // only one renders: RevealAnimate (inline-label wipe) and AnimateTooltip
+    // (used for textAs="tooltip"). animate-tooltip transitively pulls its own
+    // tooltip.tsx + get-strict-context.tsx via its extraFiles.
+    internalDependencies: ["reveal-animate", "animate-tooltip"],
   },
   {
     slug: "github-stars-button",

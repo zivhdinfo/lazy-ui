@@ -5,6 +5,11 @@ import type {
   RegistryItemJson,
 } from "./types";
 
+/** True for objects/arrays we should treat as "present" only when non-empty. */
+function hasKeys(value: Record<string, unknown> | undefined): boolean {
+  return !!value && Object.keys(value).length > 0;
+}
+
 export function normalizeRegistryName(name: string): string {
   return decodeURIComponent(name).replace(/\.json$/, "");
 }
@@ -12,7 +17,9 @@ export function normalizeRegistryName(name: string): string {
 /** Builds the shadcn registry JSON for a component. Server-side: source comes from disk.
  *  Each component ships TWO files: the implementation + an `index.ts` re-export, so the
  *  consumer can import via the directory path (e.g. `@/components/lazy-ui/animated-tabs`).
- *  Additional helper files declared in `extraFiles` are bundled too. */
+ *  Additional helper files declared in `extraFiles` are bundled too. When an
+ *  entry declares `cssVars`/`css`, they're forwarded so shadcn updates the
+ *  consumer's globals.css (theme variables, keyframes, @layer rules) on install. */
 export function buildRegistryItemJson(
   item: ComponentItem,
   source: string,
@@ -62,5 +69,7 @@ export function buildRegistryItemJson(
       },
       ...extraFileEntries,
     ],
+    ...(hasKeys(item.cssVars) ? { cssVars: item.cssVars } : {}),
+    ...(hasKeys(item.css) ? { css: item.css } : {}),
   };
 }

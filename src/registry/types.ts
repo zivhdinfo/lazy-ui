@@ -5,6 +5,26 @@ export type RegistryFile = {
   content: string;
 };
 
+/**
+ * CSS variables shadcn writes into the consumer's theme on install:
+ * `theme` → the `@theme inline` block, `light` → `:root`, `dark` → `.dark`.
+ * Values are written verbatim (e.g. "oklch(0.5 0 0)", "0.5rem").
+ */
+export type RegistryCssVars = {
+  theme?: Record<string, string>;
+  light?: Record<string, string>;
+  dark?: Record<string, string>;
+};
+
+/**
+ * Arbitrary CSS shadcn appends to the consumer's globals.css — a CSS-in-JSON
+ * tree. A string leaf is a declaration value; a nested object is an at-rule
+ * (`@keyframes`, `@layer base`) or a selector. Example:
+ * `{ "@keyframes spin": { from: { transform: "rotate(0)" }, to: { transform: "rotate(360deg)" } } }`.
+ */
+export type RegistryCssNode = string | { [selector: string]: RegistryCssNode };
+export type RegistryCss = Record<string, RegistryCssNode>;
+
 export type RegistryItemJson = {
   $schema: "https://ui.shadcn.com/schema/registry-item.json";
   name: string;
@@ -16,6 +36,10 @@ export type RegistryItemJson = {
   dependencies?: string[];
   /** Other registry items shadcn should install alongside this one. */
   registryDependencies?: string[];
+  /** CSS variables shadcn injects into the consumer's globals.css. */
+  cssVars?: RegistryCssVars;
+  /** Extra CSS (keyframes, @layer rules, utilities) appended to globals.css. */
+  css?: RegistryCss;
 };
 
 /** An additional file shipped alongside a component's primary source. */
@@ -52,4 +76,8 @@ export type ComponentItem = {
   dependencies?: string[];
   /** Extra source files (helpers, hooks, primitives) shipped with this component. */
   extraFiles?: ExtraRegistryFile[];
+  /** CSS variables shadcn injects into the consumer's globals.css on install. */
+  cssVars?: RegistryCssVars;
+  /** Extra CSS (keyframes, @layer rules, utilities) shadcn appends on install. */
+  css?: RegistryCss;
 };
