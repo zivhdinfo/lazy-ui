@@ -695,6 +695,28 @@ html[data-theme="dark"] .lui-docs .icon-btn .moon { display: block; }
   color: var(--ink-text);
 }
 
+/* Group-level count badge — a glowing rainbow-ringed number on the collapsible
+   category title (BorderGlow root), signalling how many new items the group
+   holds even when collapsed. The ring + glow come from BorderGlow; this only
+   positions the chip and styles the digit on its inner surface. */
+.lui-docs .sb-group-tag {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.lui-docs .sb-group-tag-count {
+  display: grid;
+  place-items: center;
+  min-width: 17px;
+  height: 16px;
+  padding: 0 4px;
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 9.5px;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
 /* Favorite (heart) toggle — floats over the right edge of a component link.
    It sits OUTSIDE the link (a button can't nest in an anchor); the link
    reserves right padding via .has-fav so the label never slides under it. */

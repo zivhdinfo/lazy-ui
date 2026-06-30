@@ -28,6 +28,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+import { BorderGlow } from "@/components/lazy-ui/border-glow";
 import { SlideHighlight } from "@/components/lazy-ui/slide-highlight";
 import { componentHref } from "@/registry/categories";
 import { getPublishedComponentsOnly } from "@/registry/components";
@@ -70,6 +71,20 @@ const CATEGORY_ORDER = [
 // tab on `/components`. Badge lifetime is bounded — see
 // [CLAUDE.md](../../CLAUDE.md#sidebar-badge-rotation) for the rule.
 export const NEW_SLUGS: ReadonlySet<string> = new Set(["slide-highlight"]);
+
+// Spectrum for the group count badge's glow ring. Soft, slightly-pastel hues —
+// a full rainbow at full saturation reads crude ("thô"); these stay tasteful.
+// Module-scoped so the reference is stable across renders (BorderGlow memoizes
+// on the colors array).
+const GROUP_BADGE_COLORS = [
+  "#f472b6",
+  "#fb923c",
+  "#facc15",
+  "#4ade80",
+  "#22d3ee",
+  "#60a5fa",
+  "#a78bfa",
+];
 
 const DOC_SECTION: SidebarSection = {
   id: "docs",
@@ -166,6 +181,12 @@ function SidebarGroup({
   isFavorite: (slug: string) => boolean;
   onToggleFavorite: (slug: string) => void;
 }) {
+  // Count of freshly-added children, surfaced as a glowing number on the group
+  // title so a collapsed category still signals how many new items it holds.
+  const newCount = section.items.reduce(
+    (n, item) => (item.tag ? n + 1 : n),
+    0,
+  );
   const wrapRef = useRef<HTMLDivElement | null>(null);
   // Captures the mount-time open state; only the (mount-only) ref callback reads
   // it, so it never needs updating after the first render.
@@ -226,6 +247,28 @@ function SidebarGroup({
       >
         <Icon className="sb-group-icon" strokeWidth={2} aria-hidden />
         <span className="sb-group-label">{section.title}</span>
+        {newCount > 0 && (
+          <BorderGlow
+            mode="auto"
+            colors={GROUP_BADGE_COLORS}
+            thickness={1.5}
+            radius={6}
+            coneSpread={92}
+            glowSize={6}
+            intensity={0.9}
+            speed={0.5}
+            bling={false}
+            background="var(--surface)"
+            className="sb-group-tag"
+          >
+            <span
+              className="sb-group-tag-count"
+              aria-label={`${newCount} new`}
+            >
+              {newCount}
+            </span>
+          </BorderGlow>
+        )}
         <ChevronRight className="sb-chevron" strokeWidth={2} aria-hidden />
       </button>
       <div className="sb-sub-wrap" id={panelId} ref={setWrap} data-open={open}>
