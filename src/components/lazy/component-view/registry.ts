@@ -40,6 +40,7 @@ import { view as checkbox } from "./configs/forms/checkbox";
 import { view as switchView } from "./configs/forms/switch";
 import { view as iphone } from "./configs/device-mocks/iphone";
 import { view as animatedTabs } from "./configs/navigation/animated-tabs";
+import { view as slideHighlight } from "./configs/navigation/slide-highlight";
 import { view as animateTooltip } from "./configs/overlay/animate-tooltip";
 import { view as shinyText } from "./configs/text-animate/shiny-text";
 import { view as spinningText } from "./configs/text-animate/spinning-text";
@@ -88,6 +89,7 @@ const VIEWS: Record<string, ComponentView> = {
   "reveal-animate": revealAnimate,
   "ripple-surface": rippleSurface,
   "shiny-text": shinyText,
+  "slide-highlight": slideHighlight,
   "slime-background": slimeBackground,
   "smooth-cursor": smoothCursor,
   "spectral-card": spectralCard,

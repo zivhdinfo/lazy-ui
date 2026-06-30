@@ -21,6 +21,16 @@ export const components: ComponentItem[] = [
     status: "published",
   },
   {
+    slug: "slide-highlight",
+    title: "Slide Highlight",
+    description:
+      "A cursor-following pill that glides between items, plus an active marker that slides on selection — the sidebar's moving highlight, made reusable.",
+    category: "Navigation",
+    target: "components/lazy-ui/slide-highlight/slide-highlight.tsx",
+    status: "published",
+    dependencies: ["motion"],
+  },
+  {
     slug: "copy-button",
     title: "Copy Button",
     description:

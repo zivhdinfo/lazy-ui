@@ -19,6 +19,104 @@ type ComponentContent = {
 };
 
 const COMPONENT_CONTENT: Record<string, ComponentContent> = {
+  "slide-highlight": {
+    componentName: "SlideHighlight",
+    usageCode: `import { useState } from "react";
+import { SlideHighlight } from "@/components/lazy-ui/slide-highlight";
+
+const items = ["Overview", "Analytics", "Reports", "Settings"];
+
+export function Demo() {
+  const [active, setActive] = useState(items[0]);
+  return (
+    <SlideHighlight
+      className="relative isolate flex w-56 flex-col gap-1 p-1.5"
+      activeSelector="[data-slide-active]"
+      activeKey={active}
+    >
+      {items.map((label) => (
+        <button
+          key={label}
+          type="button"
+          data-slide-item
+          data-slide-active={active === label ? "" : undefined}
+          onClick={() => setActive(label)}
+          className="relative rounded-lg px-3.5 py-2 text-left text-sm"
+        >
+          {label}
+        </button>
+      ))}
+    </SlideHighlight>
+  );
+}`,
+    api: [
+      {
+        name: "children",
+        type: "ReactNode",
+        default: "—",
+        description:
+          "The items the pills track. Give each item `position: relative` so it paints above the pills.",
+      },
+      {
+        name: "itemSelector",
+        type: "string",
+        default: '"[data-slide-item]"',
+        description:
+          "Selector (relative to the track) for the elements the hover pill follows. Comma-separated selectors are allowed.",
+      },
+      {
+        name: "activeSelector",
+        type: "string",
+        default: "—",
+        description:
+          "Selector for the active item the active pill marks. Omit to render only the hover pill.",
+      },
+      {
+        name: "activeKey",
+        type: "string | number | boolean | null",
+        default: "null",
+        description:
+          "Bump on any change that may move the active target (route, tab, list order) to re-place the active pill. Resize-driven shifts are handled automatically.",
+      },
+      {
+        name: "resolveActive",
+        type: "(matches: HTMLElement[]) => HTMLElement | null",
+        default: "first match",
+        description:
+          "Pick the real active element when `activeSelector` matches several — e.g. a route mirrored in two lists, or duplicates inside a collapsed section.",
+      },
+      {
+        name: "as",
+        type: "ElementType",
+        default: '"div"',
+        description: "Element rendered as the positioned track (e.g. `\"nav\"`, `\"ul\"`).",
+      },
+      {
+        name: "hoverDisabled",
+        type: "boolean",
+        default: "false",
+        description: "Drop the cursor-following hover pill, keeping only the active pill.",
+      },
+      {
+        name: "hoverClassName",
+        type: "string",
+        default: "—",
+        description: "Class names for the hover pill. Replaces the built-in style when set.",
+      },
+      {
+        name: "activeClassName",
+        type: "string",
+        default: "—",
+        description: "Class names for the active pill. Replaces the built-in style when set.",
+      },
+      {
+        name: "className",
+        type: "string",
+        default: "—",
+        description: "Class names for the track. Make it a positioning context (`relative`).",
+      },
+    ],
+  },
   "animated-tabs": {
     componentName: "AnimatedTabs",
     usageCode: `import { AnimatedTabs } from "@/components/lazy-ui/animated-tabs";

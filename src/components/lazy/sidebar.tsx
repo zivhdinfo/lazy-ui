@@ -9,7 +9,6 @@ import {
   useMemo,
   useRef,
   useState,
-  type MouseEvent as ReactMouseEvent,
 } from "react";
 import {
   Box,
@@ -29,6 +28,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+import { SlideHighlight } from "@/components/lazy-ui/slide-highlight";
 import { componentHref } from "@/registry/categories";
 import { getPublishedComponentsOnly } from "@/registry/components";
 import type { ComponentItem } from "@/registry/types";
@@ -69,7 +69,7 @@ const CATEGORY_ORDER = [
 // in the sidebar next to the component name AND powers the dedicated "New"
 // tab on `/components`. Badge lifetime is bounded — see
 // [CLAUDE.md](../../CLAUDE.md#sidebar-badge-rotation) for the rule.
-export const NEW_SLUGS: ReadonlySet<string> = new Set(["border-glow", "pixel-cursor"]);
+export const NEW_SLUGS: ReadonlySet<string> = new Set(["slide-highlight"]);
 
 const DOC_SECTION: SidebarSection = {
   id: "docs",
@@ -397,99 +397,29 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
     aside.scrollTo({ top: nextScroll, behavior: "auto" });
   }, [pathname]);
 
-  // Cursor-following hover highlight — a single pill that slides to whichever
-  // title/link is under the pointer. Driven imperatively (no React state) so
-  // mousemove never re-renders the tree. The pill sits behind the items.
-  const navRef = useRef<HTMLElement | null>(null);
-  const hoverRef = useRef<HTMLSpanElement | null>(null);
-
-  // Active indicator — a pill that slides from the previous active link to the
-  // new one whenever the route changes. The sidebar persists across navigation
-  // (chrome lives in the layout), so this element survives the click and a CSS
-  // transition carries it across. Snaps on first paint and when (re)appearing.
-  const activeRef = useRef<HTMLSpanElement | null>(null);
-  const activeSeenRef = useRef(false);
-  useEffect(() => {
-    const pill = activeRef.current;
-    const nav = navRef.current;
-    if (!pill || !nav) return;
-
-    const place = (slide: boolean) => {
-      // The current route can highlight twice — once in its category and once
-      // in the Favorites mirror. Land on the first active link in an open group
-      // (a collapsed panel reports clientHeight 0, so skip those).
-      let active: HTMLElement | null = null;
-      for (const el of nav.querySelectorAll<HTMLElement>(".sb-sub-link.active")) {
-        const wrap = el.closest<HTMLElement>(".sb-sub-wrap");
-        if (!wrap || wrap.clientHeight > 0) {
-          active = el;
-          break;
-        }
-      }
-      if (!active) {
-        pill.style.opacity = "0";
-        return;
-      }
-      const aRect = active.getBoundingClientRect();
-      const nRect = nav.getBoundingClientRect();
-      if (!slide) pill.style.transition = "none";
-      pill.style.transform = `translate(${aRect.left - nRect.left}px, ${aRect.top - nRect.top}px)`;
-      pill.style.width = `${aRect.width}px`;
-      pill.style.height = `${aRect.height}px`;
-      pill.style.opacity = "1";
-      if (!slide) {
-        void pill.offsetWidth; // commit the snap before re-enabling the slide
-        pill.style.transition = "";
-      }
-    };
-
-    // Slide only when it was already on screen; otherwise snap into place so it
-    // doesn't streak across from a stale spot.
-    const wasVisible = pill.style.opacity === "1";
-    place(activeSeenRef.current && wasVisible);
-    activeSeenRef.current = true;
-
-    // A collapse/expand can shift the active link mid-transition — re-place once
-    // the layout settles so the pill lands exactly.
-    const settle = window.setTimeout(() => place(true), 300);
-    return () => window.clearTimeout(settle);
-    // favoriteSlugs: toggling a favorite adds/removes the Favorites group, which
-    // shifts every link below it — re-place the pill when that set changes.
-  }, [pathname, openIds, favoriteSlugs]);
-
-  const moveHover = (event: ReactMouseEvent<HTMLElement>) => {
-    const pill = hoverRef.current;
-    const nav = navRef.current;
-    if (!pill || !nav) return;
-    const target = (event.target as HTMLElement).closest<HTMLElement>(
-      ".sb-sub-link, .sb-group-title",
-    );
-    if (!target) return; // gliding over a gap — keep the pill where it was
-    const tRect = target.getBoundingClientRect();
-    const nRect = nav.getBoundingClientRect();
-    const x = tRect.left - nRect.left;
-    const y = tRect.top - nRect.top;
-    const place = () => {
-      pill.style.transform = `translate(${x}px, ${y}px)`;
-      pill.style.width = `${tRect.width}px`;
-      pill.style.height = `${tRect.height}px`;
-    };
-    if (pill.style.opacity !== "1") {
-      // First reveal — snap into place so it doesn't slide in from the corner.
-      pill.style.transition = "none";
-      place();
-      void pill.offsetWidth;
-      pill.style.transition = "";
-      pill.style.opacity = "1";
-    } else {
-      place();
+  // The active pill (and hover pill) is handled by SlideHighlight. The current
+  // route can highlight twice — once in its own category and once in the
+  // Favorites mirror — so steer the active pill to the first active link in an
+  // *open* group; a collapsed panel reports clientHeight 0, so skip those.
+  const resolveActiveLink = useCallback((matches: HTMLElement[]) => {
+    for (const el of matches) {
+      const wrap = el.closest<HTMLElement>(".sb-sub-wrap");
+      if (!wrap || wrap.clientHeight > 0) return el;
     }
-  };
+    return null;
+  }, []);
 
-  const hideHover = () => {
-    const pill = hoverRef.current;
-    if (pill) pill.style.opacity = "0";
-  };
+  // Signal SlideHighlight to re-place the active pill whenever the route, the
+  // set of open groups, or the favorites list changes — each shifts which link
+  // is active or where it sits. (Mid-transition layout shifts are caught by the
+  // component's own ResizeObserver.)
+  const activeKey = useMemo(
+    () =>
+      [pathname, [...openIds].sort().join(","), favoriteSlugs.join(",")].join(
+        "|",
+      ),
+    [pathname, openIds, favoriteSlugs],
+  );
 
   return (
     <aside
@@ -497,14 +427,16 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
       className="sidebar sb-sidebar"
       aria-label="Component navigation"
     >
-      <nav
+      <SlideHighlight
+        as="nav"
         className="sb-menu"
-        ref={navRef}
-        onMouseMove={moveHover}
-        onMouseLeave={hideHover}
+        itemSelector=".sb-sub-link, .sb-group-title"
+        activeSelector=".sb-sub-link.active"
+        activeKey={activeKey}
+        resolveActive={resolveActiveLink}
+        activeClassName="sb-active-pill"
+        hoverClassName="sb-hover"
       >
-        <span className="sb-active-pill" ref={activeRef} aria-hidden />
-        <span className="sb-hover" ref={hoverRef} aria-hidden />
         {categorySections.map((section) => (
           <SidebarGroup
             key={section.id}
@@ -519,7 +451,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
             onToggleFavorite={toggleFavorite}
           />
         ))}
-      </nav>
+      </SlideHighlight>
     </aside>
   );
 }
