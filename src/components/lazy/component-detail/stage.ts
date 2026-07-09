@@ -30,6 +30,7 @@ export const STAGE_MIN_HEIGHT: Record<string, number> = {
   "orbit-cipher": 560,
   "orbit-bloom": 560,
   "orbit-mesh": 560,
+  "horizon-glow": 560,
   "aurora-mesh": 560,
   "prism-drift": 560,
   "chroma-flow": 680,

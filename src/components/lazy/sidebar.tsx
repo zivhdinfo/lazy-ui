@@ -70,7 +70,10 @@ const CATEGORY_ORDER = [
 // in the sidebar next to the component name AND powers the dedicated "New"
 // tab on `/components`. Badge lifetime is bounded — see
 // [CLAUDE.md](../../CLAUDE.md#sidebar-badge-rotation) for the rule.
-export const NEW_SLUGS: ReadonlySet<string> = new Set(["slide-highlight"]);
+export const NEW_SLUGS: ReadonlySet<string> = new Set([
+  "horizon-glow",
+  "slide-highlight",
+]);
 
 // Spectrum for the group count badge's glow ring. Soft, slightly-pastel hues —
 // a full rainbow at full saturation reads crude ("thô"); these stay tasteful.

@@ -113,6 +113,16 @@ export const components: ComponentItem[] = [
     status: "published",
   },
   {
+    slug: "horizon-glow",
+    title: "Horizon Glow",
+    description:
+      "A dark/light WebGL horizon arc with drifting palette stops, soft upward rays, gated cursor glow, and a reduced-motion static fallback.",
+    category: "Animate",
+    target: "components/lazy-ui/horizon-glow/horizon-glow.tsx",
+    status: "published",
+    dependencies: ["motion"],
+  },
+  {
     slug: "shiny-text",
     title: "Shiny Text",
     description:

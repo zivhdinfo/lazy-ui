@@ -4,6 +4,7 @@ import { view as blingTransition } from "./configs/animate/bling-transition";
 import { view as borderGlow } from "./configs/animate/border-glow";
 import { view as circleCipher } from "./configs/animate/circle-cipher";
 import { view as counter } from "./configs/animate/counter";
+import { view as horizonGlow } from "./configs/animate/horizon-glow";
 import { view as liquidReveal } from "./configs/animate/liquid-reveal";
 import { view as liquidTransition } from "./configs/animate/liquid-transition";
 import { view as matrixGrid } from "./configs/animate/matrix-grid";
@@ -69,6 +70,7 @@ const VIEWS: Record<string, ComponentView> = {
   "glass-button": glassButton,
   "grid-background": gridBackground,
   "horizon-cipher": horizonCipher,
+  "horizon-glow": horizonGlow,
   "image-zoom": imageZoom,
   iphone: iphone,
   "liquid-chrome": liquidChrome,

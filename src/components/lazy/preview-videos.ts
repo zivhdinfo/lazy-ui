@@ -8,6 +8,7 @@ const PREVIEW_VIDEOS: Record<string, string> = {
   "border-glow": "/video/border-glow-preview-1781389440149.webm",
   "chroma-flow": "/video/chroma-flow-preview-1781388334576.webm",
   "horizon-cipher": "/video/horizon-cipher-preview-1781388118004.webm",
+  "horizon-glow": "/video/horizon-glow-preview-1783579170232.webm",
   "image-zoom": "/video/image-zoom-preview-1781389580102.webm",
   "liquid-chrome": "/video/liquid-chrome-preview-1781388451785.webm",
   "liquid-reveal": "/video/liquid-reveal-preview-1781388954411.webm",
