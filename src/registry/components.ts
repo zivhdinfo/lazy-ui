@@ -75,6 +75,17 @@ export const components: ComponentItem[] = [
     status: "published",
   },
   {
+    slug: "scroll-image-carousel",
+    title: "Scroll Image Carousel",
+    description:
+      "A randomized image marquee with scroll-reactive velocity, draggable rows, stop-on-hover, and center-out hover fade across one row or every row.",
+    category: "Effects",
+    target:
+      "components/lazy-ui/scroll-image-carousel/scroll-image-carousel.tsx",
+    status: "published",
+    dependencies: ["motion"],
+  },
+  {
     slug: "spectral-card",
     title: "Spectral Card",
     description:

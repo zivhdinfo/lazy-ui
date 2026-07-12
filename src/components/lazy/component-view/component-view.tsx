@@ -78,12 +78,13 @@ export function ComponentView({
   const stageMinHeight = view?.stageMinHeight ?? DEFAULT_STAGE_MIN_HEIGHT;
   const cmd = installCmd(pm, component.slug);
 
-  // Usage reflects the current control values when there are controls;
-  // otherwise it falls back to the static docs snippet.
+  // Static snippets win for components with required non-control props.
+  // Otherwise usage reflects the current control values when controls exist.
   const usageCode =
-    componentName && controls
+    staticUsageCode ??
+    (componentName && controls
       ? buildUsageCode(componentName, importPath, controls, values)
-      : (staticUsageCode ?? "");
+      : "");
 
   const hasDeps = !!component.dependencies?.length;
   const hasExtras = !!component.extraFiles?.length;
@@ -422,4 +423,3 @@ function CmdCopy({ cmd }: { cmd: string }) {
     </AnimateTooltip>
   );
 }
-

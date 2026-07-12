@@ -2,29 +2,6 @@
   <img src="./public/images/git/logo.png" alt="Lazy UI Logo" width="120" />
 </p>
 
-<div align="center">
-  <table>
-    <tr>
-      <td>
-        <a href="https://www.producthunt.com/products/lazy-ui?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-lazy-ui" target="_blank" rel="noopener noreferrer"><img alt="Lazy UI - Open-Source UI Components | Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1159202&amp;theme=dark&amp;t=1780133725693"></a>
-      </td>
-      <td style="border: none; background: transparent;">
-        <a href="https://unikorn.vn/p/2lazy-ui?ref=embed-2lazy-ui" target="_blank"><img src="https://unikorn.vn/api/widgets/badge/2lazy-ui/rank?theme=dark&type=daily" alt="2Lazy-Ui - Hàng ngày" width="250" height="64" /></a>
-      </td>
-    </tr>
-  </table>
-</div>
-<p align="center">
-  A premium, motion-forward component library for React 19, Next.js 16, and Tailwind CSS v4. Clean, highly interactive, and fully compatible with shadcn/ui.
-</p>
-<p align="center">
-  <a href="https://github.com/zivhdinfo/lazy-ui">
-    <img src="https://img.shields.io/github/stars/zivhdinfo/lazy-ui?style=flat&color=white&labelColor=black&logo=github" alt="Stars" />
-  </a>
-  <a href="./LICENSE">
-    <img src="https://img.shields.io/badge/license-MIT-black.svg?style=flat&color=white&labelColor=black" alt="License" />
-  </a>
-</p>
 
 <p align="center">
   <img src="./public/images/git/efe12dbe-15ee-4fd1-bbfa-c0501004e951.webp" alt="Lazy UI Showcase" width="100%" style="border-radius: 12px;" />

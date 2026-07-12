@@ -33,6 +33,7 @@ import { view as flipButton } from "./configs/buttons/flip-button";
 import { view as githubStarsButton } from "./configs/buttons/github-stars-button";
 import { view as glassButton } from "./configs/buttons/glass-button";
 import { view as imageZoom } from "./configs/effects/image-zoom";
+import { view as scrollImageCarousel } from "./configs/effects/scroll-image-carousel";
 import { view as smoothCursor } from "./configs/effects/smooth-cursor";
 import { view as spectralCard } from "./configs/effects/spectral-card";
 import { view as progress } from "./configs/feedback/progress";
@@ -90,6 +91,7 @@ const VIEWS: Record<string, ComponentView> = {
   progress: progress,
   "reveal-animate": revealAnimate,
   "ripple-surface": rippleSurface,
+  "scroll-image-carousel": scrollImageCarousel,
   "shiny-text": shinyText,
   "slide-highlight": slideHighlight,
   "slime-background": slimeBackground,

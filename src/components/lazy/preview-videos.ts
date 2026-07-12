@@ -20,6 +20,8 @@ const PREVIEW_VIDEOS: Record<string, string> = {
   "pixel-cursor": "/video/pixel-cursor-preview-1781389126935.webm",
   "prism-drift": "/video/prism-drift-preview-1781388366643.webm",
   "ripple-surface": "/video/ripple-surface-preview-1781388434694.webm",
+  "scroll-image-carousel":
+    "/video/scroll-image-carousel-preview-1783853800953.webm",
   "slime-background": "/video/slime-background-preview-1781388412076.webm",
   "spectral-card": "/video/spectral-card-preview-1781389368770.webm",
   "wave-cipher": "/video/wave-cipher-preview-1781388035293.webm",
