@@ -5854,6 +5854,7 @@ pre .v { color: #67e8f9; }
   white-space: nowrap; transition: color 0.18s;
 }
 .lui-home .nav-community svg { flex: none; color: #5865f2; }
+.lui-home .nav-community-label { display: inline; }
 .lui-home .nav-community:hover { color: var(--text); }
 .lui-home .icon-btn {
   width: 32px; height: 32px; border-radius: 8px; flex: none;
@@ -6250,6 +6251,32 @@ pre .v { color: #67e8f9; }
 @media (max-width: 420px) {
   .lui-home .lui-gh .gs-divider, .lui-home .lui-gh .font-mono { display: none; }
   .lui-home .stab { min-width: 84px; }
+}
+/* Icon-only header controls on narrow phones so the bar never clips sideways. */
+@media (max-width: 390px) {
+  .lui-home .nav { gap: 6px; }
+  .lui-home .nav-community-glow,
+  .lui-home .nav-community {
+    width: 32px;
+  }
+  .lui-home .nav-community {
+    justify-content: center;
+    gap: 0;
+    padding: 0;
+  }
+  .lui-home .nav-community-label,
+  .lui-home .lui-gh > span:not([aria-hidden="true"]) > span:not(:first-child) {
+    display: none;
+  }
+  .lui-home .lui-gh {
+    width: 32px;
+    padding: 0 !important;
+    gap: 0 !important;
+  }
+}
+@media (max-width: 340px) {
+  .lui-home .brand > span:not(.mark) { display: none; }
+  .lui-home .brand { gap: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .lui-home .demo,

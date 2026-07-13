@@ -2013,3 +2013,8 @@ html[data-theme="dark"] .cv-menu {
   .lui-docs .all-components-card-arrow:hover { transform: none; }
   .lui-docs .all-components-card-spinner { animation-duration: 1.4s; }
 }
+@media (max-width: 350px) {
+  .hide-on-small {
+    display: none !important;
+  }
+}

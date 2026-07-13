@@ -120,39 +120,45 @@ function CornerSvg({ className }: { className: string }) {
 
 // ── Tabs ─────────────────────────────────────────────────────────────────
 
-type TabId = "liquid-chrome" | "orbit-mesh" | "spectral-card" | "liquid-reveal";
+type TabId =
+  | "horizon-glow"
+  | "scroll-image-carousel"
+  | "slime-background"
+  | "liquid-reveal";
 
 const TABS: { id: TabId; label: string; file: string; icon: ReactNode }[] = [
   {
-    id: "liquid-chrome",
-    label: "Liquid Chrome",
-    file: "liquid-chrome.tsx",
+    id: "slime-background",
+    label: "Slime Background",
+    file: "slime-background.tsx",
     icon: (
       <Svg>
-        <path d="M12 2.5 6 9a6 6 0 1 0 12 0Z" />
+        <path d="M5 15c0-5 3.5-8 7-8s7 3 7 8c0 3-2.5 5-7 5s-7-2-7-5Z" />
+        <path d="M8 13c1.4 1 2.4 1.4 4 1.4s2.6-.4 4-1.4" />
       </Svg>
     ),
   },
   {
-    id: "orbit-mesh",
-    label: "Orbit Mesh",
-    file: "orbit-mesh.tsx",
+    id: "horizon-glow",
+    label: "Horizon Glow",
+    file: "horizon-glow.tsx",
     icon: (
       <Svg>
-        <circle cx="12" cy="12" r="3" />
-        <ellipse cx="12" cy="12" rx="9" ry="4" />
+        <path d="M3 16c3.2-5.3 14.8-5.3 18 0" />
+        <path d="M6 13c2.2-2.4 9.8-2.4 12 0" />
+        <path d="M12 4v4" />
       </Svg>
     ),
   },
   {
-    id: "spectral-card",
-    label: "Spectral Card",
-    file: "spectral-card.tsx",
+    id: "scroll-image-carousel",
+    label: "Scroll Image Carousel",
+    file: "scroll-image-carousel.tsx",
     icon: (
       <Svg>
-        <rect x="3" y="4" width="18" height="16" rx="2" />
-        <circle cx="8.5" cy="9" r="1.5" />
-        <path d="m21 15-5-4L5 20" />
+        <rect x="3" y="6" width="7" height="12" rx="1.5" />
+        <rect x="14" y="6" width="7" height="12" rx="1.5" />
+        <path d="M10 10h4M10 14h4" />
       </Svg>
     ),
   },
@@ -184,27 +190,42 @@ function Loading() {
   );
 }
 
+type PreviewProps = {
+  theme: Theme;
+};
+
 function Fill({ children }: { children: ReactNode }) {
   return <div className="absolute inset-0">{children}</div>;
 }
 
-const PREVIEWS: Record<TabId, ComponentType> = {
-  "liquid-chrome": dynamic(
+const GALLERY_IMAGES = Array.from({ length: 10 }, (_, index) => {
+  const n = index + 1;
+  return {
+    src: `/images/Gallery/${n}.webp`,
+    alt: `Gallery frame ${n}`,
+  };
+});
+
+const PREVIEWS: Record<TabId, ComponentType<PreviewProps>> = {
+  "horizon-glow": dynamic(
     async () => {
-      const { LiquidChrome } = await import("@/components/lazy-ui/liquid-chrome");
-      return function LiquidChromePreview() {
+      const { HorizonGlow } = await import("@/components/lazy-ui/horizon-glow");
+      return function HorizonGlowPreview({ theme }: PreviewProps) {
         return (
           <Fill>
-            <LiquidChrome
-              palette="nightfire"
-              speed={0.45}
-              scale={0.8}
-              warp={0.45}
-              relief={0.85}
-              tilt={45}
-              highlight={1.45}
-              roughness={0.58}
-              ambient={0.28}
+            <HorizonGlow
+              palette="aurora"
+              mode={theme}
+              speed={0.35}
+              intensity={1.2}
+              rise={0.52}
+              rays={0.12}
+              softness={0.62}
+              mouseFollow
+              mouseInfluence={0.55}
+              clickRipple
+              rippleStrength={0.65}
+              showContent={false}
               className="h-full w-full"
             />
           </Fill>
@@ -213,61 +234,56 @@ const PREVIEWS: Record<TabId, ComponentType> = {
     },
     { ssr: false, loading: Loading },
   ),
-  "orbit-mesh": dynamic(
+  "scroll-image-carousel": dynamic(
     async () => {
-      const { OrbitMesh } = await import("@/components/lazy-ui/orbit-mesh");
-      return function OrbitMeshPreview() {
+      const { ScrollImageCarousel } = await import(
+        "@/components/lazy-ui/scroll-image-carousel"
+      );
+      return function ScrollImageCarouselPreview() {
         return (
-          <Fill>
-            <OrbitMesh
-              effect="wave"
-              speed={0.5}
-              scale={0.4}
-              colorLayers={3}
-              spiralArms={5}
-              waveIntensity={0.22}
-              spiralIntensity={2}
-              lineThickness={0.13}
-              falloff={1.65}
-              brightness={3}
-              colorTint="#7c3aed"
-              className="h-full w-full"
+          <div className="absolute inset-0 flex items-center justify-center overflow-hidden bg-[#070707] p-5">
+            <ScrollImageCarousel
+              images={GALLERY_IMAGES}
+              rows={3}
+              speed={0.8}
+              copies={5}
+              cardWidth={118}
+              randomize
+              hoverFade
+              hoverFadeRadius={4}
+              hoverFadeIntensity={0.42}
+              hoverFadeMode="all"
+              stopOnHover
+              aria-label="Randomized gallery carousel preview"
             />
-          </Fill>
-        );
-      };
-    },
-    { ssr: false, loading: Loading },
-  ),
-  "spectral-card": dynamic(
-    async () => {
-      const { SpectralCard } = await import("@/components/lazy-ui/spectral-card");
-      return function SpectralCardPreview() {
-        return (
-          <div className="absolute inset-0 flex items-center justify-center bg-black p-4">
-            <SpectralCard
-              media="/images/piano-girl.webp"
-              width={156}
-              height={277}
-              tone="aqua"
-              corner={16}
-              restZoom={0.08}
-              hoverZoom={0.22}
-              spectrum={0.68}
-              displace={0.78}
-              gloss={0.5}
-              tiltDepth={8}
-              hoverDuration={1.6}
-              motionDuration={0.38}
-              className="max-h-full max-w-full"
-            >
-              <div className="flex h-full items-end bg-gradient-to-t from-black/65 via-transparent to-transparent p-5 text-white">
-                <span className="text-2xl font-light tracking-normal">
-                  Spectral
-                </span>
-              </div>
-            </SpectralCard>
           </div>
+        );
+      };
+    },
+    { ssr: false, loading: Loading },
+  ),
+  "slime-background": dynamic(
+    async () => {
+      const { SlimeBackground } = await import(
+        "@/components/lazy-ui/slime-background"
+      );
+      return function SlimeBackgroundPreview() {
+        return (
+          <Fill>
+            <SlimeBackground
+              palette="toxic"
+              speed={0.35}
+              viscosity={0.85}
+              shine={1}
+              roughness={0.35}
+              detail={1}
+              contrast={0.5}
+              grain={0.04}
+              mouseFollow
+              mouseInfluence={0.6}
+              className="h-full w-full"
+            />
+          </Fill>
         );
       };
     },
@@ -295,9 +311,9 @@ const PREVIEWS: Record<TabId, ComponentType> = {
   ),
 };
 
-function Demo({ id }: { id: TabId }) {
+function Demo({ id, theme }: { id: TabId; theme: Theme }) {
   const Preview = PREVIEWS[id];
-  return <Preview />;
+  return <Preview theme={theme} />;
 }
 
 // Hero background — Liquid Transition between the light & dark images. On theme
@@ -416,7 +432,7 @@ export function HomeHero() {
 
   // Tab history — `current` is always `history[hIndex]`, which lets back /
   // forward / new-tab all fall out of a single source of truth.
-  const [history, setHistory] = useState<TabId[]>(["liquid-chrome"]);
+  const [history, setHistory] = useState<TabId[]>(["slime-background"]);
   const [hIndex, setHIndex] = useState(0);
   const [reloadKey, setReloadKey] = useState(0);
   const current = history[hIndex];
@@ -648,7 +664,7 @@ export function HomeHero() {
                   className="nav-community"
                 >
                   <DiscordIcon width={15} height={15} />
-                  Community
+                  <span className="nav-community-label">Community</span>
                 </a>
               </BorderGlow>
               <button className="icon-btn" onClick={toggleTheme} aria-label="Toggle theme">
@@ -913,7 +929,7 @@ export function HomeHero() {
                       <span>{activeTab.file}</span>
                     </div>
                     <div className="demo demo-fill" ref={demoRef}>
-                      <Demo id={current} />
+                      <Demo id={current} theme={theme} />
                     </div>
                   </div>
                 </div>

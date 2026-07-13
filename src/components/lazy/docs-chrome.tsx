@@ -276,7 +276,7 @@ export function DocsChrome({ children }: { children: ReactNode }) {
                 label="Star"
                 displayFormat="compact"
                 variant="ghost"
-                className="lui-gh"
+                className="lui-gh hide-on-small" // Thêm class này vào đây
               />
               <button
                 type="button"
