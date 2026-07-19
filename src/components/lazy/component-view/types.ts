@@ -77,6 +77,13 @@ export type ComponentView = {
   // ── Escape hatch — canvas / WebGL / overlay-heavy previews ──
   /** When set, `mapProps`/`frame`/`staticProps` are ignored. */
   render?: (values: CustomizeValues) => ReactNode;
+  /**
+   * Compact preview used ONLY by the `/all-component` gallery card. Set it when
+   * the full `render()` scene is far larger than the ~16:9 card and would crop
+   * into slivers (e.g. the tall testimonial accordion). The detail-page stage
+   * always uses `render`. Falls back to `render` when omitted.
+   */
+  cardRender?: (values: CustomizeValues) => ReactNode;
   /** Optional remount key. See CLAUDE.md Turbopack `insertBefore` caveat. */
   replayKey?: (values: CustomizeValues) => string;
 };

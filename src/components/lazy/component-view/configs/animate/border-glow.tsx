@@ -13,8 +13,12 @@ const PALETTES: Record<string, string[]> = {
   aurora: ["#34d399", "#67e8f9", "#a78bfa"],
   sunset: ["#fb7185", "#f59e0b", "#f0abfc"],
   spectrum: ["#fb7185", "#f59e0b", "#34d399", "#67e8f9", "#a78bfa"],
-  gold: ["#f59e0b", "#ffffff"],
-  mono: ["#ffffff", "#d4d4d4", "#a3a3a3"],
+  // No pure-white stops: on the theme-aware card (bg var(--surface)) white glow
+  // vanishes in light mode. Gold stays a hued amber ramp; mono uses the docs
+  // --glow tokens, which flip (near-black on light, near-white on dark) so the
+  // monochrome glow reads on either surface.
+  gold: ["#f59e0b", "#fbbf24", "#d97706"],
+  mono: ["var(--glow-3)", "var(--glow-2)", "var(--glow-1)"],
 };
 
 const PALETTE_OPTIONS = [

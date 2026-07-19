@@ -221,7 +221,7 @@ function CardPreview({
   bare: boolean;
 }) {
   const Dynamic = useMemo<ComponentType<Record<string, unknown>> | null>(() => {
-    if (!bare && view.render) return null;
+    if (!bare && (view.cardRender || view.render)) return null;
     return dynamic(
       () =>
         view.load().then(
@@ -231,6 +231,8 @@ function CardPreview({
     ) as ComponentType<Record<string, unknown>>;
   }, [view, bare]);
 
+  // A compact card scene wins when present, else the full detail-page scene.
+  if (!bare && view.cardRender) return <>{view.cardRender(values)}</>;
   if (!bare && view.render) return <>{view.render(values)}</>;
   if (!Dynamic) return <CardSkeleton />;
 

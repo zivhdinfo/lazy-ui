@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+
 import {
   TestimonialAccordion,
   type Testimonial,
@@ -115,12 +119,78 @@ const DEMO: Testimonial[] = [
   },
 ];
 
+// Natural size of the compact card scene (the accordion at height 300). The
+// card scales this to fit, so the values only fix the aspect ratio.
+const CARD_SCENE_W = 620;
+const CARD_SCENE_H = 300;
+
+/**
+ * Compact `/all-component` gallery preview. The full detail-page scene is a
+ * ~620×560 stage that a 16:9 gallery card would crop into slivers; here the
+ * real accordion is rendered at a fixed size and scaled down to fit the card at
+ * any column width, so it reads as a whole component instead of a cropped band.
+ */
+function TestimonialAccordionCard() {
+  const outerRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(0.4);
+
+  useEffect(() => {
+    const outer = outerRef.current;
+    const inner = innerRef.current;
+    if (!outer || !inner) return;
+    const measure = () => {
+      const availW = outer.clientWidth;
+      const availH = outer.clientHeight;
+      const natW = inner.offsetWidth;
+      const natH = inner.offsetHeight;
+      if (!availW || !availH || !natW || !natH) return;
+      // 0.92 keeps a little breathing room inside the card frame.
+      setScale(Math.min(availW / natW, availH / natH) * 0.92);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(outer);
+    return () => ro.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={outerRef}
+      className="flex h-full w-full items-center justify-center overflow-hidden"
+    >
+      <div
+        ref={innerRef}
+        style={{
+          width: CARD_SCENE_W,
+          transform: `scale(${scale})`,
+          transformOrigin: "center",
+          flexShrink: 0,
+        }}
+      >
+        <TestimonialAccordion
+          testimonials={DEMO}
+          trigger="hover"
+          speed={1}
+          defaultIndex={3}
+          collapsedWidth={52}
+          gap={10}
+          height={CARD_SCENE_H}
+          radius={12}
+          aria-label="Customer testimonials"
+        />
+      </div>
+    </div>
+  );
+}
+
 export const view: ComponentView = {
   load: () => import("@/components/lazy-ui/testimonial-accordion"),
   export: "TestimonialAccordion",
   componentName: "TestimonialAccordion",
   importPath: "@/components/lazy-ui/testimonial-accordion",
   stageMinHeight: 600,
+  cardRender: () => <TestimonialAccordionCard />,
   render: (v) => {
     const trigger = (v.trigger ?? "hover") as TestimonialAccordionTrigger;
     const speed = (v.speed ?? 1) as number;
