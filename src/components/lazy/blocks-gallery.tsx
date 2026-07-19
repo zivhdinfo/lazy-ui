@@ -158,7 +158,7 @@ export function BlocksGallery({ items }: { items: ComponentItem[] }) {
             padding: "10px 18px",
             borderRadius: 10,
             background: "var(--silver-grad)",
-            color: "#000",
+            color: "var(--ink-text)",
             fontSize: 14,
             fontWeight: 600,
             border: "1px solid rgba(255,255,255,0.4)",
