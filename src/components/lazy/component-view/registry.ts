@@ -36,6 +36,7 @@ import { view as imageZoom } from "./configs/effects/image-zoom";
 import { view as scrollImageCarousel } from "./configs/effects/scroll-image-carousel";
 import { view as smoothCursor } from "./configs/effects/smooth-cursor";
 import { view as spectralCard } from "./configs/effects/spectral-card";
+import { view as testimonialAccordion } from "./configs/effects/testimonial-accordion";
 import { view as progress } from "./configs/feedback/progress";
 import { view as springIconLoader } from "./configs/feedback/spring-icon-loader";
 import { view as checkbox } from "./configs/forms/checkbox";
@@ -101,6 +102,7 @@ const VIEWS: Record<string, ComponentView> = {
   "spring-icon-loader": springIconLoader,
   "stack-list": stackList,
   switch: switchView,
+  "testimonial-accordion": testimonialAccordion,
   "text-flip": textFlip,
   "text-rise": textRise,
   "text-scramble": textScramble,

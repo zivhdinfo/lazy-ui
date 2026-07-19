@@ -106,6 +106,17 @@ export const components: ComponentItem[] = [
     dependencies: ["motion"],
   },
   {
+    slug: "testimonial-accordion",
+    title: "Testimonial Accordion",
+    description:
+      "A horizontal accordion of customer stories — brand-colored bars that expand on hover, focus, or click to reveal a quote, author, and link, with a pinned logo and optional autoplay.",
+    category: "Effects",
+    target:
+      "components/lazy-ui/testimonial-accordion/testimonial-accordion.tsx",
+    status: "published",
+    dependencies: ["motion"],
+  },
+  {
     slug: "reveal-animate",
     title: "Reveal Animate",
     description:
