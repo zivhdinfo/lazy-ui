@@ -12,12 +12,12 @@ function Checkbox({ className, ...props }: CheckboxProps) {
     <CheckboxPrimitive.Root
       data-slot="checkbox"
       className={cn(
-        "group/checkbox peer inline-flex size-4 shrink-0 items-center justify-center rounded-[5px] border border-white/15 bg-white/[0.04] text-white outline-none transition-[background-color,border-color,transform] duration-200 ease-out",
-        "hover:scale-105 hover:border-white/25 hover:bg-white/[0.06]",
+        "group/checkbox peer inline-flex size-4 shrink-0 items-center justify-center rounded-[5px] border border-black/15 bg-black/[0.03] text-black outline-none transition-[background-color,border-color,transform] duration-200 ease-out dark:border-white/15 dark:bg-white/[0.04] dark:text-white",
+        "hover:scale-105 hover:border-black/25 hover:bg-black/[0.05] dark:hover:border-white/25 dark:hover:bg-white/[0.06]",
         "active:scale-95",
-        "data-[state=checked]:border-white/40 data-[state=checked]:bg-white data-[state=checked]:text-black",
-        "data-[state=indeterminate]:border-white/40 data-[state=indeterminate]:bg-white data-[state=indeterminate]:text-black",
-        "focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
+        "data-[state=checked]:border-black/40 data-[state=checked]:bg-black data-[state=checked]:text-white dark:data-[state=checked]:border-white/40 dark:data-[state=checked]:bg-white dark:data-[state=checked]:text-black",
+        "data-[state=indeterminate]:border-black/40 data-[state=indeterminate]:bg-black data-[state=indeterminate]:text-white dark:data-[state=indeterminate]:border-white/40 dark:data-[state=indeterminate]:bg-white dark:data-[state=indeterminate]:text-black",
+        "focus-visible:ring-2 focus-visible:ring-black/25 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-white/30 dark:focus-visible:ring-offset-black",
         "disabled:pointer-events-none disabled:opacity-50",
         className,
       )}

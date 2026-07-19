@@ -46,9 +46,9 @@ const TILES: Tile[] = [
     title: "Own every line.",
     body: "Each component installs as a shadcn registry file — the source lands in your repo, fully editable, with no package wrapping it.",
     extra: (
-      <div className="mt-auto flex items-center gap-2 rounded-lg bg-white/5 px-3 py-2 font-mono text-xs text-white/75">
-        <span className="text-white/40">$</span>
-        npx shadcn add <span className="text-white">button</span>
+      <div className="mt-auto flex items-center gap-2 rounded-lg bg-[var(--panel)] px-3 py-2 font-mono text-xs text-[var(--text-2)]">
+        <span className="text-[var(--text-3)]">$</span>
+        npx shadcn add <span className="text-[var(--text)]">button</span>
       </div>
     ),
   },
@@ -68,7 +68,7 @@ const TILES: Tile[] = [
         {[10, 18, 26, 16, 22].map((h, i) => (
           <span
             key={i}
-            className="w-2 rounded-full bg-white/30"
+            className="w-2 rounded-full bg-[var(--text-3)]"
             style={{ height: h, animation: `pulse 2.4s ${i * 0.18}s ease-in-out infinite` }}
           />
         ))}
@@ -213,18 +213,19 @@ function BorderGlowDemo({ values }: { values: CustomizeValues }) {
               cursorRadius={cursorRadius}
               sparkleCount={sparkleCount}
               bling={bling}
+              background="var(--surface)"
               seed={i + 1}
               className={tile.span}
             >
               <div className="flex h-full flex-col gap-2 p-5">
-                <span className="text-[10px] font-medium tracking-[0.18em] text-white/45 uppercase">
+                <span className="text-[10px] font-medium tracking-[0.18em] text-[var(--text-3)] uppercase">
                   {tile.eyebrow}
                 </span>
-                <h3 className="text-lg font-semibold tracking-tight text-white">
+                <h3 className="text-lg font-semibold tracking-tight text-[var(--text)]">
                   {tile.title}
                 </h3>
                 {tile.body && (
-                  <p className="text-xs leading-relaxed text-white/55">{tile.body}</p>
+                  <p className="text-xs leading-relaxed text-[var(--text-2)]">{tile.body}</p>
                 )}
                 {tile.extra}
               </div>

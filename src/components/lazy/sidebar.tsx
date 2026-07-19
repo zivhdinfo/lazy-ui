@@ -74,6 +74,19 @@ export const NEW_SLUGS: ReadonlySet<string> = new Set([
   "testimonial-accordion",
 ]);
 
+// Slugs enhanced (not newly added) by the current change get an "Update" tag —
+// a subtler outlined pill vs "New"'s ink fill. Same lifetime rules as NEW_SLUGS.
+// Current change: light/dark theme support across these previews + primitives.
+export const UPDATE_SLUGS: ReadonlySet<string> = new Set([
+  "checkbox",
+  "switch",
+  "copy-button",
+  "progress",
+  "border-glow",
+  "stack-list",
+  "github-stars-button",
+]);
+
 // Spectrum for the group count badge's glow ring. Soft, slightly-pastel hues —
 // a full rainbow at full saturation reads crude ("thô"); these stay tasteful.
 // Module-scoped so the reference is stable across renders (BorderGlow memoizes
@@ -147,7 +160,11 @@ function sortByCategory(items: ComponentItem[]): SidebarSection[] {
       items: list.map((item) => ({
         label: item.title,
         href: componentHref(item),
-        tag: NEW_SLUGS.has(item.slug) ? "New" : undefined,
+        tag: NEW_SLUGS.has(item.slug)
+          ? "New"
+          : UPDATE_SLUGS.has(item.slug)
+            ? "Update"
+            : undefined,
         slug: item.slug,
       })),
     };
@@ -288,7 +305,13 @@ function SidebarGroup({
                   onClick={onNavigate}
                 >
                   <span className="sb-sub-label">{item.label}</span>
-                  {item.tag && <span className="new-tag">{item.tag}</span>}
+                  {item.tag && (
+                    <span
+                      className={`new-tag${item.tag === "Update" ? " is-update" : ""}`}
+                    >
+                      {item.tag}
+                    </span>
+                  )}
                 </Link>
                 {item.slug && (
                   <button

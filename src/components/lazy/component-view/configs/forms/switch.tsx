@@ -2,8 +2,8 @@ import { Switch } from "@/components/lazy-ui/switch";
 import { select, slider, toggle } from "@/components/lazy/component-detail/controls";
 import type { ComponentView } from "@/components/lazy/component-view/types";
 
-// Theme-aware preview surface. The switch ships dark-only, so it keeps lower
-// contrast on the light surface by design.
+// Theme-aware preview surface; the switch now follows the theme (ink track on
+// light, white track on dark).
 export const view: ComponentView = {
   load: () => import("@/components/lazy-ui/switch"),
   export: "Switch",

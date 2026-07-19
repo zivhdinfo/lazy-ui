@@ -2,8 +2,8 @@ import { Checkbox } from "@/components/lazy-ui/checkbox";
 import { select, toggle } from "@/components/lazy/component-detail/controls";
 import type { ComponentView } from "@/components/lazy/component-view/types";
 
-// Theme-aware preview surface. The box itself ships dark-only (white-on-dark
-// glyph), so it keeps lower contrast on the light surface by design.
+// Theme-aware preview surface; the checkbox now follows the theme (ink fill on
+// light, white fill on dark).
 export const view: ComponentView = {
   load: () => import("@/components/lazy-ui/checkbox"),
   export: "Checkbox",

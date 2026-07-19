@@ -239,7 +239,7 @@ function Progress({
       data-slot="progress"
       data-size={size}
       className={cn(
-        "relative w-full overflow-hidden rounded-full bg-white/[0.08]",
+        "relative w-full overflow-hidden rounded-full bg-black/[0.08] dark:bg-white/[0.08]",
         sizeClasses,
         isStandalone && className,
         trackClassName,
@@ -258,7 +258,7 @@ function Progress({
               ease: [0.45, 0.05, 0.55, 0.95],
             }}
             className={cn(
-              "absolute inset-y-0 left-0 w-[33%] overflow-hidden rounded-full bg-white will-change-transform",
+              "absolute inset-y-0 left-0 w-[33%] overflow-hidden rounded-full bg-neutral-900 will-change-transform dark:bg-white",
               indicatorClassName,
             )}
           >
@@ -270,7 +270,7 @@ function Progress({
             data-slot="progress-indicator"
             style={indicatorStyle}
             className={cn(
-              "absolute inset-y-0 left-0 overflow-hidden rounded-full bg-white",
+              "absolute inset-y-0 left-0 overflow-hidden rounded-full bg-neutral-900 dark:bg-white",
               indicatorClassName,
             )}
           >
@@ -321,7 +321,7 @@ function Progress({
               <span
                 ref={labelRef}
                 className={cn(
-                  "absolute top-1/2 right-1.5 z-10 -translate-y-1/2 text-[10px] font-medium tabular-nums text-neutral-950",
+                  "absolute top-1/2 right-1.5 z-10 -translate-y-1/2 text-[10px] font-medium tabular-nums text-white dark:text-neutral-950",
                   valueClassName,
                 )}
               >
@@ -339,7 +339,7 @@ function Progress({
   if (valuePosition === "end") {
     return (
       <div className={cn("flex w-full flex-col gap-1.5", className)}>
-        <div className="flex items-baseline justify-end text-[11px] tabular-nums text-neutral-400">
+        <div className="flex items-baseline justify-end text-[11px] tabular-nums text-neutral-500 dark:text-neutral-400">
           <span ref={labelRef} className={valueClassName}>
             {initialLabel}
           </span>
@@ -362,7 +362,7 @@ function Progress({
         <motion.span
           aria-hidden
           style={{ left: widthPct, x: "-50%" }}
-          className="pointer-events-none absolute top-0 z-10 whitespace-nowrap text-[10px] tabular-nums text-neutral-300"
+          className="pointer-events-none absolute top-0 z-10 whitespace-nowrap text-[10px] tabular-nums text-neutral-500 dark:text-neutral-300"
         >
           <span ref={labelRef} className={valueClassName}>
             {initialLabel}
@@ -384,11 +384,11 @@ function Progress({
                   style={{ left: widthPct, x: "-50%" }}
                   className="pointer-events-none absolute bottom-full z-10 flex origin-bottom flex-col items-center"
                 >
-                  <span className="rounded-md bg-white px-1.5 py-px whitespace-nowrap shadow-sm">
+                  <span className="rounded-md bg-neutral-900 px-1.5 py-px whitespace-nowrap shadow-sm dark:bg-white">
                     <span
                       ref={labelRef}
                       className={cn(
-                        "text-[10px] font-medium tabular-nums text-neutral-950",
+                        "text-[10px] font-medium tabular-nums text-white dark:text-neutral-950",
                         valueClassName,
                       )}
                     >
@@ -402,7 +402,10 @@ function Progress({
                     className="-mt-px block"
                     aria-hidden
                   >
-                    <path d="M0 0 H8 L4 4 Z" fill="white" />
+                    <path
+                      d="M0 0 H8 L4 4 Z"
+                      className="fill-neutral-900 dark:fill-white"
+                    />
                   </svg>
                 </motion.span>
               )}
@@ -422,7 +425,7 @@ function Progress({
                   <span
                     ref={labelRef}
                     className={cn(
-                      "text-[10px] font-medium tabular-nums text-neutral-950",
+                      "text-[10px] font-medium tabular-nums text-white dark:text-neutral-950",
                       valueClassName,
                     )}
                   >
@@ -445,11 +448,9 @@ function EffectOverlay({ effect }: { effect: ProgressEffect }) {
     return (
       <motion.div
         aria-hidden
-        className="absolute inset-y-0 -left-[25%] w-[150%]"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(45deg, rgba(0,0,0,0.22) 0 8px, transparent 8px 16px)",
-        }}
+        // Stripes sit on the fill, so they contrast against it: the fill is ink
+        // on light (white stripes) and white on dark (ink stripes).
+        className="absolute inset-y-0 -left-[25%] w-[150%] bg-[repeating-linear-gradient(45deg,rgba(255,255,255,0.28)_0_8px,transparent_8px_16px)] dark:bg-[repeating-linear-gradient(45deg,rgba(0,0,0,0.22)_0_8px,transparent_8px_16px)]"
         animate={{ x: [0, 22.63] }}
         transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
       />
@@ -459,7 +460,7 @@ function EffectOverlay({ effect }: { effect: ProgressEffect }) {
     return (
       <motion.div
         aria-hidden
-        className="absolute inset-0 bg-black"
+        className="absolute inset-0 bg-white dark:bg-black"
         animate={{ opacity: [0, 0.22, 0] }}
         transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
       />

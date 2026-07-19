@@ -222,15 +222,15 @@ function Switch({
         // border-2 border-transparent acts as breathing room AND keeps content-box
         // math symmetric: travel = thumb_width exactly. overflow-hidden clips
         // wobble overshoot along the rounded edge.
-        "group/switch peer relative inline-flex shrink-0 cursor-pointer touch-none items-center overflow-hidden rounded-full border-2 border-transparent bg-white/[0.08] bg-clip-padding outline-none transition-colors duration-200 ease-out select-none",
-        "shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)]",
-        "hover:bg-white/[0.12]",
-        "data-[state=checked]:bg-white",
-        "data-[state=checked]:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.3)]",
+        "group/switch peer relative inline-flex shrink-0 cursor-pointer touch-none items-center overflow-hidden rounded-full border-2 border-transparent bg-black/[0.12] bg-clip-padding outline-none transition-colors duration-200 ease-out select-none dark:bg-white/[0.08]",
+        "shadow-[inset_0_0_0_1px_rgba(0,0,0,0.08)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)]",
+        "hover:bg-black/[0.18] dark:hover:bg-white/[0.12]",
+        "data-[state=checked]:bg-black dark:data-[state=checked]:bg-white",
+        "data-[state=checked]:shadow-[inset_0_0_0_1px_rgba(0,0,0,0.25)] dark:data-[state=checked]:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.3)]",
         "data-[size=sm]:h-4 data-[size=sm]:w-7",
         "data-[size=md]:h-5 data-[size=md]:w-9",
         "data-[size=lg]:h-6 data-[size=lg]:w-11",
-        "focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
+        "focus-visible:ring-2 focus-visible:ring-black/25 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-white/30 dark:focus-visible:ring-offset-black",
         "disabled:pointer-events-none disabled:opacity-50",
         className,
       )}
@@ -243,7 +243,7 @@ function Switch({
           data-slot="switch-thumb"
           className={cn(
             "pointer-events-none grid aspect-square h-full origin-center place-items-center rounded-full bg-white shadow-sm will-change-transform",
-            "data-[state=checked]:bg-neutral-950",
+            "dark:data-[state=checked]:bg-neutral-950",
             thumbClassName,
           )}
         >

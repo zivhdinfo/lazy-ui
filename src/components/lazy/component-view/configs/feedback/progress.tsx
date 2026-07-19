@@ -2,8 +2,8 @@ import { Progress } from "@/components/lazy-ui/progress";
 import { select, slider, toggle } from "@/components/lazy/component-detail/controls";
 import type { ComponentView } from "@/components/lazy/component-view/types";
 
-// Theme-aware preview surface. The bar itself ships dark-only (white fill), so
-// it keeps lower contrast on the light surface by design.
+// Theme-aware preview surface; the bar now follows the theme (ink fill on
+// light, white fill on dark).
 export const view: ComponentView = {
   load: () => import("@/components/lazy-ui/progress"),
   export: "Progress",

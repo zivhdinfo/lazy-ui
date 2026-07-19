@@ -695,6 +695,16 @@ html[data-theme="dark"] .lui-docs .icon-btn .moon { display: block; }
   color: var(--ink-text);
 }
 
+/* "Update" tag — a quiet gray pill (vs "New"'s solid ink fill). It marks an
+   enhancement to an existing component, a lesser signal than a brand-new one,
+   so it stays small and low-contrast. */
+.lui-docs .sb-sub-link .new-tag.is-update {
+  font-size: 8px;
+  padding: 1px 4px;
+  background: color-mix(in srgb, var(--text) 10%, transparent);
+  color: var(--text-2);
+}
+
 /* Group-level count badge — a glowing rainbow-ringed number on the collapsible
    category title (BorderGlow root), signalling how many new items the group
    holds even when collapsed. The ring + glow come from BorderGlow; this only

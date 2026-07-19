@@ -2,7 +2,15 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
+/* Drive the `dark:` variant off the resolved `data-theme` (set pre-paint on
+   <html> from localStorage["lazyui-theme"]) rather than a `.dark` class. The
+   root layout hardcodes `class="dark"`, so a `.dark`-based variant is stuck ON
+   everywhere and no surface can ever render its light styles — the docs/home
+   theme toggle only flips `data-theme`. Keying the variant off `data-theme`
+   lets every `dark:`-styled component follow the live toggle. Consumers who
+   copy a component are unaffected: this redefinition is not part of the
+   component file, so their own `.dark` convention still drives `dark:`. */
+@custom-variant dark (&:is([data-theme="dark"] *));
 
 @theme inline {
   --color-background: var(--background);

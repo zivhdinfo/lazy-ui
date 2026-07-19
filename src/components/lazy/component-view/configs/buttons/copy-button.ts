@@ -1,4 +1,7 @@
-import type { IconAnimate } from "@/components/lazy-ui/copy-button";
+import type {
+  CopyButtonVariant,
+  IconAnimate,
+} from "@/components/lazy-ui/copy-button";
 import { select, slider, toggle } from "@/components/lazy/component-detail/controls";
 import { fmtMs } from "@/components/lazy/component-detail/format";
 import type { ComponentView } from "@/components/lazy/component-view/types";
@@ -11,16 +14,27 @@ export const view: ComponentView = {
   staticProps: {
     content: "npm install lazy-ui",
     label: "Copy",
-    className: "text-sm text-[var(--text)]",
+    className: "text-sm",
   },
   mapProps: (v) => ({
     text: v.text,
+    variant: (v.variant ?? "outline") as CopyButtonVariant,
     textAs: (v.textAs ?? "inline") as "inline" | "tooltip",
     revealAnimate: v.revealAnimate ?? true,
     iconAnimate: (v.iconAnimate ?? "blur") as IconAnimate,
     delay: v.delay ?? 4000,
   }),
   controls: [
+    select(
+      "variant",
+      "Variant",
+      [
+        { value: "outline", label: "Outline" },
+        { value: "solid", label: "Solid" },
+        { value: "ghost", label: "Ghost" },
+      ],
+      "outline",
+    ),
     toggle("text", "Text", true),
     select(
       "textAs",

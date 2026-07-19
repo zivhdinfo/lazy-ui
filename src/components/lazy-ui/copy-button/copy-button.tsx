@@ -8,6 +8,24 @@ import { RevealAnimate } from "@/components/lazy-ui/reveal-animate";
 /** Icon swap animation between the copy and check glyphs. */
 export type IconAnimate = "blur" | "draw" | "reveal";
 
+/**
+ * Visual chrome. `ghost` is bare — icon (and optional label) with no resting
+ * background, chrome surfacing only on hover (the code-block corner button).
+ * `outline` and `solid` render a real, self-contained button.
+ */
+export type CopyButtonVariant = "ghost" | "outline" | "solid";
+
+// Resting + hover chrome per variant, dual-theme via `dark:` so a consumer gets
+// a light-appropriate button in a light app and a dark one in a dark app.
+const VARIANT_CLASSES: Record<CopyButtonVariant, string> = {
+  ghost:
+    "text-neutral-500 hover:bg-black/[0.05] hover:text-black dark:text-neutral-400 dark:hover:bg-white/[0.04] dark:hover:text-white",
+  outline:
+    "border border-black/10 bg-black/[0.03] text-neutral-800 hover:border-black/20 hover:bg-black/[0.06] dark:border-white/[0.12] dark:bg-white/[0.05] dark:text-neutral-100 dark:hover:border-white/20 dark:hover:bg-white/[0.08]",
+  solid:
+    "border border-black/10 bg-neutral-900 text-white hover:bg-neutral-800 dark:border-white/10 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100",
+};
+
 export type CopyButtonProps = {
   /** Text written to the clipboard on click. */
   content: string;
@@ -19,6 +37,8 @@ export type CopyButtonProps = {
   revealAnimate?: boolean;
   /** How the copy/check icon swap animates. @default "blur" */
   iconAnimate?: IconAnimate;
+  /** Visual chrome — `ghost` (bare), `outline`, or `solid`. @default "ghost" */
+  variant?: CopyButtonVariant;
   /** Label text. @default "Copy" */
   label?: string;
   /** Label swapped in while in the copied state. @default "Copied" */
@@ -49,6 +69,7 @@ export function CopyButton({
   textAs = "inline",
   revealAnimate = true,
   iconAnimate = "blur",
+  variant = "ghost",
   label = "Copy",
   copiedLabel = "Copied",
   delay = 4000,
@@ -94,8 +115,15 @@ export function CopyButton({
       aria-label={isCopied ? copiedLabel : label}
       onClick={handleClick}
       className={[
-        "group inline-flex items-center rounded-md text-[11px] text-neutral-400 transition-colors hover:bg-white/[0.04] hover:text-white active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-300",
-        showsInlineLabel ? "h-6 gap-1.5 px-2" : "size-6 justify-center",
+        "group inline-flex items-center rounded-md text-[11px] transition-colors active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-500 dark:focus-visible:outline-neutral-300",
+        VARIANT_CLASSES[variant],
+        variant === "ghost"
+          ? showsInlineLabel
+            ? "h-6 gap-1.5 px-2"
+            : "size-6 justify-center"
+          : showsInlineLabel
+            ? "h-8 gap-2 px-3"
+            : "size-8 justify-center",
         className,
       ]
         .filter(Boolean)

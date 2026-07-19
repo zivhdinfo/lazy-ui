@@ -212,6 +212,9 @@ export function Demo() {
 
       {/* Pick a different icon animation */}
       <CopyButton content="npm install lazy-ui" iconAnimate="reveal" />
+
+      {/* A real, self-contained button */}
+      <CopyButton content="npm install lazy-ui" text variant="outline" />
     </>
   );
 }`,
@@ -221,6 +224,13 @@ export function Demo() {
         type: "string",
         default: "—",
         description: "Text written to the clipboard on click.",
+      },
+      {
+        name: "variant",
+        type: '"ghost" | "outline" | "solid"',
+        default: '"ghost"',
+        description:
+          "Visual chrome. `ghost` is bare — icon (and optional label) with no resting background, chrome appearing on hover (the code-block corner button). `outline` and `solid` render a real, self-contained button.",
       },
       {
         name: "text",
