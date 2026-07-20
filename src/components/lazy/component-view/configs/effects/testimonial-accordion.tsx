@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   TestimonialAccordion,
   type Testimonial,
+  type TestimonialAccordionOrientation,
   type TestimonialAccordionTrigger,
 } from "@/components/lazy-ui/testimonial-accordion";
 import {
@@ -168,9 +169,12 @@ function TestimonialAccordionCard() {
           flexShrink: 0,
         }}
       >
+        {/* The scaled scene is narrower than the auto breakpoint — pin the
+            card to the horizontal layout so it never stacks. */}
         <TestimonialAccordion
           testimonials={DEMO}
           trigger="hover"
+          orientation="horizontal"
           speed={1}
           defaultIndex={3}
           collapsedWidth={52}
@@ -193,6 +197,8 @@ export const view: ComponentView = {
   cardRender: () => <TestimonialAccordionCard />,
   render: (v) => {
     const trigger = (v.trigger ?? "hover") as TestimonialAccordionTrigger;
+    const orientation = (v.orientation ??
+      "auto") as TestimonialAccordionOrientation;
     const speed = (v.speed ?? 1) as number;
     const autoplay = (v.autoplay ?? false) as boolean;
     const autoplayInterval = (v.autoplayInterval ?? 4000) as number;
@@ -203,10 +209,17 @@ export const view: ComponentView = {
 
     return (
       <div className="flex min-h-[560px] w-full items-center justify-center p-4">
-        <div className="w-full max-w-[980px]">
+        <div
+          className={
+            orientation === "vertical"
+              ? "w-full max-w-[430px]"
+              : "w-full max-w-[980px]"
+          }
+        >
           <TestimonialAccordion
             testimonials={DEMO}
             trigger={trigger}
+            orientation={orientation}
             speed={speed}
             autoplay={autoplay}
             autoplayInterval={autoplayInterval}
@@ -272,6 +285,20 @@ export function Demo() {
         "How a collapsed panel expands. Keyboard focus and click always expand a panel regardless of this setting.",
     },
     {
+      name: "orientation",
+      type: '"auto" | "horizontal" | "vertical"',
+      default: '"auto"',
+      description:
+        "Layout direction. auto stacks the panels vertically once the container is narrower than breakpoint — the mobile layout.",
+    },
+    {
+      name: "breakpoint",
+      type: "number",
+      default: "640",
+      description:
+        "Container width, in pixels, under which auto switches to the vertical layout.",
+    },
+    {
       name: "speed",
       type: "number",
       default: "1",
@@ -301,13 +328,15 @@ export function Demo() {
       name: "collapsedWidth",
       type: "number",
       default: "64",
-      description: "Width of a collapsed bar, in pixels.",
+      description:
+        "Thickness of a collapsed bar, in pixels — its width when horizontal, its height when vertical.",
     },
     {
       name: "height",
       type: "number",
       default: "500",
-      description: "Panel height, in pixels.",
+      description:
+        "Panel height, in pixels. In the vertical layout, the height of the expanded panel.",
     },
     {
       name: "gap",
@@ -343,6 +372,16 @@ export function Demo() {
         { value: "click", label: "Click" },
       ],
       "hover",
+    ),
+    select(
+      "orientation",
+      "Orientation",
+      [
+        { value: "auto", label: "Auto" },
+        { value: "horizontal", label: "Horizontal" },
+        { value: "vertical", label: "Vertical" },
+      ],
+      "auto",
     ),
     slider("speed", "Speed", {
       min: 0.05,

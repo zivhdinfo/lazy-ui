@@ -16,6 +16,8 @@ import { cn } from "@/lib/utils";
 
 export type TestimonialAccordionTrigger = "hover" | "click";
 
+export type TestimonialAccordionOrientation = "auto" | "horizontal" | "vertical";
+
 export interface Testimonial {
   /** Stable key for the panel. */
   id: string;
@@ -45,6 +47,12 @@ export interface TestimonialAccordionProps
   testimonials: Testimonial[];
   /** How a collapsed panel expands. Focus and click always work too. @default "hover" */
   trigger?: TestimonialAccordionTrigger;
+  /** Layout direction. `"auto"` stacks the panels vertically once the
+   * container is narrower than `breakpoint`. @default "auto" */
+  orientation?: TestimonialAccordionOrientation;
+  /** Container width, in px, under which `"auto"` switches to the vertical
+   * layout. @default 640 */
+  breakpoint?: number;
   /** Animation speed multiplier. `2` is twice as fast, `0.5` half. @default 1 */
   speed?: number;
   /** Cycle the open panel on a timer. Pauses on hover/focus and under
@@ -54,9 +62,10 @@ export interface TestimonialAccordionProps
   autoplayInterval?: number;
   /** Index expanded on mount. @default 0 */
   defaultIndex?: number;
-  /** Width of a collapsed bar, in px. @default 64 */
+  /** Thickness of a collapsed bar, in px — its width when horizontal, its
+   * height when vertical. @default 64 */
   collapsedWidth?: number;
-  /** Panel height, in px. @default 500 */
+  /** Panel height, in px. When vertical, the expanded panel's height. @default 500 */
   height?: number;
   /** Gap between panels, in px. @default 12 */
   gap?: number;
@@ -73,6 +82,7 @@ const BASE_STAGGER_MS = 90;
 const LOGO_SIZE = 32;
 // Fixed layout width for the expanded content so text never re-wraps while a
 // panel animates its width — the panel's `overflow: hidden` just clips it.
+// Vertical panels animate height instead, so their content spans full width.
 const CONTENT_WIDTH = 620;
 
 function initials(name: string): string {
@@ -94,10 +104,13 @@ function clampSpeed(speed: number): number {
  * on hover, focus, or click — to reveal a quote, author, and link. Data-driven,
  * so each panel carries its own accent color. The logo stays pinned while the
  * text reveals with a staggered slide-up cascade; optional autoplay cycles it.
+ * On narrow containers the panels stack and expand vertically instead.
  */
 export function TestimonialAccordion({
   testimonials,
   trigger = "hover",
+  orientation = "auto",
+  breakpoint = 640,
   speed = 1,
   autoplay = false,
   autoplayInterval = 4000,
@@ -117,7 +130,25 @@ export function TestimonialAccordion({
     Math.min(Math.max(defaultIndex, 0), Math.max(count - 1, 0)),
   );
   const [paused, setPaused] = useState(false);
+  const [narrow, setNarrow] = useState(false);
   const buttonsRef = useRef<Array<HTMLButtonElement | null>>([]);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  // Container-based, not viewport-based, so the accordion also stacks when
+  // placed in a narrow column on desktop.
+  useEffect(() => {
+    if (orientation !== "auto") return;
+    const el = rootRef.current;
+    if (!el) return;
+    const check = () => setNarrow(el.clientWidth < breakpoint);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [orientation, breakpoint]);
+
+  const vertical =
+    orientation === "vertical" || (orientation === "auto" && narrow);
 
   // Advance the open panel on a timer, but never while the user is interacting
   // or when the OS asks for reduced motion (autoplay is a motion effect).
@@ -136,10 +167,13 @@ export function TestimonialAccordion({
   const staggerMs = Math.round(BASE_STAGGER_MS / s);
   const resting = reduced ? "none" : "translateY(26px)";
   // Center the pinned logo inside a collapsed bar; the text column shares this
-  // inset so nothing shifts horizontally between states.
-  const padLeft = Math.max(16, Math.round((collapsedWidth - LOGO_SIZE) / 2));
+  // inset so nothing shifts between states. Horizontal bars center it on the
+  // x-axis, vertical bars on the y-axis.
+  const padCross = Math.max(16, Math.round((collapsedWidth - LOGO_SIZE) / 2));
 
-  const sizeTransition = reduced ? undefined : `flex-grow ${sizeMs}ms ${EASE}`;
+  const sizeTransition = reduced
+    ? undefined
+    : `${vertical ? "height" : "flex-grow"} ${sizeMs}ms ${EASE}`;
   const overlayTransition = reduced ? undefined : `opacity ${fadeMs}ms ${EASE}`;
   const revealTransition = (delay: number): string | undefined =>
     reduced
@@ -159,7 +193,11 @@ export function TestimonialAccordion({
     index: number,
   ) => {
     const dir =
-      event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
+      event.key === "ArrowRight" || event.key === "ArrowDown"
+        ? 1
+        : event.key === "ArrowLeft" || event.key === "ArrowUp"
+          ? -1
+          : 0;
     if (!dir) return;
     event.preventDefault();
     buttonsRef.current[(index + dir + count) % count]?.focus();
@@ -173,7 +211,12 @@ export function TestimonialAccordion({
 
   return (
     <div
-      className={cn("flex w-full flex-nowrap overflow-hidden", className)}
+      ref={rootRef}
+      className={cn(
+        "flex w-full overflow-hidden",
+        vertical ? "flex-col" : "flex-nowrap",
+        className,
+      )}
       style={{ gap, ...style }}
       onPointerEnter={() => setPaused(true)}
       onPointerLeave={() => setPaused(false)}
@@ -183,15 +226,25 @@ export function TestimonialAccordion({
     >
       {testimonials.map((item, index) => {
         const isActive = index === active;
-        const panelStyle: CSSProperties = {
-          flexGrow: isActive ? 1 : 0,
-          flexBasis: 0,
-          minWidth: collapsedWidth,
-          height,
-          borderRadius: radius,
-          background: item.accent,
-          transition: sizeTransition,
-        };
+        // Vertical panels animate an explicit height (both endpoints are fixed
+        // px values); horizontal ones animate flex-grow against the row width.
+        const panelStyle: CSSProperties = vertical
+          ? {
+              height: isActive ? height : collapsedWidth,
+              width: "100%",
+              borderRadius: radius,
+              background: item.accent,
+              transition: sizeTransition,
+            }
+          : {
+              flexGrow: isActive ? 1 : 0,
+              flexBasis: 0,
+              minWidth: collapsedWidth,
+              height,
+              borderRadius: radius,
+              background: item.accent,
+              transition: sizeTransition,
+            };
         const gradient = `linear-gradient(150deg, color-mix(in srgb, ${item.accent} 88%, #fff) 0%, ${item.accent} 42%, color-mix(in srgb, ${item.accent} 76%, #000) 100%)`;
 
         return (
@@ -225,14 +278,27 @@ export function TestimonialAccordion({
             />
 
             <div
-              className="absolute inset-y-0 left-0 flex flex-col justify-between"
-              style={{
-                width: CONTENT_WIDTH,
-                paddingLeft: padLeft,
-                paddingTop: 24,
-                paddingRight: 28,
-                paddingBottom: 30,
-              }}
+              className={cn(
+                "absolute flex flex-col justify-between",
+                vertical ? "inset-x-0 top-0" : "inset-y-0 left-0",
+              )}
+              style={
+                vertical
+                  ? {
+                      height,
+                      paddingLeft: 20,
+                      paddingTop: padCross,
+                      paddingRight: 20,
+                      paddingBottom: 26,
+                    }
+                  : {
+                      width: CONTENT_WIDTH,
+                      paddingLeft: padCross,
+                      paddingTop: 24,
+                      paddingRight: 28,
+                      paddingBottom: 30,
+                    }
+              }
             >
               <div>
                 {/* Pinned: same element, same position in both states. */}
