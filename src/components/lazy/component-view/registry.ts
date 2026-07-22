@@ -37,6 +37,7 @@ import { view as scrollImageCarousel } from "./configs/effects/scroll-image-caro
 import { view as smoothCursor } from "./configs/effects/smooth-cursor";
 import { view as spectralCard } from "./configs/effects/spectral-card";
 import { view as testimonialAccordion } from "./configs/effects/testimonial-accordion";
+import { view as introPreloader } from "./configs/feedback/intro-preloader";
 import { view as progress } from "./configs/feedback/progress";
 import { view as springIconLoader } from "./configs/feedback/spring-icon-loader";
 import { view as checkbox } from "./configs/forms/checkbox";
@@ -74,6 +75,7 @@ const VIEWS: Record<string, ComponentView> = {
   "horizon-cipher": horizonCipher,
   "horizon-glow": horizonGlow,
   "image-zoom": imageZoom,
+  "intro-preloader": introPreloader,
   iphone: iphone,
   "liquid-chrome": liquidChrome,
   "liquid-reveal": liquidReveal,

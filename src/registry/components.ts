@@ -234,6 +234,16 @@ export const components: ComponentItem[] = [
     dependencies: ["@gsap/react", "gsap", "motion"],
   },
   {
+    slug: "intro-preloader",
+    title: "Intro Preloader",
+    description:
+      "A full-page intro preloader that piles up photos as assets load — oversized status type, a tabular percent counter, an asset-name ticker, and a zoom-through reveal once everything is ready.",
+    category: "Feedback",
+    target: "components/lazy-ui/intro-preloader/intro-preloader.tsx",
+    status: "published",
+    dependencies: ["motion"],
+  },
+  {
     slug: "switch",
     title: "Switch",
     description:

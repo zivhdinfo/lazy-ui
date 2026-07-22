@@ -71,7 +71,7 @@ const CATEGORY_ORDER = [
 // tab on `/components`. Badge lifetime is bounded — see
 // [CLAUDE.md](../../CLAUDE.md#sidebar-badge-rotation) for the rule.
 export const NEW_SLUGS: ReadonlySet<string> = new Set([
-  "testimonial-accordion",
+  "intro-preloader",
 ]);
 
 // Slugs enhanced (not newly added) by the current change get an "Update" tag —
