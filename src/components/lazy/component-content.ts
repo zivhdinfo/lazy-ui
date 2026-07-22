@@ -1287,6 +1287,131 @@ export function Demo() {
       },
     ],
   },
+  "pixel-dither": {
+    componentName: "PixelDither",
+    usageCode: `import { PixelDither } from "@/components/lazy-ui/pixel-dither";
+
+export function Demo() {
+  return (
+    <div className="relative h-96 w-full overflow-hidden rounded-2xl bg-black">
+      <PixelDither
+        src="/images/photo.jpg"
+        pixelSize={6}
+        gap={1}
+        interactionRadius={110}
+        strength={26}
+        className="absolute inset-0"
+      />
+    </div>
+  );
+}`,
+    api: [
+      {
+        name: "src",
+        type: "string",
+        description: "Image URL rendered as a grid of dithered pixels.",
+      },
+      {
+        name: "pixelSize",
+        type: "number",
+        default: "6",
+        description: "Side length of each pixel cell, in px.",
+      },
+      {
+        name: "gap",
+        type: "number",
+        default: "1",
+        description: "Empty gap trailing each cell, in px.",
+      },
+      {
+        name: "shape",
+        type: '"square" | "circle"',
+        default: '"square"',
+        description: "Cell shape.",
+      },
+      {
+        name: "colorMode",
+        type: '"original" | "mono"',
+        default: '"original"',
+        description:
+          "Sample the image's real colors, or reduce it to two flat tones with ordered (Bayer) dithering.",
+      },
+      {
+        name: "darkColor",
+        type: "string",
+        default: '"#09090b"',
+        description: 'Dark tone used in "mono" mode.',
+      },
+      {
+        name: "lightColor",
+        type: "string",
+        default: '"#f4f4f5"',
+        description: 'Light tone used in "mono" mode.',
+      },
+      {
+        name: "density",
+        type: "number",
+        default: "1",
+        description:
+          "Fraction (0..1) of cells that render — lower thins the image into a sparser dither speckle.",
+      },
+      {
+        name: "interactive",
+        type: "boolean",
+        default: "true",
+        description: "Enable the pointer displacement field.",
+      },
+      {
+        name: "interactionRadius",
+        type: "number",
+        default: "110",
+        description: "Pointer influence radius, in px.",
+      },
+      {
+        name: "strength",
+        type: "number",
+        default: "26",
+        description: "Peak pixel displacement at the pointer center, in px.",
+      },
+      {
+        name: "intro",
+        type: "boolean",
+        default: "true",
+        description:
+          "Play a one-time assemble-in animation once the image is ready.",
+      },
+      {
+        name: "introFrom",
+        type: '"random" | "top" | "bottom" | "left" | "right" | "center"',
+        default: '"random"',
+        description:
+          "Where scattered pixels originate from before assembling into place.",
+      },
+      {
+        name: "introDuration",
+        type: "number",
+        default: "1.4",
+        description: "Intro duration, in seconds.",
+      },
+      {
+        name: "objectFit",
+        type: '"cover" | "contain"',
+        default: '"cover"',
+        description: "How the image is fit into the container.",
+      },
+      {
+        name: "alt",
+        type: "string",
+        default: '""',
+        description: "Accessible label applied to the container.",
+      },
+      {
+        name: "className",
+        type: "string",
+        description: "Extra classes merged onto the root container.",
+      },
+    ],
+  },
   "reveal-animate": {
     componentName: "RevealAnimate",
     usageCode: `import { useState } from "react";

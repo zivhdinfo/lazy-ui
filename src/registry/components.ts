@@ -155,6 +155,16 @@ export const components: ComponentItem[] = [
     dependencies: ["motion"],
   },
   {
+    slug: "pixel-dither",
+    title: "Pixel Dither",
+    description:
+      "A canvas dithering effect that assembles an image from scattered pixels on load, then lets the cursor magnetically displace nearby cells.",
+    category: "Effects",
+    target: "components/lazy-ui/pixel-dither/pixel-dither.tsx",
+    status: "published",
+    dependencies: ["motion"],
+  },
+  {
     slug: "reveal-animate",
     title: "Reveal Animate",
     description:

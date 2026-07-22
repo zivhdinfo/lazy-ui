@@ -36,6 +36,7 @@ import { view as gravityButton } from "./configs/buttons/gravity-button";
 import { view as shimmerButton } from "./configs/buttons/shimmer-button";
 import { view as shinyButton } from "./configs/buttons/shiny-button";
 import { view as imageZoom } from "./configs/effects/image-zoom";
+import { view as pixelDither } from "./configs/effects/pixel-dither";
 import { view as scrollImageCarousel } from "./configs/effects/scroll-image-carousel";
 import { view as smoothCursor } from "./configs/effects/smooth-cursor";
 import { view as spectralCard } from "./configs/effects/spectral-card";
@@ -91,6 +92,7 @@ const VIEWS: Record<string, ComponentView> = {
   "orbit-cipher": orbitCipher,
   "orbit-mesh": orbitMesh,
   "pixel-cursor": pixelCursor,
+  "pixel-dither": pixelDither,
   "pricing-1": pricing1,
   "pricing-2": pricing2,
   "pricing-3": pricing3,

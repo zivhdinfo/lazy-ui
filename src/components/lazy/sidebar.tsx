@@ -71,25 +71,18 @@ const CATEGORY_ORDER = [
 // tab on `/components`. Badge lifetime is bounded — see
 // [CLAUDE.md](../../CLAUDE.md#sidebar-badge-rotation) for the rule.
 export const NEW_SLUGS: ReadonlySet<string> = new Set([
+  "pixel-dither",
   "accordion",
   "shiny-button",
   "shimmer-button",
   "gravity-button",
   "intro-preloader",
-  "testimonial-accordion",
 ]);
 
 // Slugs enhanced (not newly added) by the current change get an "Update" tag —
 // a subtler outlined pill vs "New"'s ink fill. Same lifetime rules as NEW_SLUGS.
-// Current change: light/dark theme support across these previews + primitives.
 export const UPDATE_SLUGS: ReadonlySet<string> = new Set([
-  "checkbox",
-  "switch",
-  "copy-button",
-  "progress",
-  "border-glow",
-  "stack-list",
-  "github-stars-button",
+  "testimonial-accordion",
 ]);
 
 // Spectrum for the group count badge's glow ring. Soft, slightly-pastel hues —
