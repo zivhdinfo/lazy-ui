@@ -587,6 +587,116 @@ export function Demo() {
       },
     ],
   },
+  accordion: {
+    componentName: "Accordion",
+    usageCode: `import { Accordion } from "@/components/lazy-ui/accordion";
+
+const items = [
+  {
+    title: "Do I own the code I paste?",
+    content:
+      "Yes. Once a component is in your project it is your file — nothing to attribute, nothing to license.",
+  },
+  {
+    title: "What happens when a component updates?",
+    content:
+      "Nothing, until you decide. Re-run the CLI on a component when you want the newer version.",
+  },
+];
+
+export function Demo() {
+  return <Accordion items={items} defaultOpen={0} />;
+}`,
+    api: [
+      {
+        name: "items",
+        type: "AccordionItem[]",
+        default: "—",
+        description:
+          "Rows rendered top to bottom. Each takes `title`, `content` (both any node), and an optional `id` used as the key.",
+      },
+      {
+        name: "heading",
+        type: "ReactNode",
+        default: "undefined",
+        description:
+          "Section heading above — or beside — the rows. Omit it and `description` to render the bare list.",
+      },
+      {
+        name: "description",
+        type: "ReactNode",
+        default: "undefined",
+        description:
+          "Supporting line under the heading. Accepts nodes, so a mail link fits here.",
+      },
+      {
+        name: "layout",
+        type: '"split" | "stacked"',
+        default: '"stacked"',
+        description:
+          "`split` moves the heading into its own column beside the rows once the container passes 768px. Container-based, so a narrow column on a wide screen still stacks.",
+      },
+      {
+        name: "variant",
+        type: '"line" | "card"',
+        default: '"line"',
+        description:
+          "`line` separates rows with hairlines; `card` gives each row its own bordered tile.",
+      },
+      {
+        name: "icon",
+        type: '"chevron" | "plus" | "minus" | "none"',
+        default: '"chevron"',
+        description:
+          "Trigger glyph. `chevron` flips, `plus` rotates into a cross, `minus` folds its vertical stroke away.",
+      },
+      {
+        name: "mode",
+        type: '"single" | "multiple"',
+        default: '"single"',
+        description:
+          "`single` closes the open row when another opens. Either way, clicking an open row closes it.",
+      },
+      {
+        name: "defaultOpen",
+        type: "number | number[] | null",
+        default: "null",
+        description:
+          "Index (or indices) open on mount. `null` starts fully closed; an array is trimmed to one entry in `single` mode.",
+      },
+      {
+        name: "speed",
+        type: "number",
+        default: "1",
+        description:
+          "Animation speed multiplier for the open and fade transitions. 2 is twice as fast, 0.5 half.",
+      },
+      {
+        name: "size",
+        type: '"sm" | "md" | "lg"',
+        default: '"md"',
+        description: "Type scale and row rhythm together.",
+      },
+      {
+        name: "numbered",
+        type: "boolean",
+        default: "false",
+        description: "Prefix each row with a zero-padded index.",
+      },
+      {
+        name: "indicator",
+        type: "boolean",
+        default: "false",
+        description: "Rail that grows down the side of the open row.",
+      },
+      {
+        name: "className",
+        type: "string",
+        default: "undefined",
+        description: "Extra class names merged onto the root section.",
+      },
+    ],
+  },
   "shiny-button": {
     componentName: "ShinyButton",
     usageCode: `import { ShinyButton } from "@/components/lazy-ui/shiny-button";

@@ -12,6 +12,16 @@ export type {
 
 export const components: ComponentItem[] = [
   {
+    slug: "accordion",
+    title: "Accordion",
+    description:
+      "A disclosure list with hairline or card rows, an optional heading column, and a CSS-only open transition that never measures or remounts a panel.",
+    category: "Navigation",
+    target: "components/lazy-ui/accordion/accordion.tsx",
+    status: "published",
+    dependencies: ["motion"],
+  },
+  {
     slug: "animated-tabs",
     title: "Animated Tabs",
     description:

@@ -46,6 +46,7 @@ import { view as springIconLoader } from "./configs/feedback/spring-icon-loader"
 import { view as checkbox } from "./configs/forms/checkbox";
 import { view as switchView } from "./configs/forms/switch";
 import { view as iphone } from "./configs/device-mocks/iphone";
+import { view as accordion } from "./configs/navigation/accordion";
 import { view as animatedTabs } from "./configs/navigation/animated-tabs";
 import { view as slideHighlight } from "./configs/navigation/slide-highlight";
 import { view as animateTooltip } from "./configs/overlay/animate-tooltip";
@@ -61,6 +62,7 @@ import { view as textWarp } from "./configs/text-animate/text-warp";
 // detail page (Code / Install / Props / Usage) — only the live preview shows a
 // "coming soon" placeholder until a config lands here.
 const VIEWS: Record<string, ComponentView> = {
+  accordion: accordion,
   "animate-tooltip": animateTooltip,
   "animated-tabs": animatedTabs,
   "aurora-mesh": auroraMesh,
