@@ -65,7 +65,8 @@ export interface TestimonialAccordionProps
   /** Thickness of a collapsed bar, in px — its width when horizontal, its
    * height when vertical. @default 64 */
   collapsedWidth?: number;
-  /** Panel height, in px. When vertical, the expanded panel's height. @default 500 */
+  /** Panel height, in px. Horizontal layout only — stacked panels hug their own
+   * copy. @default 500 */
   height?: number;
   /** Gap between panels, in px. @default 12 */
   gap?: number;
@@ -80,10 +81,15 @@ const BASE_SIZE_MS = 560;
 const BASE_FADE_MS = 420;
 const BASE_STAGGER_MS = 90;
 const LOGO_SIZE = 32;
-// Fixed layout width for the expanded content so text never re-wraps while a
-// panel animates its width — the panel's `overflow: hidden` just clips it.
-// Vertical panels animate height instead, so their content spans full width.
+// Layout width the expanded content is laid out at, so text never re-wraps
+// while a panel animates its width — the panel's `overflow: hidden` just clips
+// it. Capped to what the row can actually spend on the open panel (see
+// `contentWidth`). Vertical panels animate height instead, so their content
+// spans full width.
 const CONTENT_WIDTH = 620;
+const MIN_CONTENT_WIDTH = 260;
+// Container width under which the vertical layout tightens its padding.
+const COMPACT_WIDTH = 420;
 
 function initials(name: string): string {
   return name
@@ -130,25 +136,48 @@ export function TestimonialAccordion({
     Math.min(Math.max(defaultIndex, 0), Math.max(count - 1, 0)),
   );
   const [paused, setPaused] = useState(false);
-  const [narrow, setNarrow] = useState(false);
+  const [rootWidth, setRootWidth] = useState(0);
+  const [openHeights, setOpenHeights] = useState<number[]>([]);
   const buttonsRef = useRef<Array<HTMLButtonElement | null>>([]);
+  const contentRefs = useRef<Array<HTMLDivElement | null>>([]);
   const rootRef = useRef<HTMLDivElement>(null);
 
-  // Container-based, not viewport-based, so the accordion also stacks when
-  // placed in a narrow column on desktop.
+  // Container-based, not viewport-based, so the accordion also stacks — and
+  // sizes its copy — when placed in a narrow column on a wide screen.
   useEffect(() => {
-    if (orientation !== "auto") return;
     const el = rootRef.current;
     if (!el) return;
-    const check = () => setNarrow(el.clientWidth < breakpoint);
-    check();
-    const ro = new ResizeObserver(check);
+    const measure = () => setRootWidth(el.clientWidth);
+    measure();
+    const ro = new ResizeObserver(measure);
     ro.observe(el);
     return () => ro.disconnect();
-  }, [orientation, breakpoint]);
+  }, []);
 
+  // Width 0 is the first paint, before the observer reports: stay horizontal
+  // rather than flashing the stacked layout on every mount.
   const vertical =
-    orientation === "vertical" || (orientation === "auto" && narrow);
+    orientation === "vertical" ||
+    (orientation === "auto" && rootWidth > 0 && rootWidth < breakpoint);
+
+  // Stacked panels hug their own copy — a fixed height would leave a long quote
+  // clipped and a short one floating in dead space. CSS can't tween to `auto`,
+  // so each panel's natural content height is measured and animated to in px.
+  useEffect(() => {
+    if (!vertical) return;
+    const els = contentRefs.current.slice(0, count);
+    const measure = () =>
+      setOpenHeights((prev) => {
+        const next = els.map((el) => el?.offsetHeight ?? 0);
+        return next.every((h, i) => h === prev[i]) && next.length === prev.length
+          ? prev
+          : next;
+      });
+    measure();
+    const ro = new ResizeObserver(measure);
+    for (const el of els) if (el) ro.observe(el);
+    return () => ro.disconnect();
+  }, [vertical, count]);
 
   // Advance the open panel on a timer, but never while the user is interacting
   // or when the OS asks for reduced motion (autoplay is a motion effect).
@@ -168,8 +197,33 @@ export function TestimonialAccordion({
   const resting = reduced ? "none" : "translateY(26px)";
   // Center the pinned logo inside a collapsed bar; the text column shares this
   // inset so nothing shifts between states. Horizontal bars center it on the
-  // x-axis, vertical bars on the y-axis.
+  // x-axis (with a floor, since a thin bar still needs breathing room from the
+  // edge), vertical bars center it exactly on the y-axis.
   const padCross = Math.max(16, Math.round((collapsedWidth - LOGO_SIZE) / 2));
+  const padTop = Math.max(8, Math.round((collapsedWidth - LOGO_SIZE) / 2));
+
+  // What the row has left for the open panel once every collapsed bar and gap
+  // is paid for. Laying the content out wider than that only clips it.
+  const openWidth = rootWidth
+    ? rootWidth - (count - 1) * (collapsedWidth + gap)
+    : CONTENT_WIDTH;
+  const contentWidth = Math.max(
+    MIN_CONTENT_WIDTH,
+    Math.min(CONTENT_WIDTH, openWidth),
+  );
+  const compact = vertical && rootWidth > 0 && rootWidth < COMPACT_WIDTH;
+  const padInline = compact ? 16 : 20;
+  const blockGap = compact ? 20 : 24;
+  // Sized off the container the quote actually lives in, not the viewport: a
+  // narrow column on a 4K screen should not get 29px display text. Stacked
+  // panels stay in reading sizes — the quote is body copy there, not a display
+  // line the way it is across a wide open panel.
+  const quoteSize = vertical
+    ? Math.round(Math.min(20, Math.max(16, (rootWidth || 430) * 0.038)))
+    : Math.round(Math.min(29, Math.max(19, contentWidth * 0.047)));
+  // Stacked panels drop a step down the type scale across the board — 13px meta
+  // copy set against a 20px quote reads heavy on a phone.
+  const metaClass = vertical ? "text-[12.5px]" : "text-[13px]";
 
   const sizeTransition = reduced
     ? undefined
@@ -226,15 +280,18 @@ export function TestimonialAccordion({
     >
       {testimonials.map((item, index) => {
         const isActive = index === active;
-        // Vertical panels animate an explicit height (both endpoints are fixed
-        // px values); horizontal ones animate flex-grow against the row width.
+        // Vertical panels animate an explicit height (both endpoints are px
+        // values — the open one measured from the copy); horizontal ones animate
+        // flex-grow against the row width.
         const panelStyle: CSSProperties = vertical
           ? {
-              height: isActive ? height : collapsedWidth,
+              height: isActive ? openHeights[index] || height : collapsedWidth,
               width: "100%",
               borderRadius: radius,
               background: item.accent,
-              transition: sizeTransition,
+              // Skip the transition on the frame before the copy is measured,
+              // so the open panel doesn't animate from its fallback height.
+              transition: openHeights.length ? sizeTransition : undefined,
             }
           : {
               flexGrow: isActive ? 1 : 0,
@@ -278,21 +335,24 @@ export function TestimonialAccordion({
             />
 
             <div
+              ref={(el) => {
+                contentRefs.current[index] = el;
+              }}
               className={cn(
-                "absolute flex flex-col justify-between",
-                vertical ? "inset-x-0 top-0" : "inset-y-0 left-0",
+                "absolute flex flex-col",
+                vertical ? "inset-x-0 top-0" : "inset-y-0 left-0 justify-between",
               )}
               style={
                 vertical
                   ? {
-                      height,
-                      paddingLeft: 20,
-                      paddingTop: padCross,
-                      paddingRight: 20,
-                      paddingBottom: 26,
+                      gap: blockGap,
+                      paddingLeft: padInline,
+                      paddingTop: padTop,
+                      paddingRight: padInline,
+                      paddingBottom: compact ? 24 : 28,
                     }
                   : {
-                      width: CONTENT_WIDTH,
+                      width: contentWidth,
                       paddingLeft: padCross,
                       paddingTop: 24,
                       paddingRight: 28,
@@ -304,10 +364,24 @@ export function TestimonialAccordion({
                 {/* Pinned: same element, same position in both states. */}
                 <Mark item={item} />
                 <div aria-hidden={!isActive} style={revealStyle(isActive, 0)}>
-                  <h3 className="mt-6 text-base font-semibold tracking-tight">
+                  <h3
+                    className={cn(
+                      "font-semibold tracking-tight",
+                      vertical ? "mt-5 text-[15px]" : "mt-6 text-base",
+                    )}
+                  >
                     {item.name}
                   </h3>
-                  <p className="mt-1 max-w-[46ch] text-[13px] font-medium leading-snug text-white/55">
+                  {/* Stacked panels wrap against the container instead of a
+                      measure cap — capping there would waste the narrow width
+                      the layout already has. */}
+                  <p
+                    className={cn(
+                      "mt-1 font-medium leading-snug text-white/55",
+                      metaClass,
+                      vertical ? undefined : "max-w-[46ch]",
+                    )}
+                  >
                     {item.description}
                   </p>
                 </div>
@@ -317,13 +391,19 @@ export function TestimonialAccordion({
                 aria-hidden={!isActive}
                 style={revealStyle(isActive, staggerMs)}
               >
-                <p className="max-w-[30ch] text-[clamp(20px,2.4vw,29px)] font-medium leading-[1.18] tracking-[-0.01em]">
+                <p
+                  className={cn(
+                    "font-medium tracking-[-0.01em]",
+                    vertical ? "leading-[1.35]" : "max-w-[30ch] leading-[1.18]",
+                  )}
+                  style={{ fontSize: quoteSize }}
+                >
                   {item.quote}
                 </p>
 
-                <div className="mt-6 flex items-center gap-3">
-                  <Avatar item={item} />
-                  <span className="text-[13px] font-semibold text-white/80">
+                <div className={cn("flex items-center gap-3", compact ? "mt-5" : "mt-6")}>
+                  <Avatar item={item} small={vertical} />
+                  <span className={cn("font-semibold text-white/80", metaClass)}>
                     {item.author}
                     {item.role ? (
                       <span className="font-medium text-white/50">
@@ -341,7 +421,11 @@ export function TestimonialAccordion({
                     rel="noreferrer"
                     tabIndex={isActive ? 0 : -1}
                     onClick={(event) => event.stopPropagation()}
-                    className="mt-5 inline-flex items-center gap-1.5 text-[13px] font-semibold text-white underline decoration-white/40 underline-offset-4 transition-colors hover:decoration-white"
+                    className={cn(
+                      "inline-flex items-center gap-1.5 font-semibold text-white underline decoration-white/40 underline-offset-4 transition-colors hover:decoration-white",
+                      metaClass,
+                      vertical ? "mt-4" : "mt-5",
+                    )}
                   >
                     {linkLabel}
                     <span aria-hidden>→</span>
@@ -373,7 +457,8 @@ function Mark({ item }: { item: Testimonial }) {
   );
 }
 
-function Avatar({ item }: { item: Testimonial }) {
+function Avatar({ item, small }: { item: Testimonial; small?: boolean }) {
+  const box = small ? "h-6 w-6" : "h-7 w-7";
   if (item.avatar) {
     return (
       // Plain <img>: the copied component stays dependency-free of next/image.
@@ -381,12 +466,18 @@ function Avatar({ item }: { item: Testimonial }) {
       <img
         src={item.avatar}
         alt={item.author}
-        className="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-white/25"
+        className={cn("shrink-0 rounded-full object-cover ring-1 ring-white/25", box)}
       />
     );
   }
   return (
-    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/20 text-[10px] font-bold text-white ring-1 ring-white/25">
+    <span
+      className={cn(
+        "flex shrink-0 items-center justify-center rounded-full bg-white/20 font-bold text-white ring-1 ring-white/25",
+        small ? "text-[9px]" : "text-[10px]",
+        box,
+      )}
+    >
       {initials(item.author)}
     </span>
   );

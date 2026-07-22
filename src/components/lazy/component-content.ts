@@ -587,6 +587,93 @@ export function Demo() {
       },
     ],
   },
+  "shiny-button": {
+    componentName: "ShinyButton",
+    usageCode: `import { ShinyButton } from "@/components/lazy-ui/shiny-button";
+
+export function Demo() {
+  return (
+    <div className="flex flex-wrap items-center gap-3">
+      <ShinyButton>Sign in</ShinyButton>
+      <ShinyButton tone="midnight" size="lg" proximity={220}>
+        Continue with Discord
+      </ShinyButton>
+    </div>
+  );
+}`,
+    api: [
+      {
+        name: "children",
+        type: "ReactNode",
+        default: "—",
+        description: "Button content. Icons and label sit in a flex row using the size's gap.",
+      },
+      {
+        name: "tone",
+        type: '"ink" | "midnight" | "violet" | "glass"',
+        default: '"ink"',
+        description:
+          "Preset fill. `ink` inverts with the theme (near-black on light, white on dark); `midnight` and `violet` stay put, `glass` is translucent on both.",
+      },
+      {
+        name: "size",
+        type: '"sm" | "md" | "lg"',
+        default: '"md"',
+        description: "Controls height, padding, gap, and label size together.",
+      },
+      {
+        name: "proximity",
+        type: "number",
+        default: "140",
+        description:
+          "How far from the button's edge, in px, the pointer starts lighting the shine. Distance is measured to the nearest edge, not the centre.",
+      },
+      {
+        name: "shine",
+        type: "number",
+        default: "0.65",
+        description:
+          "Peak opacity of the slash, reached when the pointer is over the button. Set `0` to switch the effect off.",
+      },
+      {
+        name: "slashWidth",
+        type: "number",
+        default: "56",
+        description: "Width of the light slash in px. The blur scales with it.",
+      },
+      {
+        name: "tilt",
+        type: "number",
+        default: "18",
+        description: "Skew of the slash in degrees. Negative values lean it the other way.",
+      },
+      {
+        name: "smoothing",
+        type: "number",
+        default: "0.16",
+        description:
+          "Follow lag, 0 to 1. Lower values let the slash glide behind the pointer for longer.",
+      },
+      {
+        name: "glow",
+        type: "boolean",
+        default: "true",
+        description: "Bloom the tone's inset glow on hover.",
+      },
+      {
+        name: "fullWidth",
+        type: "boolean",
+        default: "false",
+        description: "Stretch the button to fill its container.",
+      },
+      {
+        name: "className",
+        type: "string",
+        default: "—",
+        description: "Extra class names merged onto the root button.",
+      },
+    ],
+  },
   "gravity-button": {
     componentName: "GravityButton",
     usageCode: `import { GravityButton } from "@/components/lazy-ui/gravity-button";

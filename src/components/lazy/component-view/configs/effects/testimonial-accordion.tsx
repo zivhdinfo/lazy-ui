@@ -194,11 +194,15 @@ export const view: ComponentView = {
   componentName: "TestimonialAccordion",
   importPath: "@/components/lazy-ui/testimonial-accordion",
   stageMinHeight: 600,
+  // The whole point of `orientation="auto"` is the container breakpoint, so the
+  // stage ships the device presets and the drag handle to prove it.
+  responsive: true,
   cardRender: () => <TestimonialAccordionCard />,
   render: (v) => {
     const trigger = (v.trigger ?? "hover") as TestimonialAccordionTrigger;
     const orientation = (v.orientation ??
       "auto") as TestimonialAccordionOrientation;
+    const breakpoint = (v.breakpoint ?? 640) as number;
     const speed = (v.speed ?? 1) as number;
     const autoplay = (v.autoplay ?? false) as boolean;
     const autoplayInterval = (v.autoplayInterval ?? 4000) as number;
@@ -208,7 +212,9 @@ export const view: ComponentView = {
     const radius = (v.radius ?? 16) as number;
 
     return (
-      <div className="flex min-h-[560px] w-full items-center justify-center p-4">
+      <div className="flex min-h-[560px] w-full items-center justify-center p-4 sm:p-6">
+        {/* Fluid, not a fixed frame: the stage's width handle has to reach the
+            breakpoint for the auto layout to show its stacked side. */}
         <div
           className={
             orientation === "vertical"
@@ -220,6 +226,7 @@ export const view: ComponentView = {
             testimonials={DEMO}
             trigger={trigger}
             orientation={orientation}
+            breakpoint={breakpoint}
             speed={speed}
             autoplay={autoplay}
             autoplayInterval={autoplayInterval}
@@ -336,7 +343,7 @@ export function Demo() {
       type: "number",
       default: "500",
       description:
-        "Panel height, in pixels. In the vertical layout, the height of the expanded panel.",
+        "Panel height, in pixels. Horizontal layout only — a stacked panel measures its own copy and animates to that height instead.",
     },
     {
       name: "gap",
@@ -383,12 +390,19 @@ export function Demo() {
       ],
       "auto",
     ),
+    slider("breakpoint", "Stack below", {
+      min: 420,
+      max: 900,
+      step: 10,
+      defaultValue: 640,
+      format: (n) => `${Math.round(n)}px`,
+    }),
     slider("speed", "Speed", {
-      min: 0.05,
+      min: 0.25,
       max: 2.5,
       step: 0.05,
-      defaultValue: 0.2,
-      format: (n) => `${n.toFixed(1)}×`,
+      defaultValue: 1,
+      format: (n) => `${n.toFixed(2)}×`,
     }),
     slider("autoplayInterval", "Autoplay interval", {
       min: 2000,

@@ -75,6 +75,15 @@ export const components: ComponentItem[] = [
     status: "published",
   },
   {
+    slug: "shiny-button",
+    title: "Shiny Button",
+    description:
+      "A CTA that senses the pointer before it arrives — a light slash fades in on approach and glides across the face to follow it.",
+    category: "Buttons",
+    target: "components/lazy-ui/shiny-button/shiny-button.tsx",
+    status: "published",
+  },
+  {
     slug: "gravity-button",
     title: "Gravity Button",
     description:
