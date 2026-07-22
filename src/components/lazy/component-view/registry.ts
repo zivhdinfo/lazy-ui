@@ -32,6 +32,8 @@ import { view as copyButton } from "./configs/buttons/copy-button";
 import { view as flipButton } from "./configs/buttons/flip-button";
 import { view as githubStarsButton } from "./configs/buttons/github-stars-button";
 import { view as glassButton } from "./configs/buttons/glass-button";
+import { view as gravityButton } from "./configs/buttons/gravity-button";
+import { view as shimmerButton } from "./configs/buttons/shimmer-button";
 import { view as imageZoom } from "./configs/effects/image-zoom";
 import { view as scrollImageCarousel } from "./configs/effects/scroll-image-carousel";
 import { view as smoothCursor } from "./configs/effects/smooth-cursor";
@@ -71,6 +73,7 @@ const VIEWS: Record<string, ComponentView> = {
   "flip-button": flipButton,
   "github-stars-button": githubStarsButton,
   "glass-button": glassButton,
+  "gravity-button": gravityButton,
   "grid-background": gridBackground,
   "horizon-cipher": horizonCipher,
   "horizon-glow": horizonGlow,
@@ -95,6 +98,7 @@ const VIEWS: Record<string, ComponentView> = {
   "reveal-animate": revealAnimate,
   "ripple-surface": rippleSurface,
   "scroll-image-carousel": scrollImageCarousel,
+  "shimmer-button": shimmerButton,
   "shiny-text": shinyText,
   "slide-highlight": slideHighlight,
   "slime-background": slimeBackground,

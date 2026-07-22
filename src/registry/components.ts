@@ -66,6 +66,25 @@ export const components: ComponentItem[] = [
     dependencies: ["motion"],
   },
   {
+    slug: "shimmer-button",
+    title: "Shimmer Button",
+    description:
+      "A gradient CTA with a light band sweeping across it, a lit rim, and a tone-tinted ambient shadow — animated entirely in CSS.",
+    category: "Buttons",
+    target: "components/lazy-ui/shimmer-button/shimmer-button.tsx",
+    status: "published",
+  },
+  {
+    slug: "gravity-button",
+    title: "Gravity Button",
+    description:
+      "A magnetic wrapper that pulls any control toward the pointer on a spring, with a parallax inner layer and a field outline while engaged.",
+    category: "Buttons",
+    target: "components/lazy-ui/gravity-button/gravity-button.tsx",
+    status: "published",
+    dependencies: ["motion"],
+  },
+  {
     slug: "image-zoom",
     title: "Image Zoom",
     description:

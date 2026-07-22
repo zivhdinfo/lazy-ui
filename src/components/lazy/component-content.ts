@@ -1,4 +1,4 @@
-type PropRow = {
+﻿type PropRow = {
   name: string;
   type: string;
   default?: string;
@@ -53,7 +53,7 @@ export function Demo() {
       {
         name: "children",
         type: "ReactNode",
-        default: "—",
+        default: "â€”",
         description:
           "The items the pills track. Give each item `position: relative` so it paints above the pills.",
       },
@@ -67,7 +67,7 @@ export function Demo() {
       {
         name: "activeSelector",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
           "Selector for the active item the active pill marks. Omit to render only the hover pill.",
       },
@@ -83,7 +83,7 @@ export function Demo() {
         type: "(matches: HTMLElement[]) => HTMLElement | null",
         default: "first match",
         description:
-          "Pick the real active element when `activeSelector` matches several — e.g. a route mirrored in two lists, or duplicates inside a collapsed section.",
+          "Pick the real active element when `activeSelector` matches several â€” e.g. a route mirrored in two lists, or duplicates inside a collapsed section.",
       },
       {
         name: "as",
@@ -100,19 +100,19 @@ export function Demo() {
       {
         name: "hoverClassName",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Class names for the hover pill. Replaces the built-in style when set.",
       },
       {
         name: "activeClassName",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Class names for the active pill. Replaces the built-in style when set.",
       },
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Class names for the track. Make it a positioning context (`relative`).",
       },
     ],
@@ -144,7 +144,7 @@ export function Demo() {
       {
         name: "tabs",
         type: "AnimatedTab[]",
-        default: "—",
+        default: "â€”",
         description:
           "Array of `{ value, label, content }`. Order defines slide direction.",
       },
@@ -153,18 +153,18 @@ export function Demo() {
         type: "string",
         default: "tabs[0].value",
         description:
-          "Initially selected tab `value`. Uncontrolled — ignored if `value` is set.",
+          "Initially selected tab `value`. Uncontrolled â€” ignored if `value` is set.",
       },
       {
         name: "value",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Selected tab `value`. Controlled mode; pair with `onValueChange`.",
       },
       {
         name: "onValueChange",
         type: "(value: string) => void",
-        default: "—",
+        default: "â€”",
         description: "Fires whenever the active tab changes (controlled or not).",
       },
       {
@@ -177,7 +177,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root card.",
       },
     ],
@@ -222,7 +222,7 @@ export function Demo() {
       {
         name: "content",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Text written to the clipboard on click.",
       },
       {
@@ -230,7 +230,7 @@ export function Demo() {
         type: '"ghost" | "outline" | "solid"',
         default: '"ghost"',
         description:
-          "Visual chrome. `ghost` is bare — icon (and optional label) with no resting background, chrome appearing on hover (the code-block corner button). `outline` and `solid` render a real, self-contained button.",
+          "Visual chrome. `ghost` is bare â€” icon (and optional label) with no resting background, chrome appearing on hover (the code-block corner button). `outline` and `solid` render a real, self-contained button.",
       },
       {
         name: "text",
@@ -279,19 +279,19 @@ export function Demo() {
       {
         name: "copied",
         type: "boolean",
-        default: "—",
+        default: "â€”",
         description: "Controlled copied state. Leave undefined for uncontrolled.",
       },
       {
         name: "onCopiedChange",
         type: "(copied: boolean) => void",
-        default: "—",
+        default: "â€”",
         description: "Fires whenever the copied state changes.",
       },
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the button.",
       },
     ],
@@ -325,13 +325,13 @@ export function Demo() {
       {
         name: "username",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "GitHub username or organization.",
       },
       {
         name: "repo",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "GitHub repository name.",
       },
       {
@@ -343,7 +343,7 @@ export function Demo() {
       {
         name: "value",
         type: "number",
-        default: "—",
+        default: "â€”",
         description:
           "Controlled star count. When provided, automatic fetching is skipped.",
       },
@@ -363,7 +363,7 @@ export function Demo() {
       {
         name: "apiEndpoint",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
           "Optional proxy endpoint. It receives `owner` and `repo` query params and should return `{ stars }`.",
       },
@@ -391,7 +391,7 @@ export function Demo() {
         type: '"full" | "compact" | "plus"',
         default: '"compact"',
         description:
-          "How the star count renders. `full` → 14,021. `compact` → 14k. `plus` → 14000+.",
+          "How the star count renders. `full` â†’ 14,021. `compact` â†’ 14k. `plus` â†’ 14000+.",
       },
       {
         name: "hoverMode",
@@ -428,7 +428,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the anchor button.",
       },
     ],
@@ -449,7 +449,7 @@ export function Demo() {
       {
         name: "children",
         type: "ReactNode",
-        default: "—",
+        default: "â€”",
         description: "Front face content. Ignored when `front` is provided.",
       },
       {
@@ -498,14 +498,164 @@ export function Demo() {
       {
         name: "classNames",
         type: "FlipButtonClassNames",
-        default: "—",
+        default: "â€”",
         description: "Slot-level class overrides for front, back, and content spans.",
       },
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root button.",
+      },
+    ],
+  },
+  "shimmer-button": {
+    componentName: "ShimmerButton",
+    usageCode: `import { ShimmerButton } from "@/components/lazy-ui/shimmer-button";
+
+export function Demo() {
+  return (
+    <div className="flex flex-wrap items-center gap-3">
+      <ShimmerButton>Get the desktop app</ShimmerButton>
+      <ShimmerButton tone="violet" size="lg">Download for Windows</ShimmerButton>
+    </div>
+  );
+}`,
+    api: [
+      {
+        name: "children",
+        type: "ReactNode",
+        default: "â€”",
+        description: "Button content. Icons and label sit in a flex row using the size's gap.",
+      },
+      {
+        name: "tone",
+        type: '"ink" | "violet" | "azure" | "ember"',
+        default: '"ink"',
+        description:
+          "Preset fill. `ink` inverts with the theme (near-black on light, white on dark); the colour tones stay put.",
+      },
+      {
+        name: "size",
+        type: '"sm" | "md" | "lg"',
+        default: '"md"',
+        description: "Controls height, padding, gap, and label size together.",
+      },
+      {
+        name: "speed",
+        type: "number",
+        default: "3.4",
+        description:
+          "Seconds per sweep cycle. The band rests off-canvas for the back half, so this also sets the gap between passes.",
+      },
+      {
+        name: "shimmer",
+        type: "boolean",
+        default: "true",
+        description:
+          "Run the travelling highlight. It stops on its own under `prefers-reduced-motion`.",
+      },
+      {
+        name: "glow",
+        type: "boolean",
+        default: "true",
+        description: "Cast the tone-tinted ambient shadow under the button.",
+      },
+      {
+        name: "from",
+        type: "string",
+        default: "â€”",
+        description: "Custom gradient start colour. Overrides `tone` when paired with `to`.",
+      },
+      {
+        name: "to",
+        type: "string",
+        default: "â€”",
+        description: "Custom gradient end colour. Overrides `tone` when paired with `from`.",
+      },
+      {
+        name: "fullWidth",
+        type: "boolean",
+        default: "false",
+        description: "Stretch the button to fill its container.",
+      },
+      {
+        name: "className",
+        type: "string",
+        default: "â€”",
+        description: "Extra class names merged onto the root button.",
+      },
+    ],
+  },
+  "gravity-button": {
+    componentName: "GravityButton",
+    usageCode: `import { GravityButton } from "@/components/lazy-ui/gravity-button";
+
+export function Demo() {
+  return (
+    <GravityButton strength={0.45} radius={26}>
+      <button className="rounded-lg bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white dark:bg-white dark:text-neutral-900">
+        Hover me
+      </button>
+    </GravityButton>
+  );
+}`,
+    api: [
+      {
+        name: "children",
+        type: "ReactNode",
+        default: "â€”",
+        description:
+          "The control being pulled. It keeps its own chrome, focus ring, and click handling.",
+      },
+      {
+        name: "strength",
+        type: "number",
+        default: "0.4",
+        description: "How hard the content chases the pointer, from 0 (still) to 1 (locked to it).",
+      },
+      {
+        name: "radius",
+        type: "number",
+        default: "24",
+        description:
+          "Maximum travel from rest in px. Clamped radially, so a diagonal pull never travels further than a straight one.",
+      },
+      {
+        name: "depth",
+        type: "number",
+        default: "0.3",
+        description: "Extra travel applied to the inner layer, which reads as a parallax lag.",
+      },
+      {
+        name: "stiffness",
+        type: "number",
+        default: "170",
+        description: "Spring stiffness of the follow. Higher is snappier.",
+      },
+      {
+        name: "damping",
+        type: "number",
+        default: "18",
+        description: "Spring damping of the follow. Higher settles sooner with less overshoot.",
+      },
+      {
+        name: "field",
+        type: "boolean",
+        default: "true",
+        description: "Outline the pull area with a dashed field while the pointer is inside it.",
+      },
+      {
+        name: "disabled",
+        type: "boolean",
+        default: "false",
+        description: "Freeze the content at rest. Reduced-motion users get this automatically.",
+      },
+      {
+        name: "className",
+        type: "string",
+        default: "â€”",
+        description: "Extra class names merged onto the field wrapper.",
       },
     ],
   },
@@ -599,7 +749,7 @@ export function Demo() {
       {
         name: "children",
         type: "React.ReactElement",
-        default: "—",
+        default: "â€”",
         description: "Image or media element rendered inside the zoom surface.",
       },
     ],
@@ -758,13 +908,13 @@ export function Demo() {
       {
         name: "children",
         type: "ReactNode",
-        default: "—",
+        default: "â€”",
         description: "Overlay content rendered above the image surface.",
       },
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names passed to the root element.",
       },
     ],
@@ -807,7 +957,7 @@ export function Demo() {
       {
         name: "children",
         type: "ReactNode",
-        default: "—",
+        default: "â€”",
         description: "Surface where the custom cursor is active.",
       },
       {
@@ -929,13 +1079,13 @@ export function Demo() {
       {
         name: "classNames",
         type: "SmoothCursorClassNames",
-        default: "—",
+        default: "â€”",
         description: "Slot-level class overrides for root, layer, cursor, glyph, and label.",
       },
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root surface.",
       },
     ],
@@ -957,7 +1107,7 @@ export function Demo() {
       {
         name: "children",
         type: "ReactNode",
-        default: "—",
+        default: "â€”",
         description: "Content to reveal.",
       },
       {
@@ -981,7 +1131,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the wrapper span.",
       },
     ],
@@ -1013,7 +1163,7 @@ export function Demo() {
       {
         name: "value",
         type: "number",
-        default: "—",
+        default: "â€”",
         description: "Number to animate toward.",
       },
       {
@@ -1031,20 +1181,20 @@ export function Demo() {
       {
         name: "format",
         type: "(value: number) => string",
-        default: "—",
+        default: "â€”",
         description:
           "Custom formatter. When provided, it owns the rendered text and overrides `separator` / `decimals`.",
       },
       {
         name: "separator",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Thousands separator, for example `,` or `.`.",
       },
       {
         name: "decimals",
         type: "number",
-        default: "—",
+        default: "â€”",
         description: "Fixed decimal places for the animated output.",
       },
       {
@@ -1057,13 +1207,13 @@ export function Demo() {
       {
         name: "children",
         type: "ReactNode",
-        default: "—",
+        default: "â€”",
         description: "Optional suffix or inline content rendered after the count.",
       },
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root span.",
       },
     ],
@@ -1094,7 +1244,7 @@ export function Demo() {
       {
         name: "children",
         type: "ReactNode",
-        default: "—",
+        default: "â€”",
         description: "Text or inline content to render.",
       },
       {
@@ -1130,7 +1280,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root span.",
       },
     ],
@@ -1156,7 +1306,7 @@ export function Demo() {
       {
         name: "text",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
           "Text to animate. Words split on spaces; each letter is its own motion span.",
       },
@@ -1196,7 +1346,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root span.",
       },
     ],
@@ -1222,7 +1372,7 @@ export function Demo() {
       {
         name: "text",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
           "Text to animate. Words split on spaces; each letter rises individually.",
       },
@@ -1260,7 +1410,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root span.",
       },
     ],
@@ -1274,10 +1424,10 @@ export function Demo() {
     <SpinningText
       duration={14}
       radius={5}
-      center={<span className="text-2xl text-neutral-100">★</span>}
+      center={<span className="text-2xl text-neutral-100">â˜…</span>}
       className="text-[11px] tracking-[0.18em] text-neutral-200"
     >
-      BUILD LAZILY • BUILD LAZILY •
+      BUILD LAZILY â€¢ BUILD LAZILY â€¢
     </SpinningText>
   );
 }`,
@@ -1285,7 +1435,7 @@ export function Demo() {
       {
         name: "children",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
           "Letters laid evenly around the ring. The string is also mirrored into an `sr-only` span for screen readers.",
       },
@@ -1312,14 +1462,14 @@ export function Demo() {
       {
         name: "center",
         type: "ReactNode",
-        default: "—",
+        default: "â€”",
         description:
           "Content rendered at the dead center (icon, badge, button). Sits above the spinning ring and ignores pointer events.",
       },
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
           "Extra class names on the wrapper. Font-size and color cascade into each glyph via normal CSS inheritance.",
       },
@@ -1344,7 +1494,7 @@ export function Demo() {
       {
         name: "text",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
           "Final, locked-in text. Used as `aria-label` so screen readers always read the plain string regardless of mode.",
       },
@@ -1379,19 +1529,19 @@ export function Demo() {
         name: "charset",
         type: "string",
         default: '"X$@aHzo0y#?*01+"',
-        description: "Glyphs sampled during the scramble noise — used by every mode.",
+        description: "Glyphs sampled during the scramble noise â€” used by every mode.",
       },
       {
         name: "replayKey",
         type: "string | number | boolean",
-        default: "—",
+        default: "â€”",
         description:
-          "Change this value to replay the animation imperatively — bind it to a counter you increment on click, etc.",
+          "Change this value to replay the animation imperatively â€” bind it to a counter you increment on click, etc.",
       },
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root span.",
       },
     ],
@@ -1414,7 +1564,7 @@ export function Demo() {
       {
         name: "text",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
           "Text to animate. Words split on spaces; each grapheme is its own motion span.",
       },
@@ -1422,7 +1572,7 @@ export function Demo() {
         name: "as",
         type: "ElementType",
         default: '"p"',
-        description: "Root element tag — swap to `h1`, `span`, `div`, etc.",
+        description: "Root element tag â€” swap to `h1`, `span`, `div`, etc.",
       },
       {
         name: "direction",
@@ -1461,9 +1611,9 @@ export function Demo() {
       {
         name: "transition",
         type: "Transition",
-        default: "—",
+        default: "â€”",
         description:
-          "Custom Motion transition. When set, it overrides the per-char duration/delay/easing — apply your own if you need a spring or different curve.",
+          "Custom Motion transition. When set, it overrides the per-char duration/delay/easing â€” apply your own if you need a spring or different curve.",
       },
       {
         name: "perspective",
@@ -1474,13 +1624,13 @@ export function Demo() {
       {
         name: "charClassName",
         type: "string",
-        default: "—",
-        description: "Class merged onto each character span — handy for per-letter color or shadow.",
+        default: "â€”",
+        description: "Class merged onto each character span â€” handy for per-letter color or shadow.",
       },
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root element.",
       },
     ],
@@ -1506,7 +1656,7 @@ export function Demo() {
       {
         name: "text",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
           "Text to animate. Words split on spaces; each letter flips individually.",
       },
@@ -1544,7 +1694,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root span.",
       },
     ],
@@ -1568,9 +1718,9 @@ export function Demo() {
       {
         name: "value",
         type: "number | null",
-        default: "—",
+        default: "â€”",
         description:
-          "Current value (0 → `max`). Pass `null` or omit to show the indeterminate shuttle loop.",
+          "Current value (0 â†’ `max`). Pass `null` or omit to show the indeterminate shuttle loop.",
       },
       {
         name: "max",
@@ -1582,7 +1732,7 @@ export function Demo() {
         name: "size",
         type: '"sm" | "md" | "lg"',
         default: '"md"',
-        description: "Visual size preset — controls bar height.",
+        description: "Visual size preset â€” controls bar height.",
       },
       {
         name: "animation",
@@ -1596,21 +1746,21 @@ export function Demo() {
         type: '"none" | "stripes" | "glow" | "pulse"',
         default: '"none"',
         description:
-          "Visual treatment of the indicator. `stripes` paints a moving barber-pole. `glow` replaces the white fill with a gradient through `glowColors` and modulates brightness directionally — bright pulse when the value rises, dim pulse when it falls. `pulse` dims the fill rhythmically.",
+          "Visual treatment of the indicator. `stripes` paints a moving barber-pole. `glow` replaces the white fill with a gradient through `glowColors` and modulates brightness directionally â€” bright pulse when the value rises, dim pulse when it falls. `pulse` dims the fill rhythmically.",
       },
       {
         name: "glowPalette",
         type: '"default" | "rainbow" | "warm" | "cool" | string[]',
         default: '"default"',
         description:
-          "Palette used by the `glow` effect. Pass a preset name for a built-in template (`default` is `[\"#f7f7f7\", \"#e100ff\"]`; `rainbow` is 7 hues; `warm` and `cool` are 3-color sets) — or pass your own array of CSS colors for full control. The gradient sits inside the white fill and only lights up while the value is changing.",
+          "Palette used by the `glow` effect. Pass a preset name for a built-in template (`default` is `[\"#f7f7f7\", \"#e100ff\"]`; `rainbow` is 7 hues; `warm` and `cool` are 3-color sets) â€” or pass your own array of CSS colors for full control. The gradient sits inside the white fill and only lights up while the value is changing.",
       },
       {
         name: "valuePosition",
         type: '"hidden" | "end" | "above-leading" | "inside-leading" | "edge-leading"',
         default: '"hidden"',
         description:
-          "Where to render the live value label. `end` floats above the bar right-aligned; `above-leading` floats above the bar and x-tracks the fill's leading edge; `inside-leading` sits inside the fill anchored to its leading edge (the bar auto-grows to fit the text); `edge-leading` is a pill chip straddling the bar's top border at the leading edge. Floating labels counter-translate so they stay inside the track at both ends. All positions stream their text frame-by-frame via a DOM ref — no React re-renders.",
+          "Where to render the live value label. `end` floats above the bar right-aligned; `above-leading` floats above the bar and x-tracks the fill's leading edge; `inside-leading` sits inside the fill anchored to its leading edge (the bar auto-grows to fit the text); `edge-leading` is a pill chip straddling the bar's top border at the leading edge. Floating labels counter-translate so they stay inside the track at both ends. All positions stream their text frame-by-frame via a DOM ref â€” no React re-renders.",
       },
       {
         name: "formatValue",
@@ -1621,34 +1771,34 @@ export function Demo() {
       {
         name: "getValueLabel",
         type: "(value: number, max: number) => string",
-        default: "—",
+        default: "â€”",
         description:
           "Screen-reader label (`aria-valuetext`). Forwarded to the Radix primitive.",
       },
       {
         name: "trackClassName",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the track (outer bar).",
       },
       {
         name: "indicatorClassName",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the indicator (the fill).",
       },
       {
         name: "valueClassName",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the value label span.",
       },
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
-          "Extra class names merged onto the outermost element. When a floating label is rendered (`end`, `above-leading`, `edge-leading`), this is the wrapper that the label is positioned against — so width constraints (e.g. `max-w-sm`) anchor the label correctly to the bar's outer frame.",
+          "Extra class names merged onto the outermost element. When a floating label is rendered (`end`, `above-leading`, `edge-leading`), this is the wrapper that the label is positioned against â€” so width constraints (e.g. `max-w-sm`) anchor the label correctly to the bar's outer frame.",
       },
     ],
     credits: [
@@ -1813,34 +1963,34 @@ export function Demo() {
       {
         name: "onIconChange",
         type: "(event: SpringIconLoaderEvent) => void",
-        default: "—",
+        default: "â€”",
         description:
           "Fired exactly when the icon touches the ground and the next icon is selected.",
       },
       {
         name: "onBounce",
         type: "(event: SpringIconLoaderEvent) => void",
-        default: "—",
+        default: "â€”",
         description:
           "Fired on every landing, including loops where there is only one icon.",
       },
       {
         name: "onComplete",
         type: "(event: SpringIconLoaderEvent) => void",
-        default: "—",
+        default: "â€”",
         description: "Fired once when `loading` changes from true to false.",
       },
       {
         name: "classNames",
         type: "SpringIconLoaderClassNames",
-        default: "—",
+        default: "â€”",
         description:
           "Slot-level class overrides for stage, icon, body, image, and shadow.",
       },
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root element.",
       },
     ],
@@ -1877,7 +2027,7 @@ export function Demo() {
       {
         name: "checked",
         type: "boolean",
-        default: "—",
+        default: "â€”",
         description:
           "Controlled checked state. Pair with `onCheckedChange`. Leave undefined for uncontrolled.",
       },
@@ -1890,7 +2040,7 @@ export function Demo() {
       {
         name: "onCheckedChange",
         type: "(checked: boolean) => void",
-        default: "—",
+        default: "â€”",
         description: "Fires on click, keyboard (Space / Enter), or drag release.",
       },
       {
@@ -1918,18 +2068,18 @@ export function Demo() {
         type: "number",
         default: "0.35",
         description:
-          "Velocity threshold (px / ms) at release. Above this, the flick direction wins over position — a fast nudge toggles even before passing the midpoint.",
+          "Velocity threshold (px / ms) at release. Above this, the flick direction wins over position â€” a fast nudge toggles even before passing the midpoint.",
       },
       {
         name: "thumbContent",
         type: "ReactNode",
-        default: "—",
+        default: "â€”",
         description: "Content rendered inside the thumb (icon, dot, etc.).",
       },
       {
         name: "thumbClassName",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the thumb.",
       },
       {
@@ -1947,7 +2097,7 @@ export function Demo() {
       {
         name: "name",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Name forwarded to the hidden form input.",
       },
       {
@@ -1959,7 +2109,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root track.",
       },
     ],
@@ -1982,7 +2132,7 @@ export function Demo() {
 
 export function Demo() {
   return (
-    // The glass refracts whatever sits behind it — place it over imagery.
+    // The glass refracts whatever sits behind it â€” place it over imagery.
     <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-[url('/your-bg.jpg')] bg-cover p-8">
       <GlassButton size="md">Hover me</GlassButton>
       <GlassButton size="lg" tint="cool" distortion={18}>
@@ -1995,7 +2145,7 @@ export function Demo() {
       {
         name: "children",
         type: "ReactNode",
-        default: "—",
+        default: "â€”",
         description:
           "Button label or arbitrary inline content. Rendered twice so the roll can swap one copy for the next.",
       },
@@ -2004,7 +2154,7 @@ export function Demo() {
         type: "number",
         default: "14",
         description:
-          "Refraction strength in CSS pixels — how hard the glass bends the background behind it. The idle drift swings ±2; hover swings ±4 around base+4; a click pops a +24 wave that decays over ~700ms.",
+          "Refraction strength in CSS pixels â€” how hard the glass bends the background behind it. The idle drift swings Â±2; hover swings Â±4 around base+4; a click pops a +24 wave that decays over ~700ms.",
       },
       {
         name: "frequency",
@@ -2024,7 +2174,7 @@ export function Demo() {
         name: "size",
         type: '"sm" | "md" | "lg"',
         default: '"md"',
-        description: "Visual size preset — controls padding and text size.",
+        description: "Visual size preset â€” controls padding and text size.",
       },
       {
         name: "roll",
@@ -2043,7 +2193,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the underlying button.",
       },
     ],
@@ -2066,7 +2216,7 @@ export function Demo() {
       {
         name: "checked",
         type: 'boolean | "indeterminate"',
-        default: "—",
+        default: "â€”",
         description:
           "Controlled checked state. Pass `\"indeterminate\"` for the three-state look. Pair with `onCheckedChange`.",
       },
@@ -2079,7 +2229,7 @@ export function Demo() {
       {
         name: "onCheckedChange",
         type: '(checked: boolean | "indeterminate") => void',
-        default: "—",
+        default: "â€”",
         description: "Fires whenever the state changes.",
       },
       {
@@ -2097,7 +2247,7 @@ export function Demo() {
       {
         name: "name",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Name forwarded to the hidden form input.",
       },
       {
@@ -2109,7 +2259,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root button.",
       },
     ],
@@ -2141,23 +2291,23 @@ export function Demo() {
       {
         name: "src",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
           "Image src painted into the screen area. Cropped with `object-cover object-top`.",
       },
       {
         name: "videoSrc",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
-          "Video src for the screen — autoplays muted, loops, plays inline. Wins over `src`.",
+          "Video src for the screen â€” autoplays muted, loops, plays inline. Wins over `src`.",
       },
       {
         name: "children",
         type: "ReactNode",
-        default: "—",
+        default: "â€”",
         description:
-          "Custom screen content. Wins over `src` / `videoSrc` — drop in a div, gradient, or full lock-screen mock.",
+          "Custom screen content. Wins over `src` / `videoSrc` â€” drop in a div, gradient, or full lock-screen mock.",
       },
       {
         name: "statusBar",
@@ -2187,7 +2337,7 @@ export function Demo() {
         name: "battery",
         type: "number",
         default: "100",
-        description: "Battery percentage (0–100). Drives the inner fill width.",
+        description: "Battery percentage (0â€“100). Drives the inner fill width.",
       },
       {
         name: "batteryText",
@@ -2218,16 +2368,16 @@ export function Demo() {
       {
         name: "screenClassName",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
           "Extra class merged onto the screen wrapper (the rounded layer that clips media).",
       },
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
-          "Extra class merged onto the outer element. Width is governed here — the SVG fills it and the aspect-ratio is locked.",
+          "Extra class merged onto the outer element. Width is governed here â€” the SVG fills it and the aspect-ratio is locked.",
       },
     ],
   },
@@ -2260,14 +2410,14 @@ export function Demo() {
       {
         name: "children",
         type: "ReactElement",
-        default: "—",
+        default: "â€”",
         description:
-          "The trigger — a single React element. AnimateTooltip clones it to attach pointer/focus handlers and a ref.",
+          "The trigger â€” a single React element. AnimateTooltip clones it to attach pointer/focus handlers and a ref.",
       },
       {
         name: "content",
         type: "ReactNode",
-        default: "—",
+        default: "â€”",
         description: "The tooltip body.",
       },
       {
@@ -2275,7 +2425,7 @@ export function Demo() {
         type: '"top" | "right" | "bottom" | "left" | "auto"',
         default: '"top"',
         description:
-          'Which side of the trigger to anchor to. `"auto"` picks the side from where the cursor enters the trigger — top half → top, bottom half → bottom, left/right by dominant axis.',
+          'Which side of the trigger to anchor to. `"auto"` picks the side from where the cursor enters the trigger â€” top half â†’ top, bottom half â†’ bottom, left/right by dominant axis.',
       },
       {
         name: "sideOffset",
@@ -2318,7 +2468,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the content.",
       },
     ],
@@ -2350,7 +2500,7 @@ export function Demo() {
       {
         name: "characters",
         type: "string",
-        default: '"✶✤↣⌧✷*.;:"',
+        default: '"âœ¶âœ¤â†£âŒ§âœ·*.;:"',
         description:
           "Glyph charset. Each lit cell picks one at random and keeps it for that cell's lifetime.",
       },
@@ -2376,7 +2526,7 @@ export function Demo() {
         name: "persistence",
         type: "number",
         default: "2",
-        description: "Trail half-life — higher values make glyphs linger longer.",
+        description: "Trail half-life â€” higher values make glyphs linger longer.",
       },
       {
         name: "enableFade",
@@ -2394,7 +2544,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root container.",
       },
     ],
@@ -2459,7 +2609,7 @@ export function Demo() {
         name: "persistence",
         type: "number",
         default: "1.5",
-        description: "Trail half-life — higher values make pixels linger longer.",
+        description: "Trail half-life â€” higher values make pixels linger longer.",
       },
       {
         name: "lag",
@@ -2477,7 +2627,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root container.",
       },
     ],
@@ -2500,14 +2650,14 @@ export function Demo() {
       {
         name: "frontImage",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
           "URL of the image shown by default. Stays visible where the liquid hasn't passed.",
       },
       {
         name: "backImage",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
           "URL of the image revealed inside the dye trail as the cursor disturbs the surface.",
       },
@@ -2529,14 +2679,14 @@ export function Demo() {
         type: "number",
         default: "0.5",
         description:
-          "Simulation buffer scale (0.25–1). Lower is cheaper but blurrier.",
+          "Simulation buffer scale (0.25â€“1). Lower is cheaper but blurrier.",
       },
       {
         name: "viscous",
         type: "number",
         default: "42",
         description:
-          "Velocity diffusion — higher values make the fluid feel thicker and slower.",
+          "Velocity diffusion â€” higher values make the fluid feel thicker and slower.",
       },
       {
         name: "revealStrength",
@@ -2574,7 +2724,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root container.",
       },
     ],
@@ -2597,19 +2747,19 @@ export function Demo() {
       {
         name: "imageA",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "URL of the first image. Fully visible at progress 0.",
       },
       {
         name: "imageB",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "URL of the second image. Fully visible at progress 1.",
       },
       {
         name: "progress",
         type: "number",
-        default: "—",
+        default: "â€”",
         description:
           "Controlled progress 0..1. When supplied, autoplay is ignored.",
       },
@@ -2624,7 +2774,7 @@ export function Demo() {
         name: "duration",
         type: "number",
         default: "2400",
-        description: "Length of one A → B sweep in milliseconds.",
+        description: "Length of one A â†’ B sweep in milliseconds.",
       },
       {
         name: "hold",
@@ -2672,19 +2822,19 @@ export function Demo() {
         name: "noiseScale",
         type: "number",
         default: "2.4",
-        description: "Noise scale — higher values produce finer streaks.",
+        description: "Noise scale â€” higher values produce finer streaks.",
       },
       {
         name: "onComplete",
         type: "() => void",
-        default: "—",
+        default: "â€”",
         description:
           "Called when the forward sweep finishes (and at each end of a ping-pong cycle).",
       },
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root container.",
       },
     ],
@@ -2713,7 +2863,7 @@ export function Demo() {
         type: "boolean",
         default: "false",
         description:
-          "Move bright bands from column centers to column edges — produces thin rivers of glyphs between dark columns.",
+          "Move bright bands from column centers to column edges â€” produces thin rivers of glyphs between dark columns.",
       },
       {
         name: "bandWidth",
@@ -2769,7 +2919,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root container.",
       },
     ],
@@ -2864,7 +3014,7 @@ export function Demo() {
         type: "number",
         default: "1.4",
         description:
-          "Lateral wobble amplitude — how much each ridge curves with row depth.",
+          "Lateral wobble amplitude â€” how much each ridge curves with row depth.",
       },
       {
         name: "baseAlpha",
@@ -2906,7 +3056,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root container.",
       },
     ],
@@ -2958,7 +3108,7 @@ export function Demo() {
         name: "waveFrequency",
         type: "number",
         default: "1",
-        description: "Spatial frequency of the radial wave — higher = more bands.",
+        description: "Spatial frequency of the radial wave â€” higher = more bands.",
       },
       {
         name: "wavePower",
@@ -2977,7 +3127,7 @@ export function Demo() {
         type: "number",
         default: "1.5",
         description:
-          "Radial darkening exponent — higher concentrates brightness at the center.",
+          "Radial darkening exponent â€” higher concentrates brightness at the center.",
       },
       {
         name: "baseAlpha",
@@ -3032,7 +3182,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root container.",
       },
     ],
@@ -3097,7 +3247,7 @@ export function Demo() {
         type: "number",
         default: "1.5",
         description:
-          "Radial darkening exponent — higher concentrates brightness at the center.",
+          "Radial darkening exponent â€” higher concentrates brightness at the center.",
       },
       {
         name: "baseAlpha",
@@ -3117,7 +3267,7 @@ export function Demo() {
         type: "number",
         default: "0.4",
         description:
-          "Base shape — 0 = full circle, 1 = full square, 0.5 = squircle. Per-cell shape also drifts with radius so the grid morphs outward from the center.",
+          "Base shape â€” 0 = full circle, 1 = full square, 0.5 = squircle. Per-cell shape also drifts with radius so the grid morphs outward from the center.",
       },
       {
         name: "shapeShift",
@@ -3160,7 +3310,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root container.",
       },
     ],
@@ -3194,7 +3344,7 @@ export function Demo() {
       {
         name: "children",
         type: "ReactNode",
-        default: "—",
+        default: "â€”",
         description:
           "Content rendered above the gradient. Wrapped in `relative z-10` so layout sits on top of the canvas.",
       },
@@ -3203,14 +3353,14 @@ export function Demo() {
         type: "string[]",
         default: '["#050505","#161616","#525252","#a3a3a3","#f8f8f8"]',
         description:
-          "Gradient anchor colors. 2–8 entries; each anchor drifts on its own lissajous curve. Default is the Lazy-ui silver ramp — pass your own palette to recolor without code changes.",
+          "Gradient anchor colors. 2â€“8 entries; each anchor drifts on its own lissajous curve. Default is the Lazy-ui silver ramp â€” pass your own palette to recolor without code changes.",
       },
       {
         name: "speed",
         type: "number",
         default: "0.3",
         description:
-          "Animation speed multiplier. Multiplied into every anchor's drift frequency — `0` freezes the field on its starting positions.",
+          "Animation speed multiplier. Multiplied into every anchor's drift frequency â€” `0` freezes the field on its starting positions.",
       },
       {
         name: "mouseFollow",
@@ -3224,7 +3374,7 @@ export function Demo() {
         type: "number",
         default: "0.6",
         description:
-          "How tightly the followed anchor lerps toward the cursor (0–1). Lower values drag through honey; higher values snap.",
+          "How tightly the followed anchor lerps toward the cursor (0â€“1). Lower values drag through honey; higher values snap.",
       },
       {
         name: "ripple",
@@ -3238,7 +3388,7 @@ export function Demo() {
         type: "number",
         default: "0.06",
         description:
-          "Ripple amplitude in UV units. Values past ~0.12 start to look psychedelic — keep under 0.1 for a polished feel.",
+          "Ripple amplitude in UV units. Values past ~0.12 start to look psychedelic â€” keep under 0.1 for a polished feel.",
       },
       {
         name: "backgroundColor",
@@ -3252,28 +3402,28 @@ export function Demo() {
         type: "boolean",
         default: "false",
         description:
-          "Adds a second overlay layer: faint contour bands inside the gradient plus a subtle grid masked toward the edges. Use sparingly — it doubles the visual density.",
+          "Adds a second overlay layer: faint contour bands inside the gradient plus a subtle grid masked toward the edges. Use sparingly â€” it doubles the visual density.",
       },
       {
         name: "wireframeOpacity",
         type: "number",
         default: "0.45",
         description:
-          "Opacity of the wireframe overlay (0–1). Only applied when `wireframe` is on.",
+          "Opacity of the wireframe overlay (0â€“1). Only applied when `wireframe` is on.",
       },
       {
         name: "grain",
         type: "number",
         default: "0.06",
         description:
-          "Film-grain intensity blended over the gradient (0–0.3). Hides banding on 8-bit displays. Set to `0` for a perfectly clean fill.",
+          "Film-grain intensity blended over the gradient (0â€“0.3). Hides banding on 8-bit displays. Set to `0` for a perfectly clean fill.",
       },
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
-          "Extra class names merged onto the outermost wrapper. Width and height are governed here — the canvas fills the container.",
+          "Extra class names merged onto the outermost wrapper. Width and height are governed here â€” the canvas fills the container.",
       },
     ],
   },
@@ -3302,7 +3452,7 @@ export function Demo() {
           <span className="font-semibold italic">bend with you.</span>
         </h1>
         <p className="mt-3 text-sm text-white/80">
-          Move the cursor — distortion peaks at a ring around it, like a
+          Move the cursor â€” distortion peaks at a ring around it, like a
           black hole's accretion disk. Never just a hot point at the centre.
         </p>
       </main>
@@ -3313,7 +3463,7 @@ export function Demo() {
       {
         name: "children",
         type: "ReactNode",
-        default: "—",
+        default: "â€”",
         description:
           "Content rendered above the canvas. Wrapped in `relative z-10 h-full w-full` so centered layouts resolve.",
       },
@@ -3327,9 +3477,9 @@ export function Demo() {
       {
         name: "colors",
         type: "string[]",
-        default: "—",
+        default: "â€”",
         description:
-          "Custom rainbow stops (2–6 entries). Accepts hex, `rgb()`/`rgba()`, or `hsl()`. Overrides `palette`.",
+          "Custom rainbow stops (2â€“6 entries). Accepts hex, `rgb()`/`rgba()`, or `hsl()`. Overrides `palette`.",
       },
       {
         name: "speed",
@@ -3343,49 +3493,49 @@ export function Demo() {
         type: "number",
         default: "13",
         description:
-          "Vertical streak count — multiplied into the sine frequency. Higher = more, thinner streaks.",
+          "Vertical streak count â€” multiplied into the sine frequency. Higher = more, thinner streaks.",
       },
       {
         name: "flow",
         type: "number",
         default: "1",
         description:
-          "How much the analytic flow + 4-octave fbm warp the streaks' X position (0–1). Smoothed internally — preset switches and slider drags glide between values instead of jumping. At `0` the streaks stand perfectly vertical.",
+          "How much the analytic flow + 4-octave fbm warp the streaks' X position (0â€“1). Smoothed internally â€” preset switches and slider drags glide between values instead of jumping. At `0` the streaks stand perfectly vertical.",
       },
       {
         name: "glow",
         type: "number",
         default: "0.55",
         description:
-          "Soft bloom around the brightest streak pixels (0–1). Implemented as a `smoothstep(0.55, 1.0, streaks) * glow` lift on intensity.",
+          "Soft bloom around the brightest streak pixels (0â€“1). Implemented as a `smoothstep(0.55, 1.0, streaks) * glow` lift on intensity.",
       },
       {
         name: "vignette",
         type: "number",
         default: "0.55",
         description:
-          "Radial darkening at the canvas corners (0–1). `0` keeps the edges fully lit.",
+          "Radial darkening at the canvas corners (0â€“1). `0` keeps the edges fully lit.",
       },
       {
         name: "grain",
         type: "number",
         default: "0.04",
         description:
-          "Film-grain intensity (0–0.2). Gated by streak brightness so the dark gaps stay clean.",
+          "Film-grain intensity (0â€“0.2). Gated by streak brightness so the dark gaps stay clean.",
       },
       {
         name: "mouseFollow",
         type: "boolean",
         default: "true",
         description:
-          "Streaks bend around a ring centred on the cursor — distortion peaks at a fixed radius (≈0.24 UV) and tails off both inward and outward, like a black hole's accretion disk rather than a hot point at the pointer. Enter/leave ramps via a lerped active flag so the orbit fades in and out instead of snapping.",
+          "Streaks bend around a ring centred on the cursor â€” distortion peaks at a fixed radius (â‰ˆ0.24 UV) and tails off both inward and outward, like a black hole's accretion disk rather than a hot point at the pointer. Enter/leave ramps via a lerped active flag so the orbit fades in and out instead of snapping.",
       },
       {
         name: "mouseInfluence",
         type: "number",
         default: "0.5",
         description:
-          "Strength of the ring distortion + orbital glow (0–1). Smoothed internally so prop changes interpolate over ~0.5s.",
+          "Strength of the ring distortion + orbital glow (0â€“1). Smoothed internally so prop changes interpolate over ~0.5s.",
       },
       {
         name: "backgroundColor",
@@ -3397,9 +3547,9 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
-          "Extra class names merged onto the outermost wrapper. Width and height are governed here — the canvas fills the container.",
+          "Extra class names merged onto the outermost wrapper. Width and height are governed here â€” the canvas fills the container.",
       },
     ],
   },
@@ -3430,7 +3580,7 @@ export function Demo() {
       {
         name: "children",
         type: "ReactNode",
-        default: "—",
+        default: "â€”",
         description:
           "Content rendered above the canvas. Wrapped in `relative z-10` so layout sits on top of the gradient.",
       },
@@ -3444,9 +3594,9 @@ export function Demo() {
       {
         name: "colors",
         type: "string[]",
-        default: "—",
+        default: "â€”",
         description:
-          "Custom multi-stop palette (2–6 entries). Same convention as the presets: index 0 = bright inner stop, last = outer stop. Accepts hex, `rgb()`/`rgba()`, or `hsl()`. Overrides `palette`.",
+          "Custom multi-stop palette (2â€“6 entries). Same convention as the presets: index 0 = bright inner stop, last = outer stop. Accepts hex, `rgb()`/`rgba()`, or `hsl()`. Overrides `palette`.",
       },
       {
         name: "layout",
@@ -3460,21 +3610,21 @@ export function Demo() {
         type: "number",
         default: "0.72",
         description:
-          "Glow falloff radius (0–1). Higher = blobs bleed further across the canvas. Internally maps to a Gaussian alpha falloff so the edge is always smooth.",
+          "Glow falloff radius (0â€“1). Higher = blobs bleed further across the canvas. Internally maps to a Gaussian alpha falloff so the edge is always smooth.",
       },
       {
         name: "intensity",
         type: "number",
         default: "1.1",
         description:
-          "Color brightness multiplier (0–2). At `1` the palette renders at its native brightness; above `1` lets the corners blow out for a hot-glow look.",
+          "Color brightness multiplier (0â€“2). At `1` the palette renders at its native brightness; above `1` lets the corners blow out for a hot-glow look.",
       },
       {
         name: "grain",
         type: "number",
         default: "0.18",
         description:
-          "Grain dither amount (0–0.5). Modulated by local luminance — dark zones stay clean, the gradient edges acquire a gritty film-stock dither.",
+          "Grain dither amount (0â€“0.5). Modulated by local luminance â€” dark zones stay clean, the gradient edges acquire a gritty film-stock dither.",
       },
       {
         name: "speed",
@@ -3488,20 +3638,20 @@ export function Demo() {
         type: "number",
         default: "0.05",
         description:
-          "How far each anchor orbits its corner (0–0.2 in UV units). Independent phase per anchor so the blobs breathe asynchronously.",
+          "How far each anchor orbits its corner (0â€“0.2 in UV units). Independent phase per anchor so the blobs breathe asynchronously.",
       },
       {
         name: "mouseFollow",
         type: "boolean",
         default: "true",
         description:
-          "Pointer subtly tugs the nearest anchor toward the cursor — keeps the orbital drift visible, just biased toward the pointer.",
+          "Pointer subtly tugs the nearest anchor toward the cursor â€” keeps the orbital drift visible, just biased toward the pointer.",
       },
       {
         name: "mouseInfluence",
         type: "number",
         default: "0.4",
-        description: "Cursor pull strength (0–1).",
+        description: "Cursor pull strength (0â€“1).",
       },
       {
         name: "backgroundColor",
@@ -3513,9 +3663,9 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
-          "Extra class names merged onto the outermost wrapper. Width and height are governed here — the canvas fills the container.",
+          "Extra class names merged onto the outermost wrapper. Width and height are governed here â€” the canvas fills the container.",
       },
     ],
   },
@@ -3548,7 +3698,7 @@ export function Demo() {
       {
         name: "children",
         type: "ReactNode",
-        default: "—",
+        default: "â€”",
         description:
           "Content rendered above the canvas. Wrapped in `relative z-10 h-full w-full` so centered layouts resolve.",
       },
@@ -3562,9 +3712,9 @@ export function Demo() {
       {
         name: "colors",
         type: "string[]",
-        default: "—",
+        default: "â€”",
         description:
-          "Custom palette — 3 stops (deep, mid, peak), with an optional 4th entry for the specular highlight tint. Accepts hex, `rgb()`/`rgba()`. Overrides `palette`.",
+          "Custom palette â€” 3 stops (deep, mid, peak), with an optional 4th entry for the specular highlight tint. Accepts hex, `rgb()`/`rgba()`. Overrides `palette`.",
       },
       {
         name: "speed",
@@ -3578,55 +3728,55 @@ export function Demo() {
         type: "number",
         default: "0.85",
         description:
-          "Domain-warp depth (0–2). Higher = thicker, ropier swirls that loop back on themselves; lower = open, lazy currents. Drives the recursive fbm warp factor.",
+          "Domain-warp depth (0â€“2). Higher = thicker, ropier swirls that loop back on themselves; lower = open, lazy currents. Drives the recursive fbm warp factor.",
       },
       {
         name: "shine",
         type: "number",
         default: "1",
         description:
-          "Specular highlight intensity (0–2). The \"wet\" look. `0` removes the highlights entirely and leaves a flat, matte marble.",
+          "Specular highlight intensity (0â€“2). The \"wet\" look. `0` removes the highlights entirely and leaves a flat, matte marble.",
       },
       {
         name: "roughness",
         type: "number",
         default: "0.35",
         description:
-          "Surface roughness (0–1). Maps to the Blinn-Phong exponent: low values give mirror-like pinpoint hotspots, high values give soft satin sheens.",
+          "Surface roughness (0â€“1). Maps to the Blinn-Phong exponent: low values give mirror-like pinpoint hotspots, high values give soft satin sheens.",
       },
       {
         name: "detail",
         type: "number",
         default: "1",
         description:
-          "Height amplitude of the marbling (0–2). Drives how pronounced the embossing is — peaks read brighter and the normal map produces stronger highlights.",
+          "Height amplitude of the marbling (0â€“2). Drives how pronounced the embossing is â€” peaks read brighter and the normal map produces stronger highlights.",
       },
       {
         name: "contrast",
         type: "number",
         default: "0.5",
         description:
-          "Sharpness of the color bands between the three palette stops (0–1). `0` blurs into a smooth gradient; `1` cuts the colors into hard ropes of pigment.",
+          "Sharpness of the color bands between the three palette stops (0â€“1). `0` blurs into a smooth gradient; `1` cuts the colors into hard ropes of pigment.",
       },
       {
         name: "grain",
         type: "number",
         default: "0.04",
         description:
-          "Film-grain intensity (0–0.2). Hides banding on 8-bit displays and sells the \"thick liquid\" texture.",
+          "Film-grain intensity (0â€“0.2). Hides banding on 8-bit displays and sells the \"thick liquid\" texture.",
       },
       {
         name: "mouseFollow",
         type: "boolean",
         default: "true",
         description:
-          "Pointer adds a Gaussian bulge to the height field — the slime dimples under the cursor like a finger pressing into pudding. Fades in and out on enter/leave so the dimple never snaps.",
+          "Pointer adds a Gaussian bulge to the height field â€” the slime dimples under the cursor like a finger pressing into pudding. Fades in and out on enter/leave so the dimple never snaps.",
       },
       {
         name: "mouseInfluence",
         type: "number",
         default: "0.6",
-        description: "Bulge strength (0–1).",
+        description: "Bulge strength (0â€“1).",
       },
       {
         name: "backgroundColor",
@@ -3638,9 +3788,9 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
-          "Extra class names merged onto the outermost wrapper. Width and height are governed here — the canvas fills the container.",
+          "Extra class names merged onto the outermost wrapper. Width and height are governed here â€” the canvas fills the container.",
       },
     ],
   },
@@ -3671,36 +3821,36 @@ export function Demo() {
       {
         name: "imageA",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
           "URL of the first image. Loaded via `THREE.TextureLoader` with `crossOrigin = anonymous`; `LinearFilter` and no mipmaps so the texture stays sharp.",
       },
       {
         name: "imageB",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
           "URL of the second image. Same loader settings as `imageA`. Both must finish loading before the first frame paints.",
       },
       {
         name: "progress",
         type: "number",
-        default: "—",
+        default: "â€”",
         description:
-          "Controlled progress 0–1. When provided, the internal phase machine and autoPlay are bypassed — the parent fully owns the sweep.",
+          "Controlled progress 0â€“1. When provided, the internal phase machine and autoPlay are bypassed â€” the parent fully owns the sweep.",
       },
       {
         name: "autoPlay",
         type: "boolean",
         default: "true",
         description:
-          "Animate progress automatically through forward → hold → backward → hold → loop. Ignored when `progress` is supplied.",
+          "Animate progress automatically through forward â†’ hold â†’ backward â†’ hold â†’ loop. Ignored when `progress` is supplied.",
       },
       {
         name: "duration",
         type: "number",
         default: "2400",
-        description: "Full A → B sweep, in milliseconds.",
+        description: "Full A â†’ B sweep, in milliseconds.",
       },
       {
         name: "hold",
@@ -3721,28 +3871,28 @@ export function Demo() {
         type: '"iris" | "ember" | "ice" | "silver"',
         default: '"iris"',
         description:
-          "Color palette for the sparkle bloom at the wipe boundary. Built from IQ's `a + b * cos(2π(c*t + d))` formula.",
+          "Color palette for the sparkle bloom at the wipe boundary. Built from IQ's `a + b * cos(2Ï€(c*t + d))` formula.",
       },
       {
         name: "intensity",
         type: "number",
         default: "0.005",
         description:
-          "Sparkle-core brightness (≈ 0.001–0.02). Driven by `pow(intensity / |d|, 1.5)` so small bumps make a big visual difference.",
+          "Sparkle-core brightness (â‰ˆ 0.001â€“0.02). Driven by `pow(intensity / |d|, 1.5)` so small bumps make a big visual difference.",
       },
       {
         name: "iterations",
         type: "number",
         default: "4",
         description:
-          "Kaleidoscope fold count (1–6). More folds = more sparkle structure at the boundary.",
+          "Kaleidoscope fold count (1â€“6). More folds = more sparkle structure at the boundary.",
       },
       {
         name: "sparkleStrength",
         type: "number",
         default: "1",
         description:
-          "How much the sparkle layer contributes at the boundary (0–2). The sparkle is multiplied by the boundary edge weight, so it only ever appears at the moving wipe — never on settled regions.",
+          "How much the sparkle layer contributes at the boundary (0â€“2). The sparkle is multiplied by the boundary edge weight, so it only ever appears at the moving wipe â€” never on settled regions.",
       },
       {
         name: "softness",
@@ -3782,16 +3932,16 @@ export function Demo() {
       {
         name: "onComplete",
         type: "() => void",
-        default: "—",
+        default: "â€”",
         description:
-          "Fires when the forward sweep finishes — and again at each end when looping.",
+          "Fires when the forward sweep finishes â€” and again at each end when looping.",
       },
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
-          "Extra class names merged onto the mount wrapper. Width and height are governed here — the canvas fills the container.",
+          "Extra class names merged onto the mount wrapper. Width and height are governed here â€” the canvas fills the container.",
       },
     ],
   },
@@ -3827,7 +3977,7 @@ export function Demo() {
         name: "size",
         type: "number",
         default: "24",
-        description: "Cell size in pixels — the SVG pattern tile is `size × size`.",
+        description: "Cell size in pixels â€” the SVG pattern tile is `size Ã— size`.",
       },
       {
         name: "lineWidth",
@@ -3884,7 +4034,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
           "Extra class names merged onto the root. The root is `pointer-events-none absolute inset-0` by default; drop it into any `relative` parent.",
       },
@@ -3931,7 +4081,7 @@ export function Demo() {
       {
         name: "items",
         type: "StackListItem[]",
-        default: "—",
+        default: "â€”",
         description:
           "Array of `{ id, content }`. The first entry sits on top; later entries stack below it.",
       },
@@ -3940,7 +4090,7 @@ export function Demo() {
         type: '"blur" | "scale" | "bounce"',
         default: '"blur"',
         description:
-          "Entrance/exit animation. `blur` is a defocus → focus sweep; `scale` is a visible pop; `bounce` is a directional spring translate.",
+          "Entrance/exit animation. `blur` is a defocus â†’ focus sweep; `scale` is a visible pop; `bounce` is a directional spring translate.",
       },
       {
         name: "enterFrom",
@@ -4010,7 +4160,7 @@ export function Demo() {
         type: "boolean",
         default: "false",
         description:
-          "Stack cards on top of each other (shadcn-toast style) instead of rendering them as a scrolling list. Hovering the container fans the stack out; the pointer leaving collapses it back. The stack anchors on the side `enterFrom` points to (top → anchored at top and fans downward, bottom → anchored at bottom and fans upward).",
+          "Stack cards on top of each other (shadcn-toast style) instead of rendering them as a scrolling list. Hovering the container fans the stack out; the pointer leaving collapses it back. The stack anchors on the side `enterFrom` points to (top â†’ anchored at top and fans downward, bottom â†’ anchored at bottom and fans upward).",
       },
       {
         name: "stackDepth",
@@ -4035,14 +4185,14 @@ export function Demo() {
       {
         name: "onDismiss",
         type: "(item: StackListItem) => void",
-        default: "—",
+        default: "â€”",
         description:
           "Fires when a card commits a swipe dismiss. The card is removed from internal state before the callback runs.",
       },
       {
         name: "onItemClick",
         type: "(item: StackListItem) => void",
-        default: "—",
+        default: "â€”",
         description:
           "Fires when a card is clicked or activated by `Enter` / `Space`. Providing this also turns the card into a focusable `button`.",
       },
@@ -4082,27 +4232,27 @@ export function Demo() {
       {
         name: "renderItem",
         type: "(item: StackListItem) => ReactNode",
-        default: "—",
+        default: "â€”",
         description:
           "Optional custom card renderer. Defaults to a neutral text row.",
       },
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root container.",
       },
       {
         name: "itemClassName",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
           "Extra class names merged onto the outer frame of every card.",
       },
       {
         name: "innerClassName",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
           "Extra class names merged onto the inner content surface of every card.",
       },
@@ -4145,7 +4295,7 @@ export function Demo() {
         type: "number",
         default: "3",
         description:
-          "Chromatic channel iterations (1–6). Layers 1–3 add R/G/B ghosts, 4–6 add C/M/Y — more layers = richer fringes.",
+          "Chromatic channel iterations (1â€“6). Layers 1â€“3 add R/G/B ghosts, 4â€“6 add C/M/Y â€” more layers = richer fringes.",
       },
       {
         name: "spiralArms",
@@ -4164,14 +4314,14 @@ export function Demo() {
         type: "number",
         default: "0.6",
         description:
-          "Tangential offset intensity — drives the spiral twist on top of the radial push.",
+          "Tangential offset intensity â€” drives the spiral twist on top of the radial push.",
       },
       {
         name: "lineThickness",
         type: "number",
         default: "0.06",
         description:
-          "Streak sharpness — numerator of `lineThickness / length(gridCell)`. Higher = thicker, blurrier streaks.",
+          "Streak sharpness â€” numerator of `lineThickness / length(gridCell)`. Higher = thicker, blurrier streaks.",
       },
       {
         name: "falloff",
@@ -4201,7 +4351,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root container.",
       },
     ],
@@ -4239,7 +4389,7 @@ export function Demo() {
       {
         name: "children",
         type: "ReactNode",
-        default: "—",
+        default: "â€”",
         description:
           "Content rendered above the canvas. Wrapped in `relative z-10 h-full w-full` so centered layouts resolve.",
       },
@@ -4253,7 +4403,7 @@ export function Demo() {
       {
         name: "colors",
         type: "[string, string, string]",
-        default: "—",
+        default: "â€”",
         description:
           "Custom palette as `[surface, highlight, shadow]`. Accepts hex or `rgb()`/`rgba()`. Overrides `palette`.",
       },
@@ -4283,56 +4433,56 @@ export function Demo() {
         type: "number",
         default: "1",
         description:
-          "Ridge sharpness (0.2–4). Higher values pinch each ridge into a thinner, more defined band; lower values blur the ridges into a smooth gradient.",
+          "Ridge sharpness (0.2â€“4). Higher values pinch each ridge into a thinner, more defined band; lower values blur the ridges into a smooth gradient.",
       },
       {
         name: "depth",
         type: "number",
         default: "1",
         description:
-          "Shading contrast (0–3). Drives how strongly each ridge picks up the directional highlight and shadow. `0` leaves a flat surface with only the center sheen and vignette.",
+          "Shading contrast (0â€“3). Drives how strongly each ridge picks up the directional highlight and shadow. `0` leaves a flat surface with only the center sheen and vignette.",
       },
       {
         name: "lightAngle",
         type: "number",
         default: "315",
         description:
-          "Light direction in degrees. `0` = light from the right, `90` = below, `315` = top-right (the default — matches the canonical light-from-above-left look).",
+          "Light direction in degrees. `0` = light from the right, `90` = below, `315` = top-right (the default â€” matches the canonical light-from-above-left look).",
       },
       {
         name: "centerGlow",
         type: "number",
         default: "0.18",
         description:
-          "Center brightness lift (0–1). Subtle radial highlight pulled toward the origin — simulates an overhead key light catching the inner rings.",
+          "Center brightness lift (0â€“1). Subtle radial highlight pulled toward the origin â€” simulates an overhead key light catching the inner rings.",
       },
       {
         name: "vignette",
         type: "number",
         default: "0.2",
         description:
-          "Vignette intensity at the corners (0–1). Fades toward the palette's shadow color in the far edges.",
+          "Vignette intensity at the corners (0â€“1). Fades toward the palette's shadow color in the far edges.",
       },
       {
         name: "originX",
         type: "number",
         default: "0.5",
         description:
-          "Horizontal center of the rings, normalized 0–1. `0.5` is the middle, `0` pins the origin to the left edge.",
+          "Horizontal center of the rings, normalized 0â€“1. `0.5` is the middle, `0` pins the origin to the left edge.",
       },
       {
         name: "originY",
         type: "number",
         default: "0.5",
         description:
-          "Vertical center of the rings, normalized 0–1. `0.5` is the middle, `0` pins the origin to the top edge.",
+          "Vertical center of the rings, normalized 0â€“1. `0.5` is the middle, `0` pins the origin to the top edge.",
       },
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
-          "Extra class names merged onto the outermost wrapper. Width and height are governed here — the canvas fills the container.",
+          "Extra class names merged onto the outermost wrapper. Width and height are governed here â€” the canvas fills the container.",
       },
     ],
   },
@@ -4370,7 +4520,7 @@ export function Demo() {
       {
         name: "children",
         type: "ReactNode",
-        default: "—",
+        default: "â€”",
         description:
           "Content rendered above the canvas. Wrapped in `relative z-10 h-full w-full` so centered layouts resolve.",
       },
@@ -4384,7 +4534,7 @@ export function Demo() {
       {
         name: "colors",
         type: "string[]",
-        default: "—",
+        default: "â€”",
         description:
           "Custom 5-stop palette `[base, ambient, lightA, lightB, sparkle]`. Hex or `rgb()`/`rgba()`. Overrides `palette`.",
       },
@@ -4407,14 +4557,14 @@ export function Demo() {
         type: "number",
         default: "1.3",
         description:
-          "Domain-warp depth (0–3). Drives how tightly the liquid curls back on itself — `0` produces gentle cloud-like waves, higher values create dense ropy reflections.",
+          "Domain-warp depth (0â€“3). Drives how tightly the liquid curls back on itself â€” `0` produces gentle cloud-like waves, higher values create dense ropy reflections.",
       },
       {
         name: "relief",
         type: "number",
         default: "0.85",
         description:
-          "Surface relief (0.1–4). The implicit Z component of the normal. Lower values yield more mirror-like flat reflections; higher values emboss the surface deeper.",
+          "Surface relief (0.1â€“4). The implicit Z component of the normal. Lower values yield more mirror-like flat reflections; higher values emboss the surface deeper.",
       },
       {
         name: "tilt",
@@ -4428,42 +4578,42 @@ export function Demo() {
         type: "number",
         default: "1.4",
         description:
-          "Specular highlight intensity (0–3). Brightness of both reflected lights and the rim crescents along curl edges.",
+          "Specular highlight intensity (0â€“3). Brightness of both reflected lights and the rim crescents along curl edges.",
       },
       {
         name: "roughness",
         type: "number",
         default: "0.12",
         description:
-          "Surface roughness (0–1). `0` produces needle-sharp pinpoint glints; `1` smears them into a soft satin sheen across the whole crest.",
+          "Surface roughness (0â€“1). `0` produces needle-sharp pinpoint glints; `1` smears them into a soft satin sheen across the whole crest.",
       },
       {
         name: "ambient",
         type: "number",
         default: "0.3",
         description:
-          "Ambient base glow strength (0–1). Lifts the dead-black shadow so the unlit areas read as a single illuminated volume rather than empty space.",
+          "Ambient base glow strength (0â€“1). Lifts the dead-black shadow so the unlit areas read as a single illuminated volume rather than empty space.",
       },
       {
         name: "mouseFollow",
         type: "boolean",
         default: "true",
         description:
-          "When `true`, the cursor pushes a soft Gaussian bulge into the height field — the liquid stirs around the pointer.",
+          "When `true`, the cursor pushes a soft Gaussian bulge into the height field â€” the liquid stirs around the pointer.",
       },
       {
         name: "mouseInfluence",
         type: "number",
         default: "0.55",
         description:
-          "Cursor stir strength (0–1). Multiplied by the active-pointer ease so the bulge fades back to neutral when the pointer leaves.",
+          "Cursor stir strength (0â€“1). Multiplied by the active-pointer ease so the bulge fades back to neutral when the pointer leaves.",
       },
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description:
-          "Extra class names merged onto the outermost wrapper. Width and height are governed here — the canvas fills the container.",
+          "Extra class names merged onto the outermost wrapper. Width and height are governed here â€” the canvas fills the container.",
       },
     ],
   },
@@ -4484,14 +4634,14 @@ export function Demo() {
       {
         name: "heading",
         type: "ReactNode",
-        default: "—",
+        default: "â€”",
         description:
           "Heading content. Wrap a segment in `<em>` for the muted-italic accent.",
       },
       {
         name: "subhead",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Sub-heading paragraph beneath the title.",
       },
       {
@@ -4511,7 +4661,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root `<section>`.",
       },
     ],
@@ -4539,13 +4689,13 @@ export function ControlledDemo() {
       {
         name: "heading",
         type: "ReactNode",
-        default: "—",
+        default: "â€”",
         description: "Heading content with optional `<em>` accents.",
       },
       {
         name: "subhead",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Sub-heading paragraph (rendered above the savings badge).",
       },
       {
@@ -4558,13 +4708,13 @@ export function ControlledDemo() {
       {
         name: "onPeriodChange",
         type: '(p: "yearly" | "monthly") => void',
-        default: "—",
+        default: "â€”",
         description: "Fires whenever the toggle pill is clicked.",
       },
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root `<section>`.",
       },
     ],
@@ -4586,7 +4736,7 @@ export function Demo() {
       {
         name: "heading",
         type: "ReactNode",
-        default: "—",
+        default: "â€”",
         description: "Heading content with optional `<em>` accents.",
       },
       {
@@ -4604,7 +4754,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root `<section>`.",
       },
     ],
@@ -4620,13 +4770,13 @@ export function Demo() {
       {
         name: "eyebrow",
         type: "string",
-        default: '"Pricing · compare"',
+        default: '"Pricing Â· compare"',
         description: "Uppercase mono label above the heading.",
       },
       {
         name: "heading",
         type: "ReactNode",
-        default: "—",
+        default: "â€”",
         description: "Heading content with optional `<em>` accents.",
       },
       {
@@ -4639,7 +4789,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root `<section>`.",
       },
     ],
@@ -4655,13 +4805,13 @@ export function Demo() {
       {
         name: "eyebrow",
         type: "string",
-        default: '"Pricing · usage based"',
+        default: '"Pricing Â· usage based"',
         description: "Uppercase mono label above the heading.",
       },
       {
         name: "heading",
         type: "ReactNode",
-        default: "—",
+        default: "â€”",
         description: "Heading content with optional `<em>` accents.",
       },
       {
@@ -4680,7 +4830,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root `<section>`.",
       },
     ],
@@ -4751,7 +4901,7 @@ export function Demo() {
         type: "number",
         default: "1",
         description:
-          "Reveal speed multiplier — higher values shorten the cubic ease-in.",
+          "Reveal speed multiplier â€” higher values shorten the cubic ease-in.",
       },
       {
         name: "flicker",
@@ -4777,7 +4927,7 @@ export function Demo() {
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root container.",
       },
     ],
@@ -4786,7 +4936,7 @@ export function Demo() {
         label: "once-ui MatrixFx",
         href: "https://github.com/once-ui-system/core/blob/main/packages/core/src/components/MatrixFx.tsx",
         description:
-          "Original concept — reveal-from-origin dot canvas with ripple/wave displacement. This rewrite slims the render to a single path, swaps a paramsRef for prop-driven restarts, and adds the cursor + pulse shapes.",
+          "Original concept â€” reveal-from-origin dot canvas with ripple/wave displacement. This rewrite slims the render to a single path, swaps a paramsRef for prop-driven restarts, and adds the cursor + pulse shapes.",
       },
     ],
   },
@@ -4795,7 +4945,7 @@ export function Demo() {
     usageCode: `import { BorderGlow } from "@/components/lazy-ui/border-glow";
 
 // In "cursor" mode every card listens to the pointer, so a whole grid
-// lights up wherever the cursor goes — not just the card under it.
+// lights up wherever the cursor goes â€” not just the card under it.
 export function Demo() {
   return (
     <div className="grid grid-cols-2 gap-3">
@@ -4823,7 +4973,7 @@ export function Demo() {
         type: '"auto" | "cursor" | "hover"',
         default: '"auto"',
         description:
-          '"auto" sweeps a soft gradient arc around the border on a loop. "cursor" points the arc toward the pointer and fades it in by proximity even from outside the card — so a whole grid lights up at once. "hover" does the same but only while the pointer is over this card.',
+          '"auto" sweeps a soft gradient arc around the border on a loop. "cursor" points the arc toward the pointer and fades it in by proximity even from outside the card â€” so a whole grid lights up at once. "hover" does the same but only while the pointer is over this card.',
       },
       {
         name: "colors",
@@ -4856,7 +5006,7 @@ export function Demo() {
         type: "number",
         default: "22",
         description:
-          "Outer glow blur radius in CSS pixels — the soft halo around the lit arc. 0 keeps just the crisp arc with no halo.",
+          "Outer glow blur radius in CSS pixels â€” the soft halo around the lit arc. 0 keeps just the crisp arc with no halo.",
       },
       {
         name: "intensity",
@@ -4869,21 +5019,21 @@ export function Demo() {
         name: "speed",
         type: "number",
         default: "1",
-        description: "Sweep speed multiplier — auto mode only.",
+        description: "Sweep speed multiplier â€” auto mode only.",
       },
       {
         name: "cursorRadius",
         type: "number",
         default: "200",
         description:
-          "Cursor mode only. Activation distance in CSS pixels measured from the card's edges — the arc lights within this distance and fades out beyond it.",
+          "Cursor mode only. Activation distance in CSS pixels measured from the card's edges â€” the arc lights within this distance and fades out beyond it.",
       },
       {
         name: "bling",
         type: "boolean",
         default: "true",
         description:
-          "Toggle the bling — twinkles that appear only while the card is hovered, clustered at the lit border point (not across the whole card). Suppressed under reduced motion.",
+          "Toggle the bling â€” twinkles that appear only while the card is hovered, clustered at the lit border point (not across the whole card). Suppressed under reduced motion.",
       },
       {
         name: "sparkleCount",
@@ -4908,13 +5058,13 @@ export function Demo() {
       {
         name: "children",
         type: "ReactNode",
-        default: "—",
+        default: "â€”",
         description: "Content rendered on the inner surface.",
       },
       {
         name: "className",
         type: "string",
-        default: "—",
+        default: "â€”",
         description: "Extra class names merged onto the root container.",
       },
     ],
